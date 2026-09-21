@@ -26,7 +26,7 @@ export default async function BilanPage() {
     <>
       <SiteHeader />
 
-      <LeafPage>
+      <LeafPage seed="bilan">
         <section className="grain overflow-hidden border-b border-ink/10">
           <div className="mx-auto grid max-w-6xl items-center gap-6 px-5 py-10 md:grid-cols-[1fr_auto] md:py-14">
             <div className="flex flex-col gap-5">

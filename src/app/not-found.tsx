@@ -10,7 +10,7 @@ export default function NotFound() {
   return (
     <>
       <SiteHeader />
-      <LeafPage>
+      <LeafPage seed="not-found">
         <section className="grain overflow-hidden">
           <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-16 md:grid-cols-[1.2fr_1fr] md:py-24">
             <div className="flex flex-col gap-6">

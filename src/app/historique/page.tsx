@@ -43,7 +43,7 @@ async function HistoriqueContent({ searchParams }: { searchParams: Promise<{ not
   return (
     <>
       <SiteHeader />
-      <LeafPage>
+      <LeafPage seed="historique">
         <section className="grain overflow-hidden border-b border-ink/10">
           <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-10 md:grid-cols-[1.2fr_1fr] md:py-14">
             <div className="flex flex-col gap-4">

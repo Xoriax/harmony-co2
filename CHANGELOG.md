@@ -2,6 +2,15 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.10.2] - 2026-09-22
+
+Feuilles décoratives plus nombreuses et différentes d'une page à l'autre.
+
+### Modifié
+- Chaque page (Mon bilan, Event, Mandat, Historique, Connexion, 404) a sa propre disposition de feuilles, avec des tailles très variées (de 22 à 78 px) au lieu d'un même motif partout.
+- Environ 16 feuilles par page au lieu de 8, surtout sur les bords, quelques-unes plus à l'intérieur ; les petites et celles du centre sont masquées sur mobile.
+- La disposition est calculée de façon déterministe : elle reste identique entre le serveur et le navigateur.
+
 ## [0.10.1] - 2026-09-22
 
 Correctif de l'intégration continue.
