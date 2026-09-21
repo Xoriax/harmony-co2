@@ -50,6 +50,10 @@ Le fichier `.env` est ignoré par git.
 | `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
 | `/mandat` | Équipe du mandat (Responsable RSE et Bureau restreint) : cartes avec photo, poste, e-mail et Discord, éléments affichables au choix |
 | `/backoffice/mandat` | Gestion des membres du mandat (même accès que `/backoffice`) |
+| `/mentions-legales` | Mentions légales : éditeur, hébergeur, propriété intellectuelle, responsabilité |
+| `/confidentialite` | Politique de confidentialité (RGPD) : données, bases légales, durées, cookies, destinataires, droits |
+
+Les informations de l'association (nom, adresse, e-mail, hébergeur, région de la base) sont à renseigner dans `src/lib/legal.ts` : tant qu'une valeur est `null`, les pages affichent « à compléter ». Les liens vers ces deux pages sont dans le pied de page de tout le site.
 
 ## Base de données (Supabase)
 

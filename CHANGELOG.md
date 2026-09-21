@@ -2,6 +2,16 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.11.0] - 2026-09-22
+
+Pages légales (RGPD).
+
+### Ajouté
+- Page **Mentions légales** (`/mentions-legales`) : éditeur, hébergement, objet du site, sources des données d'émissions, propriété intellectuelle, responsabilité, droit applicable.
+- Page **Politique de confidentialité** (`/confidentialite`) : données traitées (connexion Discord, historique des bilans, membres du mandat, événements), bases légales, durées de conservation, cookies (uniquement nécessaires, aucun outil de mesure d'audience), destinataires (Supabase, Discord, Impact CO2, hébergeur), droits et recours à la CNIL.
+- Pied de page commun à toutes les pages, avec les liens vers ces deux pages (il remplace celui de l'accueil).
+- `src/lib/legal.ts` : nom de l'association, adresse, e-mail, hébergeur, etc. À renseigner ; en attendant, les pages affichent « à compléter ».
+
 ## [0.10.2] - 2026-09-22
 
 Feuilles décoratives plus nombreuses et différentes d'une page à l'autre.

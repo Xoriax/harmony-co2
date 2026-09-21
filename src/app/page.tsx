@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { GlobeScene } from "./globe-scene";
 import LeafLayer, { type LeafSpec } from "./leaf-layer";
@@ -445,16 +444,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-ink/10">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8 text-sm text-ink/70">
-          <span className="flex items-center gap-3">
-            <Image src="/logo.svg" alt="" width={32} height={32} />
-            Harmony · Bilan carbone pour les associations
-          </span>
-          <span>Facteurs d&apos;émission : Impact CO2 (ADEME)</span>
-        </div>
-      </footer>
     </>
   );
 }
