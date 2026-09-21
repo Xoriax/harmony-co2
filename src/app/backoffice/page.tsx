@@ -13,7 +13,9 @@ export default async function BackofficePage({
 }: {
   searchParams: Promise<{ edit?: string }>;
 }) {
-  if (!(await getSession())) redirect("/connexion");
+  const session = await getSession();
+  if (!session) redirect("/connexion");
+  if (!session.admin) redirect("/");
 
   const { edit } = await searchParams;
   const [{ events, error }, editing] = await Promise.all([

@@ -53,7 +53,9 @@ function parse(formData: FormData) {
 }
 
 async function requireSession() {
-  if (!(await getSession())) redirect("/connexion");
+  const session = await getSession();
+  if (!session) redirect("/connexion");
+  if (!session.admin) redirect("/");
 }
 
 function dbError(code?: string) {

@@ -2,6 +2,27 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.5.0] - 2026-09-21
+
+Connexion avec Discord.
+
+### Ajouté
+- Connexion via OAuth2 Discord (`/connexion/discord` et `/connexion/discord/callback`) : seuls les membres du serveur ciblé peuvent se connecter, avec protection anti-CSRF (état stocké en cookie).
+- Accès au backoffice réservé aux membres ayant le rôle Discord autorisé ; les autres membres sont renvoyés à l'accueil et restent connectés avec leur pseudo.
+- Barre de navigation adaptée à la session : pseudo et avatar Discord à la place du bouton « Connexion », bouton « Backoffice » pour les administrateurs, bouton « Se déconnecter ».
+- Nouvelles variables d'environnement : `SITE_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_GUILD_ID`, `DISCORD_ADMIN_ROLE_ID` (voir `.env.example` et le README).
+
+### Modifié
+- La session contient désormais l'identifiant Discord, le pseudo, l'avatar, le rôle administrateur et une date d'expiration (8 heures), dans un cookie signé.
+- La page `/connexion` est redessinée aux couleurs du site.
+
+### Supprimé
+- Les identifiants fixes temporaires (`admin` / `admin123`) et l'ancien formulaire de connexion.
+
+### Notes
+- Le rôle est vérifié à la connexion : un rôle retiré reste actif jusqu'à l'expiration de la session.
+- Les pages utilisant la barre de navigation sont désormais rendues à chaque visite, car elles lisent la session.
+
 ## [0.4.0] - 2026-09-21
 
 Gestion des événements depuis le backoffice.
@@ -76,6 +97,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.5.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.5.0
 [0.4.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.4.0
 [0.3.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.2.0

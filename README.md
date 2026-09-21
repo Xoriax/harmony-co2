@@ -28,6 +28,11 @@ L'application tourne sur http://localhost:3000.
 | `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clé publique Supabase |
 | `SUPABASE_SECRET_KEY` | Clé secrète Supabase (serveur uniquement, jamais exposée au navigateur) |
+| `SITE_URL` | URL publique du site (sans `/` final), ex. `http://localhost:3000` |
+| `DISCORD_CLIENT_ID` | Identifiant de l'application Discord |
+| `DISCORD_CLIENT_SECRET` | Secret de l'application Discord (serveur uniquement) |
+| `DISCORD_GUILD_ID` | Identifiant du serveur Discord dont il faut être membre |
+| `DISCORD_ADMIN_ROLE_ID` | Identifiant du rôle qui donne accès au backoffice |
 | `SESSION_SECRET` | Secret de signature du cookie de session (chaîne aléatoire d'au moins 32 octets) |
 
 Le fichier `.env` est ignoré par git.
@@ -37,8 +42,8 @@ Le fichier `.env` est ignoré par git.
 | Route | Description |
 |---|---|
 | `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, sections |
-| `/connexion` | Connexion (identifiants fixes temporaires) |
-| `/backoffice` | Espace protégé (redirige vers `/connexion` si non connecté) : créer, modifier, supprimer les événements |
+| `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
+| `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements |
 | `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
 | `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
 | `/mandat` | Page mandat (à venir) |
