@@ -2,6 +2,27 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.0] - 2026-09-22
+
+Page Mandat gérable depuis le backoffice et animations 3D sur Event et Historique.
+
+### Ajouté
+- Page `/mandat` : membres du **Responsable RSE** et du **Bureau restreint**, avec nom, poste, photo, e-mail et Discord.
+- Onglet « Mandat » dans le backoffice (`/backoffice/mandat`) : ajouter, modifier et supprimer les membres, choisir leur groupe et leur ordre d'affichage, envoyer une photo (JPG, PNG, WebP ou GIF, 5 Mo max).
+- Choix, pour chaque membre, des éléments affichés sur sa carte (photo, e-mail, Discord) : un élément masqué n'est jamais envoyé au navigateur des visiteurs.
+- Onglets « Événements » et « Mandat » dans le backoffice, interrupteur réutilisable et garde d'accès partagée (`requireAdmin`).
+- Composant de carte 3D partagé (inclinaison suivant la souris, reflet, profondeur), utilisé sur Mandat, Event et Historique.
+- Migration `supabase/migrations/20260922_create_mandat_members.sql` et bucket public `mandat-photos`.
+
+### Modifié
+- Page `/mandat` redessinée : en-tête avec globe 3D, bande vert sapin pour le premier groupe, cartes 3D, photos aux coins en forme de feuille, animation d'apparition en cascade.
+- Pages `/event` et `/historique` : globe 3D dans l'en-tête, cartes qui s'inclinent avec la souris, apparition en cascade, pulsation verte sur les événements en cours.
+- Le téléversement d'images accepte désormais un bucket au choix (couvertures d'événements et photos de membres).
+
+### Notes
+- Les animations sont désactivées avec `prefers-reduced-motion`.
+- La migration SQL doit être exécutée une fois dans le SQL Editor de Supabase (voir le README).
+
 ## [0.7.0] - 2026-09-21
 
 Synchronisation des événements du site vers Discord.
@@ -135,6 +156,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.8.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.0
 [0.7.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.7.0
 [0.6.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.6.0
 [0.5.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.5.0

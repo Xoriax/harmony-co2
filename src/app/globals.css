@@ -250,6 +250,90 @@ body {
   background-size: 18px 18px;
 }
 
+/* ---------- Cartes Mandat ---------- */
+.tilt3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.25s ease-out,
+    box-shadow 0.3s ease;
+}
+
+.tilt3d:hover {
+  box-shadow: 0 34px 50px -28px rgb(20 37 54 / 0.55);
+}
+
+.depth-1 {
+  transform: translateZ(38px);
+}
+
+.depth-2 {
+  transform: translateZ(22px);
+}
+
+.depth-3 {
+  transform: translateZ(60px);
+}
+
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 0%),
+    rgb(255 255 255 / 0.3),
+    transparent 55%
+  );
+}
+
+.tilt3d:hover .tilt-glare {
+  opacity: 1;
+}
+
+@keyframes live-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(66 168 120 / 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgb(66 168 120 / 0);
+  }
+}
+
+.live-glow {
+  animation: live-glow 2.2s ease-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotateX(-12deg);
+  }
+}
+
+.rise {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+.sway {
+  transform-origin: 0 100%;
+  animation: sway 5s ease-in-out infinite;
+}
+
 @keyframes grow {
   from {
     transform: scaleX(0);
@@ -284,6 +368,15 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .rise,
+  .sway,
+  .live-glow {
+    animation: none;
+  }
+  .tilt3d {
+    transform: none;
+    transition: none;
+  }
   .flip,
   .unfold {
     animation: none;

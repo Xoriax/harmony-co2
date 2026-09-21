@@ -23,9 +23,10 @@ function Section({
     <section className="flex flex-col gap-5">
       <h2 className="font-display text-3xl font-bold text-night">{title}</h2>
       <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {events.map((e) => (
+        {events.map((e, i) => (
           <EventCard
             key={e.id}
+            index={i}
             event={e}
             status={eventStatus(e, now)}
             remaining={remainingMs(e, now)}

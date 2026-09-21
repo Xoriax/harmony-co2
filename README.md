@@ -48,15 +48,17 @@ Le fichier `.env` est ignoré par git.
 | `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
 | `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF et Excel), téléchargement et suppression |
 | `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
-| `/mandat` | Page mandat (à venir) |
+| `/mandat` | Équipe du mandat (Responsable RSE et Bureau restreint) : cartes avec photo, poste, e-mail et Discord, éléments affichables au choix |
+| `/backoffice/mandat` | Gestion des membres du mandat (même accès que `/backoffice`) |
 
 ## Base de données (Supabase)
 
-Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`). Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
+Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`), les membres du mandat dans la table `mandat_members` (photos dans le bucket public `mandat-photos`). Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
 
 1. `supabase/migrations/20260921_create_events.sql` : crée la table (version à jour, avec `cover_url` et `ends_at` obligatoire).
 2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, `20260921_require_event_end.sql`, puis `20260921_add_discord_event_id.sql`.
 3. `20260921_create_bilans.sql` : crée la table de l'historique des bilans.
+4. `20260922_create_mandat_members.sql` : crée la table des membres du mandat.
 
 ## Scripts
 

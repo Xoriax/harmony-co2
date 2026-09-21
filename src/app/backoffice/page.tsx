@@ -6,6 +6,7 @@ import { eventsOnDiscord } from "@/lib/discord-sync";
 import { getEvent, listEvents } from "@/lib/events";
 import { getSession } from "@/lib/session";
 import { SiteHeader } from "../site-header";
+import { BackofficeTabs } from "./tabs";
 import DeleteEventButton from "./delete-event-button";
 import EventForm from "./event-form";
 
@@ -65,6 +66,7 @@ export default async function BackofficePage({
               Crée, modifie ou supprime les événements. Ceux qui sont publiés
               apparaissent sur la page Event.
             </p>
+            <BackofficeTabs active="events" />
           </div>
         </section>
 
