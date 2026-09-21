@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "Bilan carbone pour les associations : calcule ton empreinte en kgCO2e et exporte-la en PDF ou Excel.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${figtree.variable} ${bricolage.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>

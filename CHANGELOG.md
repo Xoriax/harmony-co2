@@ -2,6 +2,16 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.10.1] - 2026-09-22
+
+Correctif de l'intégration continue.
+
+### Corrigé
+- La vérification TypeScript échouait sur GitHub (installation neuve) : le layout utilisait le type `LayoutProps`, généré par Next dans `.next` et absent du dépôt. Il utilise désormais un type explicite, et `npm run typecheck` fonctionne sans build préalable.
+
+### Modifié
+- Actions GitHub `checkout` et `setup-node` passées en version 7 (fin de l'avertissement de dépréciation de Node 20).
+
 ## [0.10.0] - 2026-09-22
 
 Qualité du code : tests, intégration continue, formatage et pages d'erreur.
@@ -234,6 +244,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.10.1]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.10.1
 [0.10.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.10.0
 [0.9.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.9.0
 [0.8.2]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.2
