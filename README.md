@@ -7,6 +7,7 @@ Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les 
 - [Next.js](https://nextjs.org) 16 (App Router), React 19, TypeScript
 - Tailwind CSS 4
 - API Impact CO2
+- Supabase (base de données Postgres et Storage) pour les événements
 - jsPDF (+ autotable) et ExcelJS pour les exports
 
 ## Démarrage
@@ -24,6 +25,9 @@ L'application tourne sur http://localhost:3000.
 | Variable | Rôle |
 |---|---|
 | `IMPACTCO2_TOKEN` | Token de l'API Impact CO2 (serveur uniquement) |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clé publique Supabase |
+| `SUPABASE_SECRET_KEY` | Clé secrète Supabase (serveur uniquement, jamais exposée au navigateur) |
 | `SESSION_SECRET` | Secret de signature du cookie de session (chaîne aléatoire d'au moins 32 octets) |
 
 Le fichier `.env` est ignoré par git.
@@ -34,10 +38,17 @@ Le fichier `.env` est ignoré par git.
 |---|---|
 | `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, sections |
 | `/connexion` | Connexion (identifiants fixes temporaires) |
-| `/backoffice` | Espace protégé, redirige vers `/connexion` si non connecté |
+| `/backoffice` | Espace protégé (redirige vers `/connexion` si non connecté) : créer, modifier, supprimer les événements |
 | `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
-| `/event` | Page événement (à venir) |
+| `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
 | `/mandat` | Page mandat (à venir) |
+
+## Base de données (Supabase)
+
+Les événements sont stockés dans la table `events`, les couvertures dans le bucket public `event-covers` (créé automatiquement). Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
+
+1. `supabase/migrations/20260921_create_events.sql` : crée la table (version à jour, avec `cover_url` et `ends_at` obligatoire).
+2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, puis `20260921_require_event_end.sql`.
 
 ## Scripts
 

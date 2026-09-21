@@ -2,6 +2,26 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.4.0] - 2026-09-21
+
+Gestion des événements depuis le backoffice.
+
+### Ajouté
+- Backoffice `/backoffice` : créer, modifier et supprimer des événements, enregistrés dans Supabase (titre, lieu, début, fin, description, image de couverture, publié ou brouillon).
+- Image de couverture par événement : envoi vers le bucket Supabase Storage `event-covers` (JPG, PNG, WebP ou GIF, 5 Mo max), aperçu, remplacement et suppression, nettoyage automatique des anciens fichiers.
+- Page `/event` publique : cartes 3D qui se retournent au clic pour afficher la description, avec cover, titre, dates et heures de début et de fin, et badge de statut (En cours, À venir, Clos).
+- Compte à rebours en direct jusqu'à la fin de chaque événement ; à l'échéance, l'événement passe automatiquement dans « Événements passés » sans recharger la page.
+- Migrations SQL dans `supabase/migrations/`, client Supabase serveur (`@supabase/supabase-js`), configuration des images distantes et de la taille des envois (6 Mo).
+
+### Modifié
+- La date de fin est obligatoire (formulaire, serveur et base) et doit être après le début.
+- Bouton « Se connecter » de `/connexion` : couleurs corrigées après la refonte (il était invisible).
+
+### Notes
+- Les dates sont stockées sans fuseau (heure locale saisie) et comparées à l'heure de Paris.
+- Sans date de fin (anciennes données), un événement est considéré en cours jusqu'à la fin de sa journée de début.
+- Les migrations doivent être exécutées une fois dans le SQL Editor de Supabase (voir le README).
+
 ## [0.3.0] - 2026-09-21
 
 Refonte de la page Bilan et export des résultats.
@@ -56,6 +76,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.4.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.4.0
 [0.3.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.1.0

@@ -200,6 +200,33 @@ body {
   box-shadow: 0 30px 50px -24px rgb(20 37 54 / 0.45);
 }
 
+.flip-card {
+  perspective: 1200px;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.flip-card.is-flipped .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
 .float-block {
   animation: drift 7s ease-in-out infinite;
   transform-style: preserve-3d;
@@ -272,7 +299,8 @@ body {
     animation: none;
   }
   .scene-tilt,
-  .tilt-card {
+  .tilt-card,
+  .flip-inner {
     transition: none;
   }
 }

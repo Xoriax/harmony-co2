@@ -32,7 +32,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="h-12 rounded-full bg-foreground px-5 font-medium text-background transition-opacity hover:opacity-80 disabled:opacity-50"
+        className="h-12 rounded-full bg-night px-5 font-medium text-cream transition-opacity hover:opacity-80 disabled:opacity-50"
       >
         {pending ? "Connexion..." : "Se connecter"}
       </button>
