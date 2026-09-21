@@ -69,17 +69,21 @@ export function SiteHeader() {
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link href="/" className="flex items-center gap-3">
           <Image src="/logo.svg" alt="Logo Harmony" width={44} height={44} priority />
-          <span className="font-display text-xl font-bold tracking-tight text-night">
-            Harmony
-          </span>
+          <span className="font-display text-xl font-bold tracking-tight text-night">Harmony</span>
         </Link>
         <div className="hidden items-center gap-8 text-sm font-medium md:flex">
-          <Link href="/bilan" className="hover:text-blue">Mon bilan</Link>
+          <Link href="/bilan" className="hover:text-blue">
+            Mon bilan
+          </Link>
           <Suspense fallback={null}>
             <HistoryLink />
           </Suspense>
-          <Link href="/event" className="hover:text-blue">Event</Link>
-          <Link href="/mandat" className="hover:text-blue">Mandat</Link>
+          <Link href="/event" className="hover:text-blue">
+            Event
+          </Link>
+          <Link href="/mandat" className="hover:text-blue">
+            Mandat
+          </Link>
         </div>
 
         {/* Le visiteur non connecté (cas courant) voit d'emblée le bouton « Connexion ». */}

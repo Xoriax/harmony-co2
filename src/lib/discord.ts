@@ -8,12 +8,14 @@ export function siteUrl() {
   return (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
 }
 
+// La connexion a besoin de Discord ET du secret qui signe la session.
 export function isDiscordConfigured() {
   return Boolean(
+    process.env.SESSION_SECRET &&
     process.env.DISCORD_CLIENT_ID &&
-      process.env.DISCORD_CLIENT_SECRET &&
-      process.env.DISCORD_GUILD_ID &&
-      process.env.DISCORD_ADMIN_ROLE_ID,
+    process.env.DISCORD_CLIENT_SECRET &&
+    process.env.DISCORD_GUILD_ID &&
+    process.env.DISCORD_ADMIN_ROLE_ID,
   );
 }
 

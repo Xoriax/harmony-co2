@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { TEAMS, type MemberRow } from "@/lib/mandat-format";
+import { groupByTeam, toPublicMember, type PublicMember } from "@/lib/mandat-format";
 import { listMembers } from "@/lib/mandat";
 import { GlobeScene } from "../globe-scene";
 import LeafLayer from "../leaf-layer";
@@ -37,9 +37,7 @@ function MailIcon() {
 }
 
 // Les éléments masqués ne sont pas rendus : rien n'en sort vers le navigateur.
-function MemberCard({ member, index }: { member: MemberRow; index: number }) {
-  const showEmail = member.show_email && member.email;
-  const showDiscord = member.show_discord && member.discord;
+function MemberCard({ member, index }: { member: PublicMember; index: number }) {
   const tone = TONES[index % TONES.length];
   const leaf = (
     <span
@@ -50,12 +48,12 @@ function MemberCard({ member, index }: { member: MemberRow; index: number }) {
   return (
     <li className="rise" style={{ animationDelay: `${index * 90}ms` }}>
       <TiltCard className="flex flex-col gap-5 rounded-[2rem] border border-ink/10 bg-cream-soft p-4 text-ink">
-        {member.show_photo && (
+        {member.photo && (
           <div className="depth-1 relative">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2.75rem_0.75rem_2.75rem_0.75rem] bg-black">
-              {member.photo_url ? (
+              {member.photo.url ? (
                 <Image
-                  src={member.photo_url}
+                  src={member.photo.url}
                   alt={`Photo de ${member.name}`}
                   fill
                   sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
@@ -75,7 +73,7 @@ function MemberCard({ member, index }: { member: MemberRow; index: number }) {
         )}
 
         <div className="depth-2 flex items-start gap-3 px-2">
-          {!member.show_photo && leaf}
+          {!member.photo && leaf}
           <div className="flex min-w-0 flex-col gap-2">
             <h3 className="font-display text-2xl font-extrabold leading-tight text-night">
               {member.name}
@@ -86,9 +84,9 @@ function MemberCard({ member, index }: { member: MemberRow; index: number }) {
           </div>
         </div>
 
-        {(showEmail || showDiscord) && (
+        {(member.email || member.discord) && (
           <ul className="depth-2 flex flex-col gap-2 px-2 pb-2 text-sm">
-            {showEmail && (
+            {member.email && (
               <li>
                 <a
                   href={`mailto:${member.email}`}
@@ -99,7 +97,7 @@ function MemberCard({ member, index }: { member: MemberRow; index: number }) {
                 </a>
               </li>
             )}
-            {showDiscord && (
+            {member.discord && (
               <li className="flex items-center gap-3 rounded-xl border border-ink/10 bg-cream px-3 py-2.5 font-medium">
                 <span className="text-[#5865f2]">
                   <DiscordIcon />
@@ -116,10 +114,8 @@ function MemberCard({ member, index }: { member: MemberRow; index: number }) {
 
 export default async function MandatPage() {
   const { members, error } = await listMembers();
-  const groups = TEAMS.map((team) => ({
-    ...team,
-    list: members.filter((m) => m.team === team.value),
-  })).filter((g) => g.list.length > 0);
+  // Seuls les champs autorisés sont transmis aux cartes (voir toPublicMember).
+  const groups = groupByTeam(members.map(toPublicMember));
 
   return (
     <>
@@ -140,8 +136,7 @@ export default async function MandatPage() {
                 </span>
               </h1>
               <p className="max-w-[48ch] text-lg leading-relaxed text-ink/80">
-                Le Responsable RSE et le Bureau restreint : qui fait quoi, et comment les
-                contacter.
+                Le Responsable RSE et le Bureau restreint : qui fait quoi, et comment les contacter.
               </p>
             </div>
             <div className="hidden w-full max-w-[300px] justify-self-center md:block">

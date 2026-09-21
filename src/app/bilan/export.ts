@@ -170,10 +170,7 @@ export async function buildPdf(result: Result): Promise<ArrayBuffer> {
         columns[colIdx].push(headerRow(started ? `${c.name} (suite)` : c.name, c.subtotal, i));
         started = true;
       }
-      const row: Cell[] = [
-        pdfText(l.name),
-        pdfText(`${nf.format(l.quantity)} ${l.unit}`),
-      ];
+      const row: Cell[] = [pdfText(l.name), pdfText(`${nf.format(l.quantity)} ${l.unit}`)];
       if (showFactor) row.push(pdfText(factorFormat.format(l.factor)));
       row.push(pdfText(nf.format(l.emissions)));
       columns[colIdx].push(row);
@@ -277,7 +274,12 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
     { header: "Nombre d'éléments", key: "count", width: 20, style: { numFmt: "0" } },
     { header: "Émissions (kgCO2e)", key: "subtotal", width: 22, style: { numFmt: "#,##0.00" } },
     { header: "Part du total", key: "share", width: 16, style: { numFmt: "0.0%" } },
-    { header: "Émissions moyennes par élément (kgCO2e)", key: "avg", width: 30, style: { numFmt: "#,##0.00" } },
+    {
+      header: "Émissions moyennes par élément (kgCO2e)",
+      key: "avg",
+      width: 30,
+      style: { numFmt: "#,##0.00" },
+    },
   ];
   result.categories.forEach((c, i) => {
     const r = i + 2;
@@ -285,7 +287,9 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
       name: c.name,
       count: c.lines.length,
       subtotal: c.subtotal,
-      share: { formula: `IF($C$${result.categories.length + 2}=0,0,C${r}/$C$${result.categories.length + 2})` },
+      share: {
+        formula: `IF($C$${result.categories.length + 2}=0,0,C${r}/$C$${result.categories.length + 2})`,
+      },
       avg: { formula: `IF(B${r}=0,0,C${r}/B${r})` },
     });
   });
@@ -319,7 +323,9 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
     row.getCell(2).value = l.category;
     row.getCell(3).value = l.emissions;
     row.getCell(3).numFmt = "#,##0.00";
-    row.getCell(4).value = { formula: `IF($C$${last + 1}=0,0,C${topStart + 1 + i}/$C$${last + 1})` };
+    row.getCell(4).value = {
+      formula: `IF($C$${last + 1}=0,0,C${topStart + 1 + i}/$C$${last + 1})`,
+    };
     row.getCell(4).numFmt = "0.0%";
     row.eachCell((cell) => (cell.border = cellBorder));
   });
@@ -331,7 +337,12 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
     { header: "Élément", key: "name", width: 46 },
     { header: "Quantité", key: "quantity", width: 14, style: { numFmt: "#,##0.00" } },
     { header: "Unité", key: "unit", width: 14 },
-    { header: "Facteur d'émission (kgCO2e/unité)", key: "factor", width: 30, style: { numFmt: "0.000" } },
+    {
+      header: "Facteur d'émission (kgCO2e/unité)",
+      key: "factor",
+      width: 30,
+      style: { numFmt: "0.000" },
+    },
     { header: "Émissions (kgCO2e)", key: "emissions", width: 20, style: { numFmt: "#,##0.00" } },
     { header: "Part de la catégorie", key: "inCat", width: 20, style: { numFmt: "0.0%" } },
     { header: "Part du total", key: "inTotal", width: 16, style: { numFmt: "0.0%" } },
@@ -393,7 +404,10 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
       topLines[0] ? `${topLines[0].name} (${nf.format(topLines[0].emissions)} kgCO2e)` : "-",
     ],
     ["Unité", "kgCO2e (kilogrammes équivalent CO2)"],
-    ["Méthode", "Émissions = quantité x facteur d'émission (x nombre de trajets pour le transport)"],
+    [
+      "Méthode",
+      "Émissions = quantité x facteur d'émission (x nombre de trajets pour le transport)",
+    ],
     ["Source des facteurs", "Impact CO2 (ADEME) - https://impactco2.fr"],
   ];
   rows.forEach(([k, v]) => info.addRow({ k, v }));

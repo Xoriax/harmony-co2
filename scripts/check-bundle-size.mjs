@@ -7,7 +7,7 @@ import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
 import { gzipSync } from "node:zlib";
 
-const BUDGET_KB_GZIP = 220; // JS initial par page (mesuré à ~180-190 Ko lors de la mise en place)
+const BUDGET_KB_GZIP = 210; // JS initial par page (mesuré : ~189 Ko à l'accueil, ~199 Ko au backoffice)
 const HEAVY_LIBS = [
   { name: "jsPDF", pattern: /jsPDF/ },
   { name: "jsPDF autotable", pattern: /autoTable/ },
@@ -45,7 +45,9 @@ for (const file of walk(join(root, "static", "chunks"), ".js")) {
 console.log("Librairies d'export (chargées uniquement au clic) :");
 const lazy = [...chunks].filter(([, c]) => c.libs.length);
 for (const [name, c] of lazy.sort((a, b) => b[1].gzip - a[1].gzip)) {
-  console.log(`  ${name.slice(0, 22).padEnd(22)} ${kb(c.raw)}  gzip ${kb(c.gzip)}  ${c.libs.join(", ")}`);
+  console.log(
+    `  ${name.slice(0, 22).padEnd(22)} ${kb(c.raw)}  gzip ${kb(c.gzip)}  ${c.libs.join(", ")}`,
+  );
 }
 
 const pages = walk(join(root, "server", "app"), ".html").filter(
@@ -59,20 +61,27 @@ for (const file of pages) {
   const relative = normalized.slice(normalized.indexOf("server/app/") + "server/app/".length);
   const route = "/" + relative.replace(/\.html$/, "").replace(/^index$/, "");
   const html = readFileSync(file, "utf8");
-  const scripts = [...new Set([...html.matchAll(/\/_next\/static\/chunks\/([^"'?]+?\.js)/g)].map((m) => m[1]))];
+  const scripts = [
+    ...new Set([...html.matchAll(/\/_next\/static\/chunks\/([^"'?]+?\.js)/g)].map((m) => m[1])),
+  ];
   const total = scripts.reduce((sum, s) => sum + (chunks.get(basename(s))?.gzip ?? 0), 0);
   const heavy = scripts.filter((s) => chunks.get(basename(s))?.libs.length);
 
   const problems = [];
   if (total / 1024 > BUDGET_KB_GZIP) problems.push(`dépasse le budget de ${BUDGET_KB_GZIP} Ko`);
-  if (heavy.length) problems.push(`charge une librairie d'export au démarrage (${heavy.join(", ")})`);
+  if (heavy.length)
+    problems.push(`charge une librairie d'export au démarrage (${heavy.join(", ")})`);
   if (problems.length) failed = true;
 
-  console.log(`  ${route.padEnd(18)} ${kb(total)}  ${problems.length ? "✗ " + problems.join(" ; ") : "✓"}`);
+  console.log(
+    `  ${route.padEnd(18)} ${kb(total)}  ${problems.length ? "✗ " + problems.join(" ; ") : "✓"}`,
+  );
 }
 
 if (failed) {
   console.error("\nÉchec : voir les lignes ✗ ci-dessus.");
   process.exit(1);
 }
-console.log(`\nOK : toutes les pages sont sous ${BUDGET_KB_GZIP} Ko gzip et sans librairie d'export au démarrage.`);
+console.log(
+  `\nOK : toutes les pages sont sous ${BUDGET_KB_GZIP} Ko gzip et sans librairie d'export au démarrage.`,
+);

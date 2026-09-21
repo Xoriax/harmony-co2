@@ -66,6 +66,13 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 - **Données publiques en cache** : la liste des événements (étiquette `events`) et celle des membres du mandat (étiquette `mandat`) sont mises en cache 1 heure et rafraîchies aussitôt qu'on les modifie depuis le backoffice. Une modification faite directement dans Supabase n'apparaît qu'après l'expiration du cache.
 - **Exports** : jsPDF et ExcelJS ne sont chargés qu'à l'approche ou au clic d'un bouton d'export. `npm run size` le vérifie après chaque build.
 
+## Qualité du code
+
+- **Tests** (`tests/`, Vitest) : calcul du bilan, conversion des heures de Paris (changements d'heure inclus), statut et compte à rebours d'un événement, éléments masqués des cartes du mandat, validation des formulaires du backoffice, session signée (falsification, expiration, secret manquant), synchronisation Discord, validation des images, téléchargement de l'historique et pages d'erreur. Ils tournent dans un fuseau horaire éloigné de Paris pour prouver qu'aucun calcul ne dépend de la machine.
+- **Intégration continue** (`.github/workflows/ci.yml`) : à chaque push et pull request, GitHub lance ESLint, TypeScript, Prettier, les tests, le build (avec de fausses clés) et `npm run size`.
+- **Formatage** : Prettier (`.prettierrc.json`), `.editorconfig` et `.gitattributes` (fins de ligne LF partout, y compris sous Windows). Lancer `npm run format` avant de commiter.
+- **Erreurs** : pages « introuvable » (404), erreur d'une page (avec « Réessayer »), erreur grave (layout) et écrans de chargement. Le message technique d'une erreur n'est jamais affiché aux visiteurs. Si `SESSION_SECRET` manque, le site reste utilisable mais personne ne peut se connecter (un message est écrit dans les journaux).
+
 ## Scripts
 
 | Commande | Action |
@@ -74,7 +81,13 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 | `npm run build` | Build de production |
 | `npm run start` | Serveur de production |
 | `npm run lint` | Vérification ESLint |
-| `npm run size` | Après un build : poids du JS au démarrage de chaque page (budget 220 Ko gzip) et contrôle que les librairies PDF/Excel ne se chargent qu'au clic |
+| `npm run typecheck` | Vérification TypeScript |
+| `npm run format` | Formate tout le code avec Prettier |
+| `npm run format:check` | Vérifie le formatage sans rien modifier |
+| `npm test` | Lance les tests (Vitest) |
+| `npm run test:watch` | Relance les tests à chaque modification |
+| `npm run check` | Enchaîne lint, types, formatage et tests (à lancer avant un commit) |
+| `npm run size` | Après un build : poids du JS au démarrage de chaque page (budget 210 Ko gzip) et contrôle que les librairies PDF/Excel ne se chargent qu'au clic |
 
 ## Versions
 

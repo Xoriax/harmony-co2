@@ -14,15 +14,13 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   title: "Harmony CO2",
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  description:
+    "Bilan carbone pour les associations : calcule ton empreinte en kgCO2e et exporte-la en PDF ou Excel.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="fr"
-      className={`${figtree.variable} ${bricolage.variable} h-full antialiased`}
-    >
+    <html lang="fr" className={`${figtree.variable} ${bricolage.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

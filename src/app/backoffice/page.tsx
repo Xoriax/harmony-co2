@@ -65,8 +65,8 @@ async function BackofficeContent({
               Gérer les événements
             </h1>
             <p className="max-w-[56ch] text-lg text-ink/80">
-              Crée, modifie ou supprime les événements. Ceux qui sont publiés
-              apparaissent sur la page Event.
+              Crée, modifie ou supprime les événements. Ceux qui sont publiés apparaissent sur la
+              page Event.
             </p>
             <BackofficeTabs active="events" />
           </div>
@@ -188,7 +188,9 @@ async function BackofficeContent({
   );
 }
 
-export default function BackofficePage(props: { searchParams: Promise<{ edit?: string; notice?: string }> }) {
+export default function BackofficePage(props: {
+  searchParams: Promise<{ edit?: string; notice?: string }>;
+}) {
   return (
     <Suspense fallback={<PageFallback />}>
       <BackofficeContent {...props} />

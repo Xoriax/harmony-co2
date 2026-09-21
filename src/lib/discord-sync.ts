@@ -5,13 +5,7 @@ import { eventEnd, type EventRow } from "./event-format";
 import { supabaseAdmin } from "./supabase";
 
 export type SyncNotice =
-  | "none"
-  | "synced"
-  | "removed"
-  | "past"
-  | "forbidden"
-  | "failed"
-  | "nocolumn";
+  "none" | "synced" | "removed" | "past" | "forbidden" | "failed" | "nocolumn";
 
 const MISSING_COLUMN = "42703";
 
@@ -23,7 +17,10 @@ async function readDiscordId(eventId: string) {
     .eq("id", eventId)
     .maybeSingle();
   if (error) return { id: null, missingColumn: error.code === MISSING_COLUMN };
-  return { id: (data?.discord_event_id as string | null | undefined) ?? null, missingColumn: false };
+  return {
+    id: (data?.discord_event_id as string | null | undefined) ?? null,
+    missingColumn: false,
+  };
 }
 
 // Aligne l'événement Discord sur l'événement du site : création, mise à jour ou retrait (brouillon).

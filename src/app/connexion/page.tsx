@@ -14,11 +14,7 @@ const ERRORS: Record<string, string> = {
   config: "La connexion Discord n'est pas configurée (variables d'environnement manquantes).",
 };
 
-async function ConnexionContent({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
+async function ConnexionContent({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const session = await getSession();
   if (session) redirect(session.admin ? "/backoffice" : "/");
 
@@ -36,8 +32,8 @@ async function ConnexionContent({
               Connexion
             </h1>
             <p className="leading-relaxed text-ink/80">
-              Connecte-toi avec ton compte Discord. Seuls les membres du serveur
-              peuvent se connecter.
+              Connecte-toi avec ton compte Discord. Seuls les membres du serveur peuvent se
+              connecter.
             </p>
           </div>
 
@@ -62,8 +58,8 @@ async function ConnexionContent({
           </a>
 
           <p className="text-sm text-ink/65">
-            Les membres avec le rôle autorisé accèdent au backoffice. Les autres
-            restent connectés avec leur pseudo.
+            Les membres avec le rôle autorisé accèdent au backoffice. Les autres restent connectés
+            avec leur pseudo.
           </p>
         </div>
       </main>

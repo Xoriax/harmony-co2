@@ -41,33 +41,218 @@ const HIGHLIGHTS = [
 ];
 
 const HERO_LEAVES: LeafSpec[] = [
-  { x: "2%", y: "9%", size: 46, color: "leaf", speed: -0.12, spin: 0.04, dur: 7, delay: 0, rot: -20 },
-  { x: "40%", y: "5%", size: 30, color: "gold", speed: 0.16, spin: -0.05, dur: 9, delay: -2, rot: 30, hideOnMobile: true },
-  { x: "91%", y: "8%", size: 36, color: "emerald", speed: -0.18, spin: 0.05, dur: 8, delay: -4, rot: 70 },
-  { x: "4%", y: "80%", size: 54, color: "gold", speed: 0.14, spin: 0.03, dur: 10, delay: -3, rot: 120 },
-  { x: "50%", y: "86%", size: 34, color: "emerald", speed: -0.2, spin: -0.04, dur: 8, delay: -5, rot: 200, hideOnMobile: true },
-  { x: "88%", y: "84%", size: 42, color: "leaf", speed: 0.12, spin: 0.06, dur: 9, delay: -1, rot: 160 },
+  {
+    x: "2%",
+    y: "9%",
+    size: 46,
+    color: "leaf",
+    speed: -0.12,
+    spin: 0.04,
+    dur: 7,
+    delay: 0,
+    rot: -20,
+  },
+  {
+    x: "40%",
+    y: "5%",
+    size: 30,
+    color: "gold",
+    speed: 0.16,
+    spin: -0.05,
+    dur: 9,
+    delay: -2,
+    rot: 30,
+    hideOnMobile: true,
+  },
+  {
+    x: "91%",
+    y: "8%",
+    size: 36,
+    color: "emerald",
+    speed: -0.18,
+    spin: 0.05,
+    dur: 8,
+    delay: -4,
+    rot: 70,
+  },
+  {
+    x: "4%",
+    y: "80%",
+    size: 54,
+    color: "gold",
+    speed: 0.14,
+    spin: 0.03,
+    dur: 10,
+    delay: -3,
+    rot: 120,
+  },
+  {
+    x: "50%",
+    y: "86%",
+    size: 34,
+    color: "emerald",
+    speed: -0.2,
+    spin: -0.04,
+    dur: 8,
+    delay: -5,
+    rot: 200,
+    hideOnMobile: true,
+  },
+  {
+    x: "88%",
+    y: "84%",
+    size: 42,
+    color: "leaf",
+    speed: 0.12,
+    spin: 0.06,
+    dur: 9,
+    delay: -1,
+    rot: 160,
+  },
 ];
 
 const CARDS_LEAVES: LeafSpec[] = [
-  { x: "1%", y: "6%", size: 40, color: "emerald", speed: -0.14, spin: 0.05, dur: 8, delay: -1, rot: 40 },
-  { x: "93%", y: "14%", size: 48, color: "leaf", speed: 0.15, spin: -0.04, dur: 9, delay: -3, rot: -30 },
-  { x: "96%", y: "72%", size: 30, color: "gold", speed: -0.18, spin: 0.06, dur: 7, delay: -2, rot: 90, hideOnMobile: true },
-  { x: "2%", y: "90%", size: 36, color: "leaf", speed: 0.12, spin: -0.05, dur: 10, delay: -4, rot: 150 },
+  {
+    x: "1%",
+    y: "6%",
+    size: 40,
+    color: "emerald",
+    speed: -0.14,
+    spin: 0.05,
+    dur: 8,
+    delay: -1,
+    rot: 40,
+  },
+  {
+    x: "93%",
+    y: "14%",
+    size: 48,
+    color: "leaf",
+    speed: 0.15,
+    spin: -0.04,
+    dur: 9,
+    delay: -3,
+    rot: -30,
+  },
+  {
+    x: "96%",
+    y: "72%",
+    size: 30,
+    color: "gold",
+    speed: -0.18,
+    spin: 0.06,
+    dur: 7,
+    delay: -2,
+    rot: 90,
+    hideOnMobile: true,
+  },
+  {
+    x: "2%",
+    y: "90%",
+    size: 36,
+    color: "leaf",
+    speed: 0.12,
+    spin: -0.05,
+    dur: 10,
+    delay: -4,
+    rot: 150,
+  },
 ];
 
 const BAND_LEAVES: LeafSpec[] = [
-  { x: "3%", y: "5%", size: 44, color: "leaf", speed: -0.14, spin: 0.05, dur: 8, delay: 0, rot: 20 },
-  { x: "47%", y: "3%", size: 32, color: "gold", speed: 0.17, spin: -0.05, dur: 9, delay: -3, rot: 100, hideOnMobile: true },
-  { x: "94%", y: "18%", size: 50, color: "emerald", speed: -0.12, spin: 0.04, dur: 7, delay: -2, rot: -50 },
-  { x: "49%", y: "90%", size: 40, color: "leaf", speed: 0.15, spin: 0.06, dur: 10, delay: -5, rot: 210, hideOnMobile: true },
-  { x: "92%", y: "84%", size: 34, color: "gold", speed: -0.2, spin: -0.05, dur: 8, delay: -1, rot: 140 },
+  {
+    x: "3%",
+    y: "5%",
+    size: 44,
+    color: "leaf",
+    speed: -0.14,
+    spin: 0.05,
+    dur: 8,
+    delay: 0,
+    rot: 20,
+  },
+  {
+    x: "47%",
+    y: "3%",
+    size: 32,
+    color: "gold",
+    speed: 0.17,
+    spin: -0.05,
+    dur: 9,
+    delay: -3,
+    rot: 100,
+    hideOnMobile: true,
+  },
+  {
+    x: "94%",
+    y: "18%",
+    size: 50,
+    color: "emerald",
+    speed: -0.12,
+    spin: 0.04,
+    dur: 7,
+    delay: -2,
+    rot: -50,
+  },
+  {
+    x: "49%",
+    y: "90%",
+    size: 40,
+    color: "leaf",
+    speed: 0.15,
+    spin: 0.06,
+    dur: 10,
+    delay: -5,
+    rot: 210,
+    hideOnMobile: true,
+  },
+  {
+    x: "92%",
+    y: "84%",
+    size: 34,
+    color: "gold",
+    speed: -0.2,
+    spin: -0.05,
+    dur: 8,
+    delay: -1,
+    rot: 140,
+  },
 ];
 
 const CTA_LEAVES: LeafSpec[] = [
-  { x: "62%", y: "14%", size: 44, color: "leaf", speed: -0.1, spin: 0.05, dur: 8, delay: 0, rot: 30 },
-  { x: "80%", y: "58%", size: 56, color: "gold", speed: 0.12, spin: -0.04, dur: 9, delay: -3, rot: -40 },
-  { x: "68%", y: "82%", size: 32, color: "emerald", speed: -0.16, spin: 0.06, dur: 7, delay: -2, rot: 120 },
+  {
+    x: "62%",
+    y: "14%",
+    size: 44,
+    color: "leaf",
+    speed: -0.1,
+    spin: 0.05,
+    dur: 8,
+    delay: 0,
+    rot: 30,
+  },
+  {
+    x: "80%",
+    y: "58%",
+    size: 56,
+    color: "gold",
+    speed: 0.12,
+    spin: -0.04,
+    dur: 9,
+    delay: -3,
+    rot: -40,
+  },
+  {
+    x: "68%",
+    y: "82%",
+    size: 32,
+    color: "emerald",
+    speed: -0.16,
+    spin: 0.06,
+    dur: 7,
+    delay: -2,
+    rot: 120,
+  },
 ];
 
 function Arrow() {
@@ -111,8 +296,8 @@ export default function Home() {
                 de ton association
               </h1>
               <p className="max-w-[52ch] text-lg leading-relaxed text-ink/80">
-                Choisis les postes qui te concernent, renseigne tes quantités et
-                obtiens ton total en kgCO2e, avec le détail par catégorie.
+                Choisis les postes qui te concernent, renseigne tes quantités et obtiens ton total
+                en kgCO2e, avec le détail par catégorie.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
@@ -146,58 +331,51 @@ export default function Home() {
 
         {/* Cartes */}
         <div className="relative overflow-hidden">
-        <LeafLayer leaves={CARDS_LEAVES} />
-        <section className="relative z-10 mx-auto max-w-6xl px-5 py-16 md:py-24">
-          <div className="mb-12 flex flex-col gap-4 md:max-w-2xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
-              Ce que tu peux faire
-            </span>
-            <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-night [text-wrap:balance] md:text-5xl">
-              Suivre, agir et retrouver l&apos;équipe
-            </h2>
-            <p className="text-lg leading-relaxed text-ink/75">
-              Un outil simple pour les associations qui veulent mesurer leur
-              empreinte carbone et faire vivre leur mandat.
-            </p>
-          </div>
-          <div className="tilt-wrap grid gap-6 md:grid-cols-3">
-            {CARDS.map((c) => (
-              <Link
-                key={c.title}
-                href={c.href}
-                className="tilt-card group flex flex-col gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-4"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
-                  <span
-                    className={`absolute left-3 top-3 h-3 w-12 rounded-full ${c.tone}`}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 px-2 pb-2">
-                  <h3 className="font-display text-2xl font-bold text-night">
-                    {c.title}
-                  </h3>
-                  <p className="leading-relaxed text-ink/75">{c.text}</p>
-                  <span className="mt-2 inline-flex items-center gap-2 font-semibold text-blue">
-                    {c.cta}
-                    <span className="transition-transform group-hover:translate-x-1">
-                      <Arrow />
+          <LeafLayer leaves={CARDS_LEAVES} />
+          <section className="relative z-10 mx-auto max-w-6xl px-5 py-16 md:py-24">
+            <div className="mb-12 flex flex-col gap-4 md:max-w-2xl">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
+                Ce que tu peux faire
+              </span>
+              <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-night [text-wrap:balance] md:text-5xl">
+                Suivre, agir et retrouver l&apos;équipe
+              </h2>
+              <p className="text-lg leading-relaxed text-ink/75">
+                Un outil simple pour les associations qui veulent mesurer leur empreinte carbone et
+                faire vivre leur mandat.
+              </p>
+            </div>
+            <div className="tilt-wrap grid gap-6 md:grid-cols-3">
+              {CARDS.map((c) => (
+                <Link
+                  key={c.title}
+                  href={c.href}
+                  className="tilt-card group flex flex-col gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-4"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
+                    <span className={`absolute left-3 top-3 h-3 w-12 rounded-full ${c.tone}`} />
+                  </div>
+                  <div className="flex flex-col gap-2 px-2 pb-2">
+                    <h3 className="font-display text-2xl font-bold text-night">{c.title}</h3>
+                    <p className="leading-relaxed text-ink/75">{c.text}</p>
+                    <span className="mt-2 inline-flex items-center gap-2 font-semibold text-blue">
+                      {c.cta}
+                      <span className="transition-transform group-hover:translate-x-1">
+                        <Arrow />
+                      </span>
                     </span>
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
 
         {/* Bandeau vert */}
         <section className="relative overflow-hidden bg-forest text-cream">
           <LeafLayer leaves={BAND_LEAVES} />
           <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 px-5 py-16 md:py-24 lg:grid-cols-2">
-            <div
-              className="grid grid-cols-2 gap-4"
-              style={{ perspective: "1000px" }}
-            >
+            <div className="grid grid-cols-2 gap-4" style={{ perspective: "1000px" }}>
               <div className="float-block aspect-[3/4] rounded-2xl bg-black" />
               <div className="float-block mt-10 aspect-[3/4] rounded-2xl bg-black" />
               <div className="float-block -mt-6 aspect-square rounded-2xl bg-black" />
@@ -211,8 +389,8 @@ export default function Home() {
                 Un bilan, étape par étape
               </h2>
               <p className="max-w-[52ch] text-lg leading-relaxed text-cream/85">
-                Pas besoin d&apos;être expert : le site s&apos;occupe des calculs
-                avec les facteurs d&apos;émission officiels.
+                Pas besoin d&apos;être expert : le site s&apos;occupe des calculs avec les facteurs
+                d&apos;émission officiels.
               </p>
               <ol className="flex flex-col gap-4">
                 {STEPS.map((step, i) => (
@@ -246,8 +424,8 @@ export default function Home() {
                 Prêt à mesurer ton empreinte ?
               </h2>
               <p className="text-lg leading-relaxed text-cream/85">
-                Connecte-toi avec Discord pour retrouver automatiquement tous
-                tes bilans dans ton historique.
+                Connecte-toi avec Discord pour retrouver automatiquement tous tes bilans dans ton
+                historique.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link

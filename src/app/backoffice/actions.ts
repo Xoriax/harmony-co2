@@ -2,9 +2,10 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { removeCover, uploadCover, validateCover } from "@/lib/covers";
+import { removeCover, uploadCover } from "@/lib/covers";
 import { deleteDiscordEvent } from "@/lib/discord-events";
 import { discordIdOf, syncEventToDiscord } from "@/lib/discord-sync";
+import { parseEventForm } from "@/lib/event-form";
 import { MISSING_COLUMN, MISSING_TABLE } from "@/lib/events";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -13,46 +14,6 @@ export type EventFormState = {
   error?: string;
   values?: Record<string, string>;
 } | null;
-
-const DATE_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
-
-function parse(formData: FormData) {
-  const text = (key: string) => String(formData.get(key) ?? "").trim();
-  const values = {
-    title: text("title"),
-    description: text("description"),
-    location: text("location"),
-    starts_at: text("starts_at"),
-    ends_at: text("ends_at"),
-    published: formData.get("published") ? "on" : "",
-  };
-
-  const file = formData.get("cover");
-  const cover = file instanceof File && file.size > 0 ? file : null;
-  const removeCoverRequested = Boolean(formData.get("remove_cover"));
-
-  let error: string | null = null;
-  if (!values.title) error = "Le titre est obligatoire.";
-  else if (values.title.length > 120) error = "Le titre ne doit pas dépasser 120 caractères.";
-  else if (values.location.length > 120) error = "Le lieu ne doit pas dépasser 120 caractères.";
-  else if (values.description.length > 2000)
-    error = "La description ne doit pas dépasser 2000 caractères.";
-  else if (!DATE_RE.test(values.starts_at)) error = "La date de début est obligatoire.";
-  else if (!values.ends_at) error = "La date de fin est obligatoire.";
-  else if (!DATE_RE.test(values.ends_at)) error = "La date de fin est invalide.";
-  else if (values.ends_at <= values.starts_at) error = "La fin doit être après le début.";
-  else if (cover) error = validateCover(cover);
-
-  const row = {
-    title: values.title,
-    description: values.description,
-    location: values.location,
-    starts_at: `${values.starts_at}:00`,
-    ends_at: `${values.ends_at}:00`,
-    published: Boolean(values.published),
-  };
-  return { values, row, cover, removeCoverRequested, error };
-}
 
 async function requireSession() {
   const session = await getSession();
@@ -71,7 +32,7 @@ export async function createEvent(
   formData: FormData,
 ): Promise<EventFormState> {
   await requireSession();
-  const { values, row, cover, error } = parse(formData);
+  const { values, row, cover, error } = parseEventForm(formData);
   if (error) return { error, values };
 
   let coverUrl: string | null = null;
@@ -103,7 +64,7 @@ export async function updateEvent(
   formData: FormData,
 ): Promise<EventFormState> {
   await requireSession();
-  const { values, row, cover, removeCoverRequested, error } = parse(formData);
+  const { values, row, cover, removeCoverRequested, error } = parseEventForm(formData);
   if (error) return { error, values };
 
   const db = supabaseAdmin();

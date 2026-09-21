@@ -147,13 +147,10 @@ export default function EventCard({
               </h3>
               <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                 <p className="whitespace-pre-line leading-relaxed text-cream/90">
-                  {event.description ||
-                    "Aucune description pour cet événement."}
+                  {event.description || "Aucune description pour cet événement."}
                 </p>
               </div>
-              <p className="text-xs font-semibold text-leaf">
-                Cliquer pour revenir
-              </p>
+              <p className="text-xs font-semibold text-leaf">Cliquer pour revenir</p>
             </div>
           </div>
         </div>

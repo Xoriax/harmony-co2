@@ -20,15 +20,7 @@ const quantityLabels: Record<string, string> = {
   transport: "Distance par trajet (km)",
 };
 
-const TONES = [
-  "bg-leaf",
-  "bg-sky",
-  "bg-gold",
-  "bg-emerald",
-  "bg-blue",
-  "bg-night",
-  "bg-forest",
-];
+const TONES = ["bg-leaf", "bg-sky", "bg-gold", "bg-emerald", "bg-blue", "bg-night", "bg-forest"];
 
 const inputClass =
   "h-11 min-w-0 rounded-xl border border-ink/20 bg-cream px-4 text-ink transition-colors focus:border-blue disabled:opacity-50";
@@ -237,9 +229,7 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
           </span>
           <p className="font-display text-5xl font-extrabold tabular-nums">
             {includedCategories.length}
-            <span className="ml-2 text-xl font-bold text-cream/70">
-              / {categories.length}
-            </span>
+            <span className="ml-2 text-xl font-bold text-cream/70">/ {categories.length}</span>
           </p>
           <p className="-mt-3 text-sm text-cream/80">
             {includedCategories.length > 1 ? "catégories incluses" : "catégorie incluse"}

@@ -10,15 +10,7 @@ import {
 } from "@/lib/event-format";
 import EventCard from "./event-card";
 
-function Section({
-  title,
-  events,
-  now,
-}: {
-  title: string;
-  events: EventRow[];
-  now: string;
-}) {
+function Section({ title, events, now }: { title: string; events: EventRow[]; now: string }) {
   return (
     <section className="flex flex-col gap-5">
       <h2 className="font-display text-3xl font-bold text-night">{title}</h2>

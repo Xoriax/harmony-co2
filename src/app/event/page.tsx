@@ -32,10 +32,7 @@ function EventsSkeleton() {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" aria-busy="true">
       {[0, 1, 2].map((i) => (
-        <div
-          key={i}
-          className="h-[30rem] animate-pulse rounded-3xl bg-ink/10"
-        />
+        <div key={i} className="h-[30rem] animate-pulse rounded-3xl bg-ink/10" />
       ))}
     </div>
   );
@@ -61,8 +58,7 @@ export default function EventPage() {
                 </span>
               </h1>
               <p className="max-w-[48ch] text-lg leading-relaxed text-ink/80">
-                Clique sur une carte pour la retourner et lire la description de
-                l&apos;événement.
+                Clique sur une carte pour la retourner et lire la description de l&apos;événement.
               </p>
             </div>
             <div className="hidden w-full max-w-[300px] justify-self-center md:block">

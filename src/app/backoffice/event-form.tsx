@@ -19,9 +19,12 @@ export default function EventForm({ event }: { event?: EventRow }) {
   const [removeCover, setRemoveCover] = useState(false);
   const [coverError, setCoverError] = useState<string | null>(null);
 
-  useEffect(() => () => {
-    if (preview) URL.revokeObjectURL(preview);
-  }, [preview]);
+  useEffect(
+    () => () => {
+      if (preview) URL.revokeObjectURL(preview);
+    },
+    [preview],
+  );
 
   const shownCover = preview ?? (removeCover ? null : (event?.cover_url ?? null));
 

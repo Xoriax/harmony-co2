@@ -1,0 +1,14 @@
+# Fins de ligne : LF dans le dépôt et dans le dossier de travail, sur tous les systèmes.
+* text=auto eol=lf
+
+# Fichiers binaires (jamais convertis).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.woff binary
+*.woff2 binary

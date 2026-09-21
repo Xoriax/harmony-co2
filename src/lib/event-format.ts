@@ -66,9 +66,7 @@ export type EventStatus = "live" | "upcoming" | "ended";
 
 // Heure de Paris avec les secondes, au même format que les dates stockées ("AAAA-MM-JJTHH:mm:ss").
 export function nowParisFull() {
-  return new Date()
-    .toLocaleString("sv-SE", { timeZone: "Europe/Paris" })
-    .replace(" ", "T");
+  return new Date().toLocaleString("sv-SE", { timeZone: "Europe/Paris" }).replace(" ", "T");
 }
 
 const full = (value: string) => (value.length === 16 ? `${value}:00` : value.slice(0, 19));

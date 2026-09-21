@@ -10,7 +10,13 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       ...(supabaseHost
-        ? [{ protocol: "https" as const, hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }]
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: supabaseHost,
+              pathname: "/storage/v1/object/public/**",
+            },
+          ]
         : []),
       { protocol: "https", hostname: "cdn.discordapp.com", pathname: "/avatars/**" },
     ],

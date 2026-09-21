@@ -14,8 +14,16 @@ export type Session = {
 
 type Payload = Session & { exp: number };
 
+export function isSessionConfigured() {
+  return Boolean(process.env.SESSION_SECRET);
+}
+
+let warned = false;
+
 function sign(value: string) {
-  return createHmac("sha256", process.env.SESSION_SECRET!).update(value).digest("hex");
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) throw new Error("SESSION_SECRET est manquant : impossible de signer une session.");
+  return createHmac("sha256", secret).update(value).digest("hex");
 }
 
 // Cookie signé (HMAC) contenant la session et sa date d'expiration.
@@ -44,6 +52,16 @@ export async function createSession(session: Session) {
 }
 
 export async function getSession(): Promise<Session | null> {
+  // Sans secret, personne ne peut être connecté : le site reste utilisable pour les visiteurs
+  // (au lieu de planter sur chaque page), et l'anomalie est signalée dans les journaux.
+  if (!isSessionConfigured()) {
+    if (!warned) {
+      warned = true;
+      console.error("[session] SESSION_SECRET est manquant : les connexions sont désactivées.");
+    }
+    return null;
+  }
+
   const raw = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!raw) return null;
 

@@ -2,6 +2,33 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.10.0] - 2026-09-22
+
+Qualité du code : tests, intégration continue, formatage et pages d'erreur.
+
+### Ajouté
+- 176 tests (Vitest) sur le calcul du bilan, les heures de Paris, le statut des événements, le masquage des éléments du mandat, la validation des formulaires du backoffice, la session signée, la synchronisation Discord, les images, le téléchargement de l'historique et les pages d'erreur ; commandes `npm test`, `npm run test:watch` et `npm run check`.
+- Intégration continue GitHub Actions (`.github/workflows/ci.yml`) : ESLint, TypeScript, Prettier, tests, build et contrôle du poids du JavaScript à chaque push et pull request.
+- Prettier (`.prettierrc.json`, commandes `format` et `format:check`), `.editorconfig` et `.gitattributes` : fins de ligne LF sur tous les systèmes, ce qui supprime les avertissements Git sous Windows.
+- Pages « introuvable » (404), d'erreur avec « Réessayer » et d'erreur grave, à l'image du site ; le message technique n'est jamais affiché.
+- Modules purs testables : `paris-time`, `bilan-calc`, `event-form`, `member-form`, et types `PublicMember` / `toPublicMember` pour la page Mandat.
+
+### Modifié
+- Tout le code est formaté avec Prettier (modification de forme uniquement).
+- La page Mandat ne reçoit plus que les champs autorisés : un e-mail, un Discord ou une photo masqués ne sont jamais transmis aux cartes.
+- Sans `SESSION_SECRET`, le site ne plante plus : personne n'est connecté, la connexion Discord est signalée comme non configurée et l'anomalie est journalisée une fois.
+- Un lien de téléchargement invalide ou périmé dans l'historique ramène à la page Historique avec un message, au lieu d'un texte brut.
+- Budget de poids de `npm run size` ramené de 220 à 210 Ko gzip par page.
+- `@types/node` passe en version 22 (requise par Vitest).
+- Description du site : le lorem ipsum restant est remplacé.
+
+### Corrigé
+- Le build échouait quand la base de données était injoignable ou qu'une table n'existait pas encore : les erreurs de lecture sont désormais mises en cache une minute seulement au lieu d'une heure, et la page affiche le message d'erreur.
+
+### Notes
+- La CI n'a été exécutée qu'en simulation locale : le premier push la lancera pour de vrai.
+- Les pages d'erreur sont vérifiées par des tests de rendu, pas dans un navigateur.
+
 ## [0.9.0] - 2026-09-22
 
 Performance : pages prérendues et suivi du poids des exports.
@@ -207,6 +234,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.10.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.10.0
 [0.9.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.9.0
 [0.8.2]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.2
 [0.8.1]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.1

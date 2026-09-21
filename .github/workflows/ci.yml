@@ -1,0 +1,66 @@
+name: CI
+
+# Vérifie chaque push et chaque pull request : style, types, tests, build et poids du JavaScript.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+# Un nouveau push annule la vérification en cours de la même branche.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, types, tests et build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Valeurs factices : le build ne se connecte à aucun vrai service. Les pages qui lisent
+      # Supabase ou Impact CO2 se prérendent avec leur message d'erreur, ce qui suffit à vérifier
+      # que tout compile et se prérend.
+      NEXT_PUBLIC_SUPABASE_URL: https://ci.invalid
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-publishable-key
+      SUPABASE_SECRET_KEY: ci-secret-key
+      IMPACTCO2_TOKEN: ci-token
+      SESSION_SECRET: ci-session-secret-ci-session-secret
+      SITE_URL: http://localhost:3000
+      DISCORD_CLIENT_ID: ci
+      DISCORD_CLIENT_SECRET: ci
+      DISCORD_GUILD_ID: ci
+      DISCORD_ADMIN_ROLE_ID: ci
+      DISCORD_BOT_TOKEN: ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: Prettier
+        run: npm run format:check
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Poids du JavaScript
+        run: npm run size

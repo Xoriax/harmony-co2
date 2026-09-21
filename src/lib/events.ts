@@ -9,39 +9,47 @@ export const MISSING_TABLE =
 export const MISSING_COLUMN =
   "La colonne « cover_url » n'existe pas encore : exécute supabase/migrations/20260921_add_event_cover.sql dans le SQL Editor de Supabase.";
 
+// Résultat d'une lecture mise en cache : les erreurs sont renvoyées (et non levées) car une erreur
+// levée dans une fonction en cache fait échouer le prérendu, y compris quand la base est injoignable.
+type Fetched = { events: EventRow[]; code: null } | { events: EventRow[]; code: string };
+
 // Liste mise en cache (étiquette « events », rafraîchie à chaque modification depuis le backoffice).
-// Une erreur est levée et non renvoyée : ainsi elle n'est jamais mise en cache.
-async function fetchEvents(publishedOnly: boolean): Promise<EventRow[]> {
+async function fetchEvents(publishedOnly: boolean): Promise<Fetched> {
   "use cache";
   cacheTag("events");
-  cacheLife("hours");
 
-  let query = supabaseAdmin()
-    .from("events")
-    .select("id,title,description,location,starts_at,ends_at,published,cover_url")
-    .order("starts_at", { ascending: true });
-  if (publishedOnly) query = query.eq("published", true);
+  try {
+    let query = supabaseAdmin()
+      .from("events")
+      .select("id,title,description,location,starts_at,ends_at,published,cover_url")
+      .order("starts_at", { ascending: true });
+    if (publishedOnly) query = query.eq("published", true);
 
-  const { data, error } = await query;
-  if (error) throw new Error(`db:${error.code ?? "unknown"}`);
-  return data as EventRow[];
+    const { data, error } = await query;
+    // Une erreur n'est gardée qu'une minute : elle disparaît dès que la base répond de nouveau.
+    if (error) cacheLife("minutes");
+    else cacheLife("hours");
+    if (error) return { events: [], code: error.code || "unknown" };
+    return { events: data as EventRow[], code: null };
+  } catch {
+    cacheLife("minutes");
+    return { events: [], code: "unknown" };
+  }
 }
 
 export async function listEvents(options?: { publishedOnly?: boolean }) {
-  try {
-    return { events: await fetchEvents(Boolean(options?.publishedOnly)), error: null };
-  } catch (e) {
-    const code = e instanceof Error ? e.message.replace("db:", "") : "";
-    return {
-      events: [] as EventRow[],
-      error:
-        code === "PGRST205"
-          ? MISSING_TABLE
-          : code === "42703"
-            ? MISSING_COLUMN
-            : "Impossible de charger les événements.",
-    };
-  }
+  const { events, code } = await fetchEvents(Boolean(options?.publishedOnly));
+  if (code === null) return { events, error: null };
+
+  return {
+    events,
+    error:
+      code === "PGRST205"
+        ? MISSING_TABLE
+        : code === "42703"
+          ? MISSING_COLUMN
+          : "Impossible de charger les événements.",
+  };
 }
 
 export async function getEvent(id: string) {

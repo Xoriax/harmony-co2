@@ -35,13 +35,12 @@ export default async function BilanPage() {
                 Bilan carbone
               </span>
               <h1 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-night [text-wrap:balance] sm:text-5xl lg:text-6xl">
-                Mesure l&apos;empreinte de ton{" "}
-                <span className="text-forest">association</span>
+                Mesure l&apos;empreinte de ton <span className="text-forest">association</span>
               </h1>
               <p className="max-w-[56ch] text-lg leading-relaxed text-ink/80">
-                Choisis les postes qui te concernent, renseigne les quantités et
-                obtiens un total en kgCO2e avec le détail par catégorie. Les
-                facteurs d&apos;émission viennent d&apos;Impact CO2 (ADEME).
+                Choisis les postes qui te concernent, renseigne les quantités et obtiens un total en
+                kgCO2e avec le détail par catégorie. Les facteurs d&apos;émission viennent
+                d&apos;Impact CO2 (ADEME).
               </p>
             </div>
             <div className="hidden w-60 md:block">

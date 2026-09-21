@@ -43,11 +43,7 @@ export function GlobeScene({ small = false }: { small?: boolean }) {
       <div ref={tilt} className="scene-tilt absolute inset-[8%]">
         <div className="globe">
           {RINGS.map((i) => (
-            <span
-              key={i}
-              className="ring"
-              style={{ "--i": i } as React.CSSProperties}
-            />
+            <span key={i} className="ring" style={{ "--i": i } as React.CSSProperties} />
           ))}
           <span className="equator" />
           <span className="equator tropic" />
