@@ -31,11 +31,12 @@ Le fichier `.env` est ignoré par git.
 
 | Route | Description |
 |---|---|
-| `/` | Accueil : logo et boutons Connect, Mon bilan, Event |
+| `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, sections |
 | `/connexion` | Connexion (identifiants fixes temporaires) |
 | `/backoffice` | Espace protégé, redirige vers `/connexion` si non connecté |
 | `/bilan` | Formulaire et calcul du bilan carbone |
 | `/event` | Page événement (à venir) |
+| `/mandat` | Page mandat (à venir) |
 
 ## Scripts
 

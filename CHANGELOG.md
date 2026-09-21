@@ -2,6 +2,21 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.2.0] - 2026-09-21
+
+Refonte de la page d'accueil.
+
+### Ajouté
+- Nouvelle page d'accueil aux couleurs du logo (crème, bleu nuit, vert sapin, vert pomme, or), sur le thème de l'écologie : barre de navigation, hero, cartes, bandeau vert, appel à l'action et pied de page.
+- Animations 3D en CSS : globe en anneaux qui tourne et suit la souris, feuilles flottantes, cartes inclinées au survol, blocs flottants (désactivées avec `prefers-reduced-motion`).
+- Barre de navigation avec les onglets **Mon bilan**, **Event**, **Mandat** et le bouton **Connexion**.
+- Page `/mandat` (contenu à venir).
+- Polices Bricolage Grotesque et Figtree.
+
+### Modifié
+- Les textes et images de la page d'accueil sont des placeholders (lorem ipsum, blocs noirs) en attendant le contenu final.
+- Métadonnées du site : titre « Harmony CO2 », langue `fr`.
+
 ## [0.1.0] - 2026-09-21
 
 Première version fonctionnelle.
@@ -22,4 +37,5 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.2.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.1.0

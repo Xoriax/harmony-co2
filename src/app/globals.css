@@ -1,26 +1,227 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #f6e9cf;
+  --cream-soft: #fbf4e4;
+  --ink: #142536;
+  --night: #242878;
+  --blue: #2380e2;
+  --sky: #52b6e8;
+  --forest: #07504a;
+  --emerald: #42a878;
+  --leaf: #9acb78;
+  --gold: #e3aa3b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-cream: var(--cream);
+  --color-cream-soft: var(--cream-soft);
+  --color-ink: var(--ink);
+  --color-night: var(--night);
+  --color-blue: var(--blue);
+  --color-sky: var(--sky);
+  --color-forest: var(--forest);
+  --color-emerald: var(--emerald);
+  --color-leaf: var(--leaf);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-figtree), system-ui, sans-serif;
+  --font-display: var(--font-bricolage), system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* ---------- Globe 3D ---------- */
+.scene {
+  perspective: 1100px;
+}
+
+.scene-tilt {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 12deg)) rotateY(var(--ry, -10deg));
+  transition: transform 0.25s ease-out;
+}
+
+.globe {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: spin 26s linear infinite;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid var(--emerald);
+  transform: rotateY(calc(var(--i) * 30deg));
+  opacity: 0.9;
+}
+
+.ring:nth-child(3n) {
+  border-color: var(--blue);
+}
+
+.ring:nth-child(3n + 1) {
+  border-color: var(--forest);
+}
+
+.equator {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 3px dashed var(--gold);
+  transform: rotateX(90deg);
+}
+
+.equator.tropic {
+  inset: 14%;
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--leaf);
+  transform: rotateX(90deg) translateZ(-120px);
+}
+
+.equator.tropic.top {
+  transform: rotateX(90deg) translateZ(120px);
+}
+
+.core {
+  position: absolute;
+  inset: 22%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--sky),
+    var(--blue) 40%,
+    var(--night) 100%
+  );
+  box-shadow:
+    0 30px 60px -20px rgb(36 40 120 / 0.55),
+    inset -14px -18px 40px rgb(20 37 54 / 0.45);
+  transform: translateZ(0);
+}
+
+.leaf {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  border-radius: 0 100% 0 100%;
+  border: 3px solid var(--ink);
+  animation: float 6s ease-in-out infinite;
+}
+
+.shadow-disc {
+  position: absolute;
+  left: 50%;
+  bottom: -4%;
+  width: 62%;
+  height: 34px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(20 37 54 / 0.28),
+    transparent 70%
+  );
+  animation: pulse 6s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -18px;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    transform: translateX(-50%) scaleX(0.86);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: translate3d(0, -14px, 30px) rotateX(6deg) rotateY(-8deg);
+  }
+}
+
+/* ---------- Cartes & blocs ---------- */
+.tilt-wrap {
+  perspective: 900px;
+}
+
+.tilt-card {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.4s ease;
+}
+
+.tilt-card:hover,
+.tilt-card:focus-visible {
+  transform: rotateX(5deg) rotateY(-7deg) translateY(-8px);
+  box-shadow: 0 30px 50px -24px rgb(20 37 54 / 0.45);
+}
+
+.float-block {
+  animation: drift 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+.float-block:nth-child(2) {
+  animation-delay: -2s;
+}
+.float-block:nth-child(3) {
+  animation-delay: -4s;
+}
+.float-block:nth-child(4) {
+  animation-delay: -1s;
+}
+
+.grain {
+  background-image: radial-gradient(
+    rgb(20 37 54 / 0.07) 1px,
+    transparent 1px
+  );
+  background-size: 18px 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globe,
+  .leaf,
+  .shadow-disc,
+  .float-block {
+    animation: none;
+  }
+  .scene-tilt,
+  .tilt-card {
+    transition: none;
+  }
 }
