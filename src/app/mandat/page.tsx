@@ -8,8 +8,6 @@ import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import TiltCard from "../tilt-card";
 
-export const dynamic = "force-dynamic";
-
 const TONES = ["bg-leaf", "bg-sky", "bg-gold", "bg-emerald", "bg-blue"];
 
 function DiscordIcon() {

@@ -1,12 +1,13 @@
 {
   "name": "harmony-co2",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "size": "node scripts/check-bundle-size.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

@@ -42,6 +42,10 @@ function download(blob: Blob, name: string) {
   URL.revokeObjectURL(url);
 }
 
+// Précharge les librairies (lourdes) quand l'utilisateur s'apprête à exporter : le clic paraît alors instantané.
+export const preloadPdf = () => Promise.all([import("jspdf"), import("jspdf-autotable")]);
+export const preloadExcel = () => import("exceljs");
+
 // Génération des fichiers : utilisable côté navigateur (téléchargement) et côté serveur (historique).
 export async function buildPdf(result: Result): Promise<ArrayBuffer> {
   const [{ jsPDF }, { default: autoTable }] = await Promise.all([

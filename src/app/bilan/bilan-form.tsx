@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { GlobeScene } from "../globe-scene";
 import { computeBilan } from "./actions";
-import { exportExcel, exportPdf } from "./export";
 import type { BilanCategory, BilanInput, BilanResult } from "./types";
 
 type Line = { itemId: string; quantity: string; trips: string };
@@ -65,11 +64,21 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
     }));
   }
 
+  // Le module d'export (et ses librairies PDF/Excel) n'est chargé qu'à l'usage ou à l'approche du bouton.
+  function preloadExport(kind: "pdf" | "xlsx") {
+    import("./export")
+      .then(async (m) => {
+        await (kind === "pdf" ? m.preloadPdf() : m.preloadExcel());
+      })
+      .catch(() => {});
+  }
+
   async function runExport(kind: "pdf" | "xlsx") {
     if (!result || !("total" in result)) return;
     setExporting(kind);
     setExportError(false);
     try {
+      const { exportExcel, exportPdf } = await import("./export");
       await (kind === "pdf" ? exportPdf(result) : exportExcel(result));
     } catch {
       setExportError(true);
@@ -293,6 +302,8 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
                 <button
                   type="button"
                   onClick={() => runExport("pdf")}
+                  onPointerEnter={() => preloadExport("pdf")}
+                  onFocus={() => preloadExport("pdf")}
                   disabled={exporting !== null}
                   className="h-11 rounded-full bg-gold px-6 font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-60"
                 >
@@ -301,6 +312,8 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
                 <button
                   type="button"
                   onClick={() => runExport("xlsx")}
+                  onPointerEnter={() => preloadExport("xlsx")}
+                  onFocus={() => preloadExport("xlsx")}
                   disabled={exporting !== null}
                   className="h-11 rounded-full border-2 border-cream/60 px-6 font-semibold transition-colors hover:bg-cream hover:text-night disabled:opacity-60"
                 >

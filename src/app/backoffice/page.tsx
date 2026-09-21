@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -6,6 +7,7 @@ import { eventsOnDiscord } from "@/lib/discord-sync";
 import { getEvent, listEvents } from "@/lib/events";
 import { getSession } from "@/lib/session";
 import { SiteHeader } from "../site-header";
+import { PageFallback } from "../page-fallback";
 import { BackofficeTabs } from "./tabs";
 import DeleteEventButton from "./delete-event-button";
 import EventForm from "./event-form";
@@ -31,7 +33,7 @@ const NOTICES: Record<string, { ok: boolean; text: string }> = {
   },
 };
 
-export default async function BackofficePage({
+async function BackofficeContent({
   searchParams,
 }: {
   searchParams: Promise<{ edit?: string; notice?: string }>;
@@ -183,5 +185,13 @@ export default async function BackofficePage({
         </div>
       </main>
     </>
+  );
+}
+
+export default function BackofficePage(props: { searchParams: Promise<{ edit?: string; notice?: string }> }) {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <BackofficeContent {...props} />
+    </Suspense>
   );
 }

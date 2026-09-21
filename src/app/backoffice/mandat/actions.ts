@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
 import { PHOTO_BUCKET, removeCover, uploadCover, validateCover } from "@/lib/covers";
@@ -66,8 +66,8 @@ function dbError(code?: string) {
 }
 
 function done() {
+  updateTag("mandat");
   revalidatePath("/backoffice/mandat");
-  revalidatePath("/mandat");
   redirect("/backoffice/mandat");
 }
 
@@ -171,6 +171,6 @@ export async function deleteMember(formData: FormData) {
   const { error } = await db.from("mandat_members").delete().eq("id", id);
   if (!error) await removeCover(current?.photo_url as string | null | undefined, PHOTO_BUCKET);
 
+  updateTag("mandat");
   revalidatePath("/backoffice/mandat");
-  revalidatePath("/mandat");
 }

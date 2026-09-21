@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { nowParisFull } from "@/lib/event-format";
 import { listEvents } from "@/lib/events";
 import { LeafPage } from "../leaf-page";
@@ -5,11 +7,41 @@ import { SiteHeader } from "../site-header";
 import { GlobeScene } from "../globe-scene";
 import EventBoard from "./event-board";
 
-export const dynamic = "force-dynamic";
-
-export default async function EventPage() {
+// Bloc rendu à chaque requête : les statuts (en cours, à venir, passé) dépendent de l'heure exacte.
+// La liste elle-même vient du cache ; le reste de la page est prérendu.
+async function EventsSection() {
+  await connection();
   const { events, error } = await listEvents({ publishedOnly: true });
 
+  return (
+    <>
+      {error && (
+        <p
+          role="alert"
+          className="rounded-2xl border-2 border-red-700/30 bg-red-50 px-5 py-4 font-medium text-red-800"
+        >
+          Impossible de charger les événements, réessaie plus tard.
+        </p>
+      )}
+      {!error && <EventBoard events={events} serverNow={nowParisFull()} />}
+    </>
+  );
+}
+
+function EventsSkeleton() {
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="h-[30rem] animate-pulse rounded-3xl bg-ink/10"
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function EventPage() {
   return (
     <>
       <SiteHeader />
@@ -40,16 +72,9 @@ export default async function EventPage() {
         </section>
 
         <div className="mx-auto flex max-w-6xl flex-col gap-14 px-5 py-12">
-          {error && (
-            <p
-              role="alert"
-              className="rounded-2xl border-2 border-red-700/30 bg-red-50 px-5 py-4 font-medium text-red-800"
-            >
-              Impossible de charger les événements, réessaie plus tard.
-            </p>
-          )}
-
-          {!error && <EventBoard events={events} serverNow={nowParisFull()} />}
+          <Suspense fallback={<EventsSkeleton />}>
+            <EventsSection />
+          </Suspense>
         </div>
       </LeafPage>
     </>

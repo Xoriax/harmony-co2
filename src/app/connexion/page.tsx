@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import LeafLayer from "../leaf-layer";
 import { SIDE_LEAVES } from "../leaf-presets";
 import { SiteHeader } from "../site-header";
+import { PageFallback } from "../page-fallback";
 
 const ERRORS: Record<string, string> = {
   not_member: "Ton compte Discord n'est pas membre du serveur : connexion refusée.",
@@ -12,7 +14,7 @@ const ERRORS: Record<string, string> = {
   config: "La connexion Discord n'est pas configurée (variables d'environnement manquantes).",
 };
 
-export default async function ConnexionPage({
+async function ConnexionContent({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
@@ -66,5 +68,13 @@ export default async function ConnexionPage({
         </div>
       </main>
     </>
+  );
+}
+
+export default function ConnexionPage(props: { searchParams: Promise<{ error?: string }> }) {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <ConnexionContent {...props} />
+    </Suspense>
   );
 }

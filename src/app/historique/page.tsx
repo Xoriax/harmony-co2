@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { listBilans } from "@/lib/bilans";
@@ -5,6 +6,7 @@ import { getSession } from "@/lib/session";
 import { GlobeScene } from "../globe-scene";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
+import { PageFallback } from "../page-fallback";
 import TiltCard from "../tilt-card";
 import DeleteBilanButton from "./delete-bilan-button";
 
@@ -33,7 +35,7 @@ const dateFormat = new Intl.DateTimeFormat("fr-FR", {
 const linkClass =
   "flex h-10 items-center rounded-full border-2 border-night/80 px-5 text-sm font-semibold text-night transition-colors hover:bg-night hover:text-cream";
 
-export default async function HistoriquePage() {
+async function HistoriqueContent() {
   const session = await getSession();
   if (!session) redirect("/connexion");
 
@@ -152,5 +154,13 @@ export default async function HistoriquePage() {
         </div>
       </LeafPage>
     </>
+  );
+}
+
+export default function HistoriquePage() {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <HistoriqueContent />
+    </Suspense>
   );
 }

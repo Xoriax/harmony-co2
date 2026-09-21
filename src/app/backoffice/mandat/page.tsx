@@ -1,14 +1,16 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { TEAMS } from "@/lib/mandat-format";
 import { getMember, listMembers } from "@/lib/mandat";
 import { SiteHeader } from "../../site-header";
+import { PageFallback } from "../../page-fallback";
 import { BackofficeTabs } from "../tabs";
 import DeleteMemberButton from "./delete-member-button";
 import MemberForm from "./member-form";
 
-export default async function BackofficeMandatPage({
+async function BackofficeMandatContent({
   searchParams,
 }: {
   searchParams: Promise<{ edit?: string }>;
@@ -153,5 +155,13 @@ export default async function BackofficeMandatPage({
         </div>
       </main>
     </>
+  );
+}
+
+export default function BackofficeMandatPage(props: { searchParams: Promise<{ edit?: string }> }) {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <BackofficeMandatContent {...props} />
+    </Suspense>
   );
 }

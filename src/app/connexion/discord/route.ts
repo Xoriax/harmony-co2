@@ -1,9 +1,11 @@
 import { randomBytes } from "node:crypto";
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { authorizeUrl, isDiscordConfigured, OAUTH_STATE_COOKIE, siteUrl } from "@/lib/discord";
 
 // Démarre la connexion : redirige vers Discord avec un état anti-CSRF stocké en cookie.
 export async function GET() {
+  // Toujours au moment de la requête : l'état anti-CSRF doit être neuf à chaque connexion.
+  await connection();
   if (!isDiscordConfigured()) {
     return NextResponse.redirect(new URL("/connexion?error=config", siteUrl()));
   }

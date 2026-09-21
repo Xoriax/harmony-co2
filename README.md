@@ -60,6 +60,12 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 3. `20260921_create_bilans.sql` : crée la table de l'historique des bilans.
 4. `20260922_create_mandat_members.sql` : crée la table des membres du mandat.
 
+## Performance
+
+- **Cache Components** (Next 16) : les pages sont prérendues (coquille statique) et seules les parties liées à la session ou à l'heure exacte arrivent en streaming (pseudo dans la barre du haut, historique, backoffice, liste des événements).
+- **Données publiques en cache** : la liste des événements (étiquette `events`) et celle des membres du mandat (étiquette `mandat`) sont mises en cache 1 heure et rafraîchies aussitôt qu'on les modifie depuis le backoffice. Une modification faite directement dans Supabase n'apparaît qu'après l'expiration du cache.
+- **Exports** : jsPDF et ExcelJS ne sont chargés qu'à l'approche ou au clic d'un bouton d'export. `npm run size` le vérifie après chaque build.
+
 ## Scripts
 
 | Commande | Action |
@@ -68,6 +74,7 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 | `npm run build` | Build de production |
 | `npm run start` | Serveur de production |
 | `npm run lint` | Vérification ESLint |
+| `npm run size` | Après un build : poids du JS au démarrage de chaque page (budget 220 Ko gzip) et contrôle que les librairies PDF/Excel ne se chargent qu'au clic |
 
 ## Versions
 

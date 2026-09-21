@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { removeCover, uploadCover, validateCover } from "@/lib/covers";
 import { deleteDiscordEvent } from "@/lib/discord-events";
@@ -92,8 +92,8 @@ export async function createEvent(
   }
 
   const notice = await syncEventToDiscord(created.id);
+  updateTag("events");
   revalidatePath("/backoffice");
-  revalidatePath("/event");
   redirect(notice === "none" ? "/backoffice" : `/backoffice?notice=${notice}`);
 }
 
@@ -130,8 +130,8 @@ export async function updateEvent(
   if ("cover_url" in coverChange) await removeCover(oldUrl);
 
   const notice = await syncEventToDiscord(id);
+  updateTag("events");
   revalidatePath("/backoffice");
-  revalidatePath("/event");
   redirect(notice === "none" ? "/backoffice" : `/backoffice?notice=${notice}`);
 }
 
@@ -148,6 +148,6 @@ export async function deleteEvent(formData: FormData) {
     await removeCover(current?.cover_url as string | null | undefined);
     if (discordId) await deleteDiscordEvent(discordId);
   }
+  updateTag("events");
   revalidatePath("/backoffice");
-  revalidatePath("/event");
 }

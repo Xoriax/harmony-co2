@@ -2,6 +2,31 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.9.0] - 2026-09-22
+
+Performance : pages prérendues et suivi du poids des exports.
+
+### Ajouté
+- Activation de Cache Components (Next 16) : les pages sont prérendues avec une coque statique, seules les parties liées à la session ou à l'heure exacte arrivent en streaming.
+- Écran de chargement instantané (`PageFallback`) pour les pages qui lisent la session (Historique, Connexion, Backoffice).
+- Script `npm run size` (`scripts/check-bundle-size.mjs`) : poids du JavaScript au démarrage de chaque page (budget 220 Ko gzip) et contrôle que les librairies PDF et Excel ne se chargent qu'au clic.
+- Préchargement des librairies d'export quand la souris ou le focus arrive sur un bouton d'export.
+
+### Modifié
+- Barre de navigation : la coque est statique ; le bloc pseudo, Backoffice et déconnexion, ainsi que le lien Historique, sont chargés à part (le visiteur voit d'emblée le bouton « Connexion »).
+- Listes d'événements et de membres du mandat mises en cache 1 heure (étiquettes `events` et `mandat`), rafraîchies immédiatement à chaque modification depuis le backoffice.
+- Page Event : la liste est rendue à la requête avec l'heure exacte du serveur ; le reste de la page est prérendu.
+- Le module d'export est importé à la demande (`/bilan` charge 3 Ko de moins).
+- Les routes d'administration utilisent des étiquettes de cache (`updateTag`) plutôt que le rafraîchissement des chemins publics.
+
+### Supprimé
+- Les réglages `dynamic = "force-dynamic"` des pages Event et Mandat (incompatibles avec Cache Components).
+
+### Notes
+- Une modification faite directement dans Supabase n'apparaît sur le site qu'après l'expiration du cache (1 heure au plus).
+- Sans session, `/backoffice` et `/historique` redirigent désormais côté navigateur (au lieu d'une redirection serveur).
+- Mesures : JS au démarrage de 179 à 183 Ko gzip par page, sans librairie d'export ; 2e visite de `/event` en environ 11 ms.
+
 ## [0.8.2] - 2026-09-22
 
 Feuilles décoratives animées.
@@ -182,6 +207,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.9.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.9.0
 [0.8.2]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.2
 [0.8.1]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.1
 [0.8.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.0

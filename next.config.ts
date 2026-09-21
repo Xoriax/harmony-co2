@@ -5,6 +5,8 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   : null;
 
 const nextConfig: NextConfig = {
+  // Pages publiques prérendues et mises en cache ; seules les parties liées à la session arrivent en streaming.
+  cacheComponents: true,
   images: {
     remotePatterns: [
       ...(supabaseHost
