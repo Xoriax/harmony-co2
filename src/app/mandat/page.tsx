@@ -2,6 +2,9 @@ import Image from "next/image";
 import { TEAMS, type MemberRow } from "@/lib/mandat-format";
 import { listMembers } from "@/lib/mandat";
 import { GlobeScene } from "../globe-scene";
+import LeafLayer from "../leaf-layer";
+import { DARK_LEAVES } from "../leaf-presets";
+import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import TiltCard from "../tilt-card";
 
@@ -123,7 +126,7 @@ export default async function MandatPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <LeafPage>
         <section className="grain overflow-hidden border-b border-ink/10">
           <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-12 md:grid-cols-[1.2fr_1fr] md:py-16">
             <div className="flex flex-col gap-5">
@@ -175,11 +178,12 @@ export default async function MandatPage() {
             >
               {dark && (
                 <>
+                  <LeafLayer leaves={DARK_LEAVES} />
                   <span className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full border-[28px] border-emerald/40" />
                   <span className="pointer-events-none absolute -bottom-28 left-10 h-60 w-60 rounded-full border-[22px] border-leaf/20" />
                 </>
               )}
-              <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-5 py-14 md:py-20">
+              <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-5 py-14 md:py-20">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                   <div className="flex flex-col gap-2">
                     <span
@@ -216,7 +220,7 @@ export default async function MandatPage() {
             </section>
           );
         })}
-      </main>
+      </LeafPage>
     </>
   );
 }

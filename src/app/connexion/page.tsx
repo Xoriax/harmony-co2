@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
+import LeafLayer from "../leaf-layer";
+import { SIDE_LEAVES } from "../leaf-presets";
 import { SiteHeader } from "../site-header";
 
 const ERRORS: Record<string, string> = {
@@ -24,8 +26,9 @@ export default async function ConnexionPage({
   return (
     <>
       <SiteHeader />
-      <main className="grain flex flex-1 items-center justify-center px-5 py-16">
-        <div className="flex w-full max-w-md flex-col gap-6 rounded-3xl border border-ink/10 bg-cream-soft p-8 shadow-[0_30px_50px_-32px_rgb(20_37_54/0.5)]">
+      <main className="grain relative flex flex-1 items-center justify-center px-5 py-16">
+        <LeafLayer leaves={SIDE_LEAVES} />
+        <div className="relative z-10 flex w-full max-w-md flex-col gap-6 rounded-3xl border border-ink/10 bg-cream-soft p-8 shadow-[0_30px_50px_-32px_rgb(20_37_54/0.5)]">
           <div className="flex flex-col gap-2">
             <h1 className="font-display text-4xl font-extrabold tracking-tight text-night">
               Connexion

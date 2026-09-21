@@ -1,0 +1,21 @@
+import type { LeafSpec } from "./leaf-layer";
+
+// Feuilles réparties sur toute la hauteur d'une page à fond clair (vitesses réduites : le calque est haut).
+export const SIDE_LEAVES: LeafSpec[] = [
+  { x: "1%", y: "6%", size: 40, color: "leaf", speed: -0.07, spin: 0.03, dur: 8, delay: 0, rot: -20 },
+  { x: "94%", y: "14%", size: 34, color: "emerald", speed: 0.08, spin: -0.03, dur: 9, delay: -2, rot: 60 },
+  { x: "3%", y: "30%", size: 30, color: "gold", speed: 0.06, spin: 0.04, dur: 7, delay: -4, rot: 110, hideOnMobile: true },
+  { x: "95%", y: "42%", size: 44, color: "leaf", speed: -0.09, spin: 0.03, dur: 10, delay: -1, rot: 200 },
+  { x: "2%", y: "56%", size: 38, color: "emerald", speed: -0.06, spin: -0.04, dur: 8, delay: -3, rot: 30 },
+  { x: "93%", y: "68%", size: 30, color: "gold", speed: 0.07, spin: 0.05, dur: 9, delay: -5, rot: 150, hideOnMobile: true },
+  { x: "4%", y: "82%", size: 46, color: "leaf", speed: 0.08, spin: 0.03, dur: 7, delay: -2, rot: -60 },
+  { x: "95%", y: "92%", size: 36, color: "emerald", speed: -0.08, spin: -0.03, dur: 10, delay: -4, rot: 250 },
+];
+
+// Pour les bandes vert sapin (le calque de page est masqué derrière leur fond plein).
+export const DARK_LEAVES: LeafSpec[] = [
+  { x: "3%", y: "6%", size: 44, color: "leaf", speed: -0.14, spin: 0.05, dur: 8, delay: 0, rot: 20 },
+  { x: "94%", y: "16%", size: 50, color: "emerald", speed: -0.12, spin: 0.04, dur: 7, delay: -2, rot: -50 },
+  { x: "48%", y: "92%", size: 38, color: "gold", speed: 0.15, spin: 0.06, dur: 10, delay: -5, rot: 210, hideOnMobile: true },
+  { x: "92%", y: "84%", size: 34, color: "leaf", speed: -0.2, spin: -0.05, dur: 8, delay: -1, rot: 140 },
+];

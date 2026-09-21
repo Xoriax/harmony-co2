@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GlobeScene } from "./globe-scene";
+import LeafLayer, { type LeafSpec } from "./leaf-layer";
 import { SiteHeader } from "./site-header";
 
 const CARDS = [
@@ -39,6 +40,36 @@ const HIGHLIGHTS = [
   "Historique de tes bilans",
 ];
 
+const HERO_LEAVES: LeafSpec[] = [
+  { x: "2%", y: "9%", size: 46, color: "leaf", speed: -0.12, spin: 0.04, dur: 7, delay: 0, rot: -20 },
+  { x: "40%", y: "5%", size: 30, color: "gold", speed: 0.16, spin: -0.05, dur: 9, delay: -2, rot: 30, hideOnMobile: true },
+  { x: "91%", y: "8%", size: 36, color: "emerald", speed: -0.18, spin: 0.05, dur: 8, delay: -4, rot: 70 },
+  { x: "4%", y: "80%", size: 54, color: "gold", speed: 0.14, spin: 0.03, dur: 10, delay: -3, rot: 120 },
+  { x: "50%", y: "86%", size: 34, color: "emerald", speed: -0.2, spin: -0.04, dur: 8, delay: -5, rot: 200, hideOnMobile: true },
+  { x: "88%", y: "84%", size: 42, color: "leaf", speed: 0.12, spin: 0.06, dur: 9, delay: -1, rot: 160 },
+];
+
+const CARDS_LEAVES: LeafSpec[] = [
+  { x: "1%", y: "6%", size: 40, color: "emerald", speed: -0.14, spin: 0.05, dur: 8, delay: -1, rot: 40 },
+  { x: "93%", y: "14%", size: 48, color: "leaf", speed: 0.15, spin: -0.04, dur: 9, delay: -3, rot: -30 },
+  { x: "96%", y: "72%", size: 30, color: "gold", speed: -0.18, spin: 0.06, dur: 7, delay: -2, rot: 90, hideOnMobile: true },
+  { x: "2%", y: "90%", size: 36, color: "leaf", speed: 0.12, spin: -0.05, dur: 10, delay: -4, rot: 150 },
+];
+
+const BAND_LEAVES: LeafSpec[] = [
+  { x: "3%", y: "5%", size: 44, color: "leaf", speed: -0.14, spin: 0.05, dur: 8, delay: 0, rot: 20 },
+  { x: "47%", y: "3%", size: 32, color: "gold", speed: 0.17, spin: -0.05, dur: 9, delay: -3, rot: 100, hideOnMobile: true },
+  { x: "94%", y: "18%", size: 50, color: "emerald", speed: -0.12, spin: 0.04, dur: 7, delay: -2, rot: -50 },
+  { x: "49%", y: "90%", size: 40, color: "leaf", speed: 0.15, spin: 0.06, dur: 10, delay: -5, rot: 210, hideOnMobile: true },
+  { x: "92%", y: "84%", size: 34, color: "gold", speed: -0.2, spin: -0.05, dur: 8, delay: -1, rot: 140 },
+];
+
+const CTA_LEAVES: LeafSpec[] = [
+  { x: "62%", y: "14%", size: 44, color: "leaf", speed: -0.1, spin: 0.05, dur: 8, delay: 0, rot: 30 },
+  { x: "80%", y: "58%", size: 56, color: "gold", speed: 0.12, spin: -0.04, dur: 9, delay: -3, rot: -40 },
+  { x: "68%", y: "82%", size: 32, color: "emerald", speed: -0.16, spin: 0.06, dur: 7, delay: -2, rot: 120 },
+];
+
 function Arrow() {
   return (
     <svg
@@ -64,7 +95,8 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero */}
         <section className="grain relative overflow-hidden">
-          <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-[1.05fr_1fr]">
+          <LeafLayer leaves={HERO_LEAVES} />
+          <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-[1.05fr_1fr]">
             <div className="flex flex-col gap-7">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-forest/25 bg-cream-soft px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-forest">
                 <span className="h-2 w-2 rounded-full bg-emerald" />
@@ -113,7 +145,9 @@ export default function Home() {
         </section>
 
         {/* Cartes */}
-        <section className="mx-auto max-w-6xl px-5 py-16 md:py-24">
+        <div className="relative overflow-hidden">
+        <LeafLayer leaves={CARDS_LEAVES} />
+        <section className="relative z-10 mx-auto max-w-6xl px-5 py-16 md:py-24">
           <div className="mb-12 flex flex-col gap-4 md:max-w-2xl">
             <span className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
               Ce que tu peux faire
@@ -154,10 +188,12 @@ export default function Home() {
             ))}
           </div>
         </section>
+        </div>
 
         {/* Bandeau vert */}
-        <section className="bg-forest text-cream">
-          <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 py-16 md:py-24 lg:grid-cols-2">
+        <section className="relative overflow-hidden bg-forest text-cream">
+          <LeafLayer leaves={BAND_LEAVES} />
+          <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 px-5 py-16 md:py-24 lg:grid-cols-2">
             <div
               className="grid grid-cols-2 gap-4"
               style={{ perspective: "1000px" }}
@@ -204,7 +240,8 @@ export default function Home() {
           <div className="relative overflow-hidden rounded-[2rem] bg-night px-7 py-14 text-cream md:px-16 md:py-20">
             <span className="absolute -right-24 -top-24 h-72 w-72 rounded-full border-[28px] border-blue/60" />
             <span className="absolute -bottom-32 right-24 h-64 w-64 rounded-full border-[24px] border-emerald/50" />
-            <div className="relative flex max-w-2xl flex-col gap-6">
+            <LeafLayer leaves={CTA_LEAVES} />
+            <div className="relative z-10 flex max-w-2xl flex-col gap-6">
               <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight [text-wrap:balance] md:text-5xl">
                 Prêt à mesurer ton empreinte ?
               </h2>

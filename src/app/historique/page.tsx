@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { listBilans } from "@/lib/bilans";
 import { getSession } from "@/lib/session";
 import { GlobeScene } from "../globe-scene";
+import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import TiltCard from "../tilt-card";
 import DeleteBilanButton from "./delete-bilan-button";
@@ -41,7 +42,7 @@ export default async function HistoriquePage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <LeafPage>
         <section className="grain overflow-hidden border-b border-ink/10">
           <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-10 md:grid-cols-[1.2fr_1fr] md:py-14">
             <div className="flex flex-col gap-4">
@@ -149,7 +150,7 @@ export default async function HistoriquePage() {
             ))}
           </ul>
         </div>
-      </main>
+      </LeafPage>
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
 import { GlobeScene } from "../globe-scene";
+import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import BilanForm from "./bilan-form";
 import type { BilanCategory } from "./types";
@@ -25,7 +26,7 @@ export default async function BilanPage() {
     <>
       <SiteHeader />
 
-      <main className="flex-1">
+      <LeafPage>
         <section className="grain overflow-hidden border-b border-ink/10">
           <div className="mx-auto grid max-w-6xl items-center gap-6 px-5 py-10 md:grid-cols-[1fr_auto] md:py-14">
             <div className="flex flex-col gap-5">
@@ -61,7 +62,7 @@ export default async function BilanPage() {
             </p>
           )}
         </div>
-      </main>
+      </LeafPage>
     </>
   );
 }

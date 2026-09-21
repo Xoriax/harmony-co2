@@ -2,6 +2,20 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.2] - 2026-09-22
+
+Feuilles décoratives animées.
+
+### Ajouté
+- Feuilles décoratives (SVG aux couleurs du logo) qui dérivent seules et se décalent selon le défilement : sur la page d'accueil (hero, cartes, bandeau vert, bloc final) et sur les pages Bilan, Event, Mandat, Historique et Connexion. Le backoffice n'est pas concerné.
+- Composants `LeafLayer` (calque animé), `LeafPage` (habillage des pages) et jeux de positions partagés (`leaf-presets`).
+- Feuilles propres aux bandes vert sapin de la page Mandat.
+
+### Notes
+- Les feuilles sont placées derrière le contenu et n'interceptent aucun clic ; une partie est masquée sur mobile.
+- Elles restent fixes avec `prefers-reduced-motion`.
+- Aucun `overflow` n'est ajouté sur `<main>` afin de ne pas casser le panneau collant de la page Bilan.
+
 ## [0.8.1] - 2026-09-22
 
 Textes de la page d'accueil.
@@ -168,6 +182,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.8.2]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.2
 [0.8.1]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.1
 [0.8.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.0
 [0.7.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.7.0

@@ -1,5 +1,6 @@
 import { nowParisFull } from "@/lib/event-format";
 import { listEvents } from "@/lib/events";
+import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import { GlobeScene } from "../globe-scene";
 import EventBoard from "./event-board";
@@ -12,7 +13,7 @@ export default async function EventPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <LeafPage>
         <section className="grain overflow-hidden border-b border-ink/10">
           <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-12 md:grid-cols-[1.2fr_1fr] md:py-16">
             <div className="flex flex-col gap-5">
@@ -50,7 +51,7 @@ export default async function EventPage() {
 
           {!error && <EventBoard events={events} serverNow={nowParisFull()} />}
         </div>
-      </main>
+      </LeafPage>
     </>
   );
 }

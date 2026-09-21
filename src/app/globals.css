@@ -294,6 +294,26 @@ body {
   opacity: 1;
 }
 
+/* ---------- Feuilles décoratives ---------- */
+.leaf-parallax {
+  transform: translate3d(0, calc(var(--p, 0) * var(--speed, 0.1) * 1px), 0)
+    rotate(calc(var(--p, 0) * var(--spin, 0.03) * 1deg));
+  will-change: transform;
+}
+
+@keyframes leaf-drift {
+  from {
+    transform: translate3d(-8px, 6px, 0) rotate(-9deg);
+  }
+  to {
+    transform: translate3d(12px, -22px, 0) rotate(11deg);
+  }
+}
+
+.leaf-drift {
+  animation: leaf-drift 7s ease-in-out infinite alternate;
+}
+
 @keyframes live-glow {
   0%,
   100% {
@@ -370,8 +390,12 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .rise,
   .sway,
-  .live-glow {
+  .live-glow,
+  .leaf-drift {
     animation: none;
+  }
+  .leaf-parallax {
+    transform: none;
   }
   .tilt3d {
     transform: none;
