@@ -307,6 +307,20 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
                   {exporting === "xlsx" ? "Export..." : "Exporter en Excel"}
                 </button>
               </div>
+              {result.history === "saved" && (
+                <p className="text-sm font-medium text-leaf">
+                  Bilan enregistré dans ton{" "}
+                  <a href="/historique" className="underline underline-offset-2">
+                    historique
+                  </a>{" "}
+                  (PDF et Excel).
+                </p>
+              )}
+              {result.history === "failed" && (
+                <p role="alert" className="text-sm font-medium text-gold">
+                  Le bilan n&apos;a pas pu être enregistré dans ton historique.
+                </p>
+              )}
               {exportError && (
                 <p role="alert" className="text-sm font-medium text-gold">
                   L&apos;export a échoué, réessaie.

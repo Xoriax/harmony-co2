@@ -2,6 +2,26 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.6.0] - 2026-09-21
+
+Historique des bilans.
+
+### Ajouté
+- Enregistrement automatique des bilans : quand l'utilisateur est connecté, le PDF et l'Excel sont générés côté serveur et enregistrés à chaque calcul (table `bilans` et bucket privé `bilans` sur Supabase).
+- Page `/historique`, visible uniquement une fois connecté : liste des bilans (total, date, catégories) avec téléchargement du PDF et de l'Excel et suppression.
+- Onglet « Historique » dans la barre de navigation pour les utilisateurs connectés.
+- Message de confirmation (ou d'échec) de l'enregistrement dans les résultats du bilan.
+- Téléchargement sécurisé : `/historique/fichier/[id]` vérifie le propriétaire puis redirige vers une URL signée de 60 secondes.
+- Migration `supabase/migrations/20260921_create_bilans.sql`.
+
+### Modifié
+- La génération des PDF et Excel est séparée du téléchargement (`buildPdf`, `buildExcel`) pour servir côté navigateur et côté serveur.
+- Les dates et heures des exports sont exprimées à l'heure de Paris, quel que soit le fuseau du serveur.
+
+### Notes
+- Un bilan calculé sans être connecté n'est pas enregistré.
+- La migration SQL doit être exécutée une fois dans le SQL Editor de Supabase (voir le README).
+
 ## [0.5.0] - 2026-09-21
 
 Connexion avec Discord.
@@ -97,6 +117,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.6.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.6.0
 [0.5.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.5.0
 [0.4.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.4.0
 [0.3.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.3.0

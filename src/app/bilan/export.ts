@@ -42,7 +42,8 @@ function download(blob: Blob, name: string) {
   URL.revokeObjectURL(url);
 }
 
-export async function exportPdf(result: Result) {
+// Génération des fichiers : utilisable côté navigateur (téléchargement) et côté serveur (historique).
+export async function buildPdf(result: Result): Promise<ArrayBuffer> {
   const [{ jsPDF }, { default: autoTable }] = await Promise.all([
     import("jspdf"),
     import("jspdf-autotable"),
@@ -69,7 +70,7 @@ export async function exportPdf(result: Result) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.text(
-    `Harmony  |  ${now.toLocaleDateString("fr-FR")} à ${now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
+    `Harmony  |  ${now.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })} à ${now.toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" })}`,
     W - M,
     33,
     { align: "right" },
@@ -215,11 +216,14 @@ export async function exportPdf(result: Result) {
     });
   });
 
-  doc.save(fileName("pdf"));
+  return doc.output("arraybuffer");
 }
 
-export async function exportExcel(result: Result) {
-  const { Workbook } = await import("exceljs");
+export async function buildExcel(result: Result): Promise<ArrayBuffer> {
+  // Selon le contexte (navigateur ou Node), la classe est sur le module ou sur son export par défaut.
+  type ExcelJS = typeof import("exceljs");
+  const excel = (await import("exceljs")) as ExcelJS & { default?: ExcelJS };
+  const Workbook = excel.Workbook ?? excel.default!.Workbook;
   const wb = new Workbook();
   wb.creator = "Harmony";
   wb.created = new Date();
@@ -375,7 +379,7 @@ export async function exportExcel(result: Result) {
   ];
   const rows: [string, string | number][] = [
     ["Rapport", "Bilan carbone Harmony"],
-    ["Date de génération", now.toLocaleString("fr-FR")],
+    ["Date de génération", now.toLocaleString("fr-FR", { timeZone: "Europe/Paris" })],
     ["Total (kgCO2e)", result.total],
     ["Nombre de catégories", result.categories.length],
     ["Nombre d'éléments", n],
@@ -396,11 +400,15 @@ export async function exportExcel(result: Result) {
     row.getCell(2).alignment = { horizontal: "left", wrapText: true, vertical: "top" };
   });
 
-  const buffer = await wb.xlsx.writeBuffer();
-  download(
-    new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    }),
-    fileName("xlsx"),
-  );
+  return (await wb.xlsx.writeBuffer()) as ArrayBuffer;
+}
+
+const XLSX_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+export async function exportPdf(result: Result) {
+  download(new Blob([await buildPdf(result)], { type: "application/pdf" }), fileName("pdf"));
+}
+
+export async function exportExcel(result: Result) {
+  download(new Blob([await buildExcel(result)], { type: XLSX_TYPE }), fileName("xlsx"));
 }

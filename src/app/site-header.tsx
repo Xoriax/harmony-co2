@@ -19,6 +19,7 @@ export async function SiteHeader() {
         </Link>
         <div className="hidden items-center gap-8 text-sm font-medium md:flex">
           <Link href="/bilan" className="hover:text-blue">Mon bilan</Link>
+          {session && <Link href="/historique" className="hover:text-blue">Historique</Link>}
           <Link href="/event" className="hover:text-blue">Event</Link>
           <Link href="/mandat" className="hover:text-blue">Mandat</Link>
         </div>

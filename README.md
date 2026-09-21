@@ -1,6 +1,6 @@
 # harmony-co2
 
-Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les postes qui le concernent (numérique, repas, boissons, habillement, usage numérique, mobilier, transport) et obtient un total en kgCO2e avec le détail par catégorie, exportable en PDF ou en Excel. Les facteurs d'émission viennent de l'API [Impact CO2](https://impactco2.fr) (ADEME).
+Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les postes qui le concernent (numérique, repas, boissons, habillement, usage numérique, mobilier, transport) et obtient un total en kgCO2e avec le détail par catégorie, exportable en PDF ou en Excel et enregistré dans l'historique quand on est connecté. Les facteurs d'émission viennent de l'API [Impact CO2](https://impactco2.fr) (ADEME).
 
 ## Stack
 
@@ -45,15 +45,17 @@ Le fichier `.env` est ignoré par git.
 | `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
 | `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements |
 | `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
+| `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF et Excel), téléchargement et suppression |
 | `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
 | `/mandat` | Page mandat (à venir) |
 
 ## Base de données (Supabase)
 
-Les événements sont stockés dans la table `events`, les couvertures dans le bucket public `event-covers` (créé automatiquement). Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
+Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`). Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
 
 1. `supabase/migrations/20260921_create_events.sql` : crée la table (version à jour, avec `cover_url` et `ends_at` obligatoire).
 2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, puis `20260921_require_event_end.sql`.
+3. `20260921_create_bilans.sql` : crée la table de l'historique des bilans.
 
 ## Scripts
 

@@ -12,19 +12,21 @@ export type BilanLineInput = {
 
 export type BilanInput = { categorySlug: string; lines: BilanLineInput[] }[];
 
-export type BilanResult =
-  | { error: string }
-  | {
-      total: number;
-      categories: {
-        name: string;
-        subtotal: number;
-        lines: {
-          name: string;
-          quantity: number;
-          unit: string;
-          factor: number;
-          emissions: number;
-        }[];
-      }[];
-    };
+export type BilanSuccess = {
+  total: number;
+  categories: {
+    name: string;
+    subtotal: number;
+    lines: {
+      name: string;
+      quantity: number;
+      unit: string;
+      factor: number;
+      emissions: number;
+    }[];
+  }[];
+  // Présent seulement si l'utilisateur est connecté : le bilan a-t-il été enregistré dans l'historique ?
+  history?: "saved" | "failed";
+};
+
+export type BilanResult = { error: string } | BilanSuccess;

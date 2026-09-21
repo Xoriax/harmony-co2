@@ -1,7 +1,9 @@
 "use server";
 
+import { saveBilan } from "@/lib/bilans";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
-import type { BilanInput, BilanResult } from "./types";
+import { getSession } from "@/lib/session";
+import type { BilanInput, BilanResult, BilanSuccess } from "./types";
 
 const UNITS: Record<string, string> = {
   alimentation: "repas",
@@ -20,7 +22,7 @@ export async function computeBilan(input: BilanInput): Promise<BilanResult> {
     return { error: "Sélectionne au moins une catégorie avec un élément." };
   }
 
-  const categories: Extract<BilanResult, { total: number }>["categories"] = [];
+  const categories: BilanSuccess["categories"] = [];
 
   try {
     // Le client n'envoie que des références et des quantités : les facteurs
@@ -65,5 +67,18 @@ export async function computeBilan(input: BilanInput): Promise<BilanResult> {
   }
 
   if (categories.length === 0) return { error: "Aucun élément renseigné." };
-  return { total: categories.reduce((sum, c) => sum + c.subtotal, 0), categories };
+
+  const result: BilanSuccess = {
+    total: categories.reduce((sum, c) => sum + c.subtotal, 0),
+    categories,
+  };
+
+  // Connecté : le PDF et l'Excel sont générés et enregistrés automatiquement dans l'historique.
+  const session = await getSession();
+  if (session) {
+    result.history = (await saveBilan({ id: session.id, name: session.name }, result))
+      ? "saved"
+      : "failed";
+  }
+  return result;
 }
