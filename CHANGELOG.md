@@ -2,6 +2,24 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.7.0] - 2026-09-21
+
+Synchronisation des événements du site vers Discord.
+
+### Ajouté
+- Création, modification et suppression des événements Discord programmés depuis le backoffice, via un bot : titre, description, lieu, dates de début et de fin, cover (JPG, PNG, GIF) et lien vers la page Event.
+- Un événement passé en brouillon est retiré de Discord ; un événement supprimé sur le site l'est aussi sur Discord.
+- Conversion des heures de Paris vers un instant exact (heure d'été et d'hiver).
+- Bandeau de résultat dans le backoffice après chaque enregistrement et badge « Sur Discord » sur les événements synchronisés.
+- Colonne `discord_event_id` (migration `supabase/migrations/20260921_add_discord_event_id.sql`) et variable d'environnement `DISCORD_BOT_TOKEN`.
+
+### Notes
+- Discord refuse de programmer un événement dont le début est passé : il reste alors uniquement sur le site, avec un message.
+- Sans lieu, « Lieu à préciser » est envoyé (Discord l'exige) ; la description est limitée à 1000 caractères sur Discord.
+- Si Discord est indisponible ou si le bot n'a plus ses permissions, l'événement est tout de même enregistré sur le site.
+- Le sens Discord vers site n'est pas encore géré.
+- Le bot n'a pas besoin de tourner en continu : il apparaît hors ligne mais les appels fonctionnent.
+
 ## [0.6.0] - 2026-09-21
 
 Historique des bilans.
@@ -117,6 +135,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.7.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.7.0
 [0.6.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.6.0
 [0.5.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.5.0
 [0.4.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.4.0

@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { removeCover, uploadCover, validateCover } from "@/lib/covers";
+import { deleteDiscordEvent } from "@/lib/discord-events";
+import { discordIdOf, syncEventToDiscord } from "@/lib/discord-sync";
 import { MISSING_COLUMN, MISSING_TABLE } from "@/lib/events";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -79,17 +81,20 @@ export async function createEvent(
     coverUrl = uploaded.url;
   }
 
-  const { error: dbErr } = await supabaseAdmin()
+  const { data: created, error: dbErr } = await supabaseAdmin()
     .from("events")
-    .insert({ ...row, cover_url: coverUrl });
-  if (dbErr) {
+    .insert({ ...row, cover_url: coverUrl })
+    .select("id")
+    .single();
+  if (dbErr || !created) {
     await removeCover(coverUrl);
-    return { error: dbError(dbErr.code), values };
+    return { error: dbError(dbErr?.code), values };
   }
 
+  const notice = await syncEventToDiscord(created.id);
   revalidatePath("/backoffice");
   revalidatePath("/event");
-  redirect("/backoffice");
+  redirect(notice === "none" ? "/backoffice" : `/backoffice?notice=${notice}`);
 }
 
 export async function updateEvent(
@@ -124,9 +129,10 @@ export async function updateEvent(
   }
   if ("cover_url" in coverChange) await removeCover(oldUrl);
 
+  const notice = await syncEventToDiscord(id);
   revalidatePath("/backoffice");
   revalidatePath("/event");
-  redirect("/backoffice");
+  redirect(notice === "none" ? "/backoffice" : `/backoffice?notice=${notice}`);
 }
 
 export async function deleteEvent(formData: FormData) {
@@ -136,8 +142,12 @@ export async function deleteEvent(formData: FormData) {
 
   const db = supabaseAdmin();
   const { data: current } = await db.from("events").select("cover_url").eq("id", id).maybeSingle();
+  const discordId = await discordIdOf(id);
   const { error } = await db.from("events").delete().eq("id", id);
-  if (!error) await removeCover(current?.cover_url as string | null | undefined);
+  if (!error) {
+    await removeCover(current?.cover_url as string | null | undefined);
+    if (discordId) await deleteDiscordEvent(discordId);
+  }
   revalidatePath("/backoffice");
   revalidatePath("/event");
 }

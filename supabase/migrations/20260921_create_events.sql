@@ -11,6 +11,7 @@ create table if not exists public.events (
   ends_at timestamp not null,
   published boolean not null default true,
   cover_url text,
+  discord_event_id text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint events_dates_check check (ends_at > starts_at)

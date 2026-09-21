@@ -2,26 +2,50 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { eventStatus, formatEventDate, nowParisFull } from "@/lib/event-format";
+import { eventsOnDiscord } from "@/lib/discord-sync";
 import { getEvent, listEvents } from "@/lib/events";
 import { getSession } from "@/lib/session";
 import { SiteHeader } from "../site-header";
 import DeleteEventButton from "./delete-event-button";
 import EventForm from "./event-form";
 
+const NOTICES: Record<string, { ok: boolean; text: string }> = {
+  synced: { ok: true, text: "Événement enregistré et synchronisé avec Discord." },
+  removed: { ok: true, text: "Événement enregistré en brouillon et retiré de Discord." },
+  past: {
+    ok: false,
+    text: "Événement enregistré, mais non envoyé à Discord : l'heure de début est déjà passée.",
+  },
+  forbidden: {
+    ok: false,
+    text: "Événement enregistré, mais Discord a refusé : vérifie que le bot a les permissions « Créer des événements » et « Gérer les événements ».",
+  },
+  failed: {
+    ok: false,
+    text: "Événement enregistré sur le site, mais la synchronisation avec Discord a échoué. Réessaie en le modifiant.",
+  },
+  nocolumn: {
+    ok: false,
+    text: "Événement enregistré, mais pas envoyé à Discord : exécute supabase/migrations/20260921_add_discord_event_id.sql dans le SQL Editor de Supabase.",
+  },
+};
+
 export default async function BackofficePage({
   searchParams,
 }: {
-  searchParams: Promise<{ edit?: string }>;
+  searchParams: Promise<{ edit?: string; notice?: string }>;
 }) {
   const session = await getSession();
   if (!session) redirect("/connexion");
   if (!session.admin) redirect("/");
 
-  const { edit } = await searchParams;
-  const [{ events, error }, editing] = await Promise.all([
+  const { edit, notice } = await searchParams;
+  const [{ events, error }, editing, onDiscord] = await Promise.all([
     listEvents(),
     edit ? getEvent(edit) : Promise.resolve(null),
+    eventsOnDiscord(),
   ]);
+  const banner = notice ? NOTICES[notice] : undefined;
   const now = nowParisFull();
 
   return (
@@ -56,6 +80,19 @@ export default async function BackofficePage({
             <h2 className="font-display text-2xl font-bold text-night">
               Événements <span className="text-ink/50">({events.length})</span>
             </h2>
+
+            {banner && (
+              <p
+                role={banner.ok ? "status" : "alert"}
+                className={`rounded-2xl border-2 px-5 py-4 font-medium ${
+                  banner.ok
+                    ? "border-emerald/40 bg-emerald/15 text-forest"
+                    : "border-gold/60 bg-gold/20 text-ink"
+                }`}
+              >
+                {banner.text}
+              </p>
+            )}
 
             {error && (
               <p
@@ -101,6 +138,11 @@ export default async function BackofficePage({
                       >
                         {e.published ? "Publié" : "Brouillon"}
                       </span>
+                      {onDiscord.has(e.id) && (
+                        <span className="rounded-full bg-[#5865f2] px-3 py-1 text-xs font-semibold text-white">
+                          Sur Discord
+                        </span>
+                      )}
                       {status === "live" && (
                         <span className="rounded-full bg-emerald px-3 py-1 text-xs font-semibold text-ink">
                           En cours

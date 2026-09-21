@@ -33,6 +33,7 @@ L'application tourne sur http://localhost:3000.
 | `DISCORD_CLIENT_SECRET` | Secret de l'application Discord (serveur uniquement) |
 | `DISCORD_GUILD_ID` | Identifiant du serveur Discord dont il faut être membre |
 | `DISCORD_ADMIN_ROLE_ID` | Identifiant du rôle qui donne accès au backoffice |
+| `DISCORD_BOT_TOKEN` | Jeton du bot Discord (permissions « Créer des événements » et « Gérer les événements ») : crée, met à jour et supprime les événements programmés du serveur |
 | `SESSION_SECRET` | Secret de signature du cookie de session (chaîne aléatoire d'au moins 32 octets) |
 
 Le fichier `.env` est ignoré par git.
@@ -43,7 +44,7 @@ Le fichier `.env` est ignoré par git.
 |---|---|
 | `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, sections |
 | `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
-| `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements |
+| `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements, synchronisés avec les événements programmés du serveur Discord |
 | `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
 | `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF et Excel), téléchargement et suppression |
 | `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
@@ -54,7 +55,7 @@ Le fichier `.env` est ignoré par git.
 Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`). Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
 
 1. `supabase/migrations/20260921_create_events.sql` : crée la table (version à jour, avec `cover_url` et `ends_at` obligatoire).
-2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, puis `20260921_require_event_end.sql`.
+2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, `20260921_require_event_end.sql`, puis `20260921_add_discord_event_id.sql`.
 3. `20260921_create_bilans.sql` : crée la table de l'historique des bilans.
 
 ## Scripts
