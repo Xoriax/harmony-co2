@@ -2,6 +2,25 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.3.0] - 2026-09-21
+
+Refonte de la page Bilan et export des résultats.
+
+### Ajouté
+- Export des résultats en **PDF** : une seule page A4 paysage (total, répartition par catégorie, détail de tous les éléments), avec une mise en page qui s'adapte au nombre de lignes.
+- Export des résultats en **Excel** (.xlsx) : feuilles « Synthèse » (parts, moyennes, top 5 des éléments les plus émetteurs), « Détail » (une ligne par élément, parts, filtres, formules) et « Infos » (date, méthode, source).
+- Composant `SiteHeader` partagé entre l'accueil et le bilan.
+- Dépendances `jspdf`, `jspdf-autotable` et `exceljs` (chargées uniquement au clic sur un export).
+
+### Modifié
+- Page `/bilan` redessinée aux couleurs du logo : en-tête avec globe 3D, catégories sous forme de cartes avec interrupteur, panneau récapitulatif fixe, résultats avec total en grand, barres de répartition animées et tableaux par catégorie.
+- Animations 3D sur le formulaire : feuille qui pivote à l'activation d'une catégorie, dépliage des champs en perspective, globe dans le panneau récapitulatif.
+- L'accueil utilise désormais la barre de navigation partagée.
+
+### Notes
+- Les animations sont désactivées avec `prefers-reduced-motion`.
+- La page `/connexion` n'est pas encore redessinée : son bouton utilise d'anciennes classes de couleur supprimées de la configuration.
+
 ## [0.2.0] - 2026-09-21
 
 Refonte de la page d'accueil.
@@ -37,5 +56,6 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.3.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.1.0

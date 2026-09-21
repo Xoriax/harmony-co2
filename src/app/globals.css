@@ -172,6 +172,16 @@ body {
   }
 }
 
+.scene-sm .leaf {
+  width: 36px;
+  height: 36px;
+  border-width: 2px;
+}
+
+.scene-sm .tropic {
+  display: none;
+}
+
 /* ---------- Cartes & blocs ---------- */
 .tilt-wrap {
   perspective: 900px;
@@ -213,7 +223,48 @@ body {
   background-size: 18px 18px;
 }
 
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.bar-grow {
+  transform-origin: left;
+  animation: grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.flip {
+  transform-style: preserve-3d;
+  transform: perspective(300px) rotateY(0deg);
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.flip.on {
+  transform: perspective(300px) rotateY(360deg) scale(1.08);
+}
+
+@keyframes unfold {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(-14deg) translateY(-12px);
+  }
+}
+
+.unfold {
+  transform-origin: top;
+  animation: unfold 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .flip,
+  .unfold {
+    animation: none;
+    transition: none;
+  }
+  .bar-grow {
+    animation: none;
+  }
   .globe,
   .leaf,
   .shadow-disc,

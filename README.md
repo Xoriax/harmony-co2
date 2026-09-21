@@ -1,12 +1,13 @@
 # harmony-co2
 
-Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les postes qui le concernent (numérique, repas, boissons, habillement, usage numérique, mobilier, transport) et obtient un total en kgCO2e avec le détail par catégorie. Les facteurs d'émission viennent de l'API [Impact CO2](https://impactco2.fr) (ADEME).
+Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les postes qui le concernent (numérique, repas, boissons, habillement, usage numérique, mobilier, transport) et obtient un total en kgCO2e avec le détail par catégorie, exportable en PDF ou en Excel. Les facteurs d'émission viennent de l'API [Impact CO2](https://impactco2.fr) (ADEME).
 
 ## Stack
 
 - [Next.js](https://nextjs.org) 16 (App Router), React 19, TypeScript
 - Tailwind CSS 4
 - API Impact CO2
+- jsPDF (+ autotable) et ExcelJS pour les exports
 
 ## Démarrage
 
@@ -34,7 +35,7 @@ Le fichier `.env` est ignoré par git.
 | `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, sections |
 | `/connexion` | Connexion (identifiants fixes temporaires) |
 | `/backoffice` | Espace protégé, redirige vers `/connexion` si non connecté |
-| `/bilan` | Formulaire et calcul du bilan carbone |
+| `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
 | `/event` | Page événement (à venir) |
 | `/mandat` | Page mandat (à venir) |
 

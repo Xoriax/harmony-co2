@@ -11,7 +11,7 @@ const LEAVES = [
   { top: "84%", left: "78%", bg: "var(--leaf)", delay: "-4.5s" },
 ];
 
-export function GlobeScene() {
+export function GlobeScene({ small = false }: { small?: boolean }) {
   const tilt = useRef<HTMLDivElement>(null);
 
   function onMove(e: React.PointerEvent<HTMLDivElement>) {
@@ -33,7 +33,9 @@ export function GlobeScene() {
 
   return (
     <div
-      className="scene relative mx-auto aspect-square w-full max-w-[460px]"
+      className={`scene relative mx-auto aspect-square w-full ${
+        small ? "scene-sm max-w-[240px]" : "max-w-[460px]"
+      }`}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
       aria-hidden="true"

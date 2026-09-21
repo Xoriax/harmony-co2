@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { GlobeScene } from "../globe-scene";
 import { computeBilan } from "./actions";
+import { exportExcel, exportPdf } from "./export";
 import type { BilanCategory, BilanInput, BilanResult } from "./types";
 
 type Line = { itemId: string; quantity: string; trips: string };
@@ -19,10 +21,20 @@ const quantityLabels: Record<string, string> = {
   transport: "Distance par trajet (km)",
 };
 
+const TONES = [
+  "bg-leaf",
+  "bg-sky",
+  "bg-gold",
+  "bg-emerald",
+  "bg-blue",
+  "bg-night",
+  "bg-forest",
+];
+
 const inputClass =
-  "h-10 min-w-0 rounded-full border border-black/[.15] bg-transparent px-4 dark:border-white/[.25]";
+  "h-11 min-w-0 rounded-xl border border-ink/20 bg-cream px-4 text-ink transition-colors focus:border-blue disabled:opacity-50";
 const buttonClass =
-  "h-10 rounded-full border border-black/[.15] px-4 text-sm transition-colors hover:bg-black/[.05] disabled:opacity-50 dark:border-white/[.25] dark:hover:bg-white/[.1]";
+  "h-10 rounded-full border-2 border-night/80 px-4 text-sm font-semibold text-night transition-colors hover:bg-night hover:text-cream disabled:opacity-50";
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 
@@ -32,6 +44,15 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
   );
   const [result, setResult] = useState<BilanResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const resultRef = useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = useState<"pdf" | "xlsx" | null>(null);
+  const [exportError, setExportError] = useState(false);
+
+  useEffect(() => {
+    if (result) resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [result]);
+
+  const includedCategories = categories.filter((c) => state[c.slug].included);
 
   function update(categoryId: string, change: (current: CategoryState) => CategoryState) {
     setState((prev) => ({ ...prev, [categoryId]: change(prev[categoryId]) }));
@@ -42,6 +63,19 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
       ...c,
       lines: c.lines.map((line, i) => (i === index ? { ...line, ...patch } : line)),
     }));
+  }
+
+  async function runExport(kind: "pdf" | "xlsx") {
+    if (!result || !("total" in result)) return;
+    setExporting(kind);
+    setExportError(false);
+    try {
+      await (kind === "pdf" ? exportPdf(result) : exportExcel(result));
+    } catch {
+      setExportError(true);
+    } finally {
+      setExporting(null);
+    }
   }
 
   function submit() {
@@ -63,163 +97,296 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {categories.map((category) => {
-        const { included, lines } = state[category.slug];
-        const isTransport = category.slug === "transport";
+    <div className="flex flex-col gap-12">
+      <div className="grid items-start gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="flex flex-col gap-5">
+          {categories.map((category, ci) => {
+            const { included, lines } = state[category.slug];
+            const isTransport = category.slug === "transport";
 
-        return (
-          <section
-            key={category.slug}
-            className="rounded-2xl border border-black/[.1] p-4 dark:border-white/[.2]"
-          >
-            <label className="flex cursor-pointer items-center justify-between gap-4">
-              <span className="text-lg font-medium">{category.name}</span>
-              <span className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={included}
-                  onChange={(e) => update(category.slug, (c) => ({ ...c, included: e.target.checked }))}
-                />
-                Inclure
-              </span>
-            </label>
+            return (
+              <section
+                key={category.slug}
+                className={`rounded-3xl border-2 p-5 transition-all duration-300 ${
+                  included
+                    ? "border-forest bg-cream-soft shadow-[0_24px_40px_-28px_rgb(7_80_74/0.6)]"
+                    : "border-ink/10 bg-cream-soft/60 hover:border-ink/25"
+                }`}
+              >
+                <label className="flex cursor-pointer items-center justify-between gap-4">
+                  <span className="flex items-center gap-3">
+                    <span
+                      className={`flip h-10 w-10 shrink-0 rounded-[0_100%_0_100%] border-2 border-ink ${included ? "on" : ""} ${TONES[ci % TONES.length]}`}
+                    />
+                    <span className="font-display text-xl font-bold text-night">
+                      {category.name}
+                    </span>
+                  </span>
+                  <span className="flex items-center gap-3 text-sm font-semibold text-ink/75">
+                    {included ? "Inclus" : "Inclure"}
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={included}
+                      onChange={(e) =>
+                        update(category.slug, (c) => ({ ...c, included: e.target.checked }))
+                      }
+                    />
+                    <span className="relative h-7 w-12 rounded-full bg-ink/25 transition-colors after:absolute after:left-1 after:top-1 after:h-5 after:w-5 after:rounded-full after:bg-cream-soft after:shadow after:transition-transform peer-checked:bg-emerald peer-checked:after:translate-x-5 peer-focus-visible:ring-4 peer-focus-visible:ring-blue/40" />
+                  </span>
+                </label>
 
-            {included && (
-              <div className="mt-4 flex flex-col gap-3">
-                {lines.map((line, index) => (
-                  <div key={index} className="flex flex-wrap items-end gap-2">
-                    <label className="flex min-w-48 flex-[2] flex-col gap-1 text-sm">
-                      {isTransport ? "Transport" : "Élément"}
-                      <select
-                        value={line.itemId}
-                        onChange={(e) => updateLine(category.slug, index, { itemId: e.target.value })}
-                        className={`${inputClass} bg-background`}
-                      >
-                        <option value="">Choisir un élément</option>
-                        {category.items.map((item) => (
-                          <option key={item.ref} value={item.ref}>
-                            {item.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="flex min-w-32 flex-1 flex-col gap-1 text-sm">
-                      {quantityLabels[category.slug] ?? "Quantité"}
-                      <input
-                        type="number"
-                        min="0"
-                        step="any"
-                        inputMode="decimal"
-                        value={line.quantity}
-                        onChange={(e) => updateLine(category.slug, index, { quantity: e.target.value })}
-                        className={inputClass}
-                      />
-                    </label>
-                    {isTransport && (
-                      <label className="flex w-28 flex-col gap-1 text-sm">
-                        Trajets
-                        <input
-                          type="number"
-                          min="1"
-                          step="1"
-                          value={line.trips}
-                          onChange={(e) => updateLine(category.slug, index, { trips: e.target.value })}
-                          className={inputClass}
-                        />
-                      </label>
-                    )}
+                {included && (
+                  <div className="unfold mt-5 flex flex-col gap-4 border-t border-ink/10 pt-5">
+                    {lines.map((line, index) => (
+                      <div key={index} className="flex flex-wrap items-end gap-3">
+                        <label className="flex min-w-48 flex-[2] flex-col gap-1.5 text-sm font-medium">
+                          {isTransport ? "Transport" : "Élément"}
+                          <select
+                            value={line.itemId}
+                            onChange={(e) =>
+                              updateLine(category.slug, index, { itemId: e.target.value })
+                            }
+                            className={inputClass}
+                          >
+                            <option value="">Choisir un élément</option>
+                            {category.items.map((item) => (
+                              <option key={item.ref} value={item.ref}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="flex min-w-32 flex-1 flex-col gap-1.5 text-sm font-medium">
+                          {quantityLabels[category.slug] ?? "Quantité"}
+                          <input
+                            type="number"
+                            min="0"
+                            step="any"
+                            inputMode="decimal"
+                            value={line.quantity}
+                            onChange={(e) =>
+                              updateLine(category.slug, index, { quantity: e.target.value })
+                            }
+                            className={inputClass}
+                          />
+                        </label>
+                        {isTransport && (
+                          <label className="flex w-28 flex-col gap-1.5 text-sm font-medium">
+                            Trajets
+                            <input
+                              type="number"
+                              min="1"
+                              step="1"
+                              value={line.trips}
+                              onChange={(e) =>
+                                updateLine(category.slug, index, { trips: e.target.value })
+                              }
+                              className={inputClass}
+                            />
+                          </label>
+                        )}
+                        <button
+                          type="button"
+                          className={buttonClass}
+                          onClick={() =>
+                            update(category.slug, (c) => ({
+                              ...c,
+                              lines:
+                                c.lines.length > 1
+                                  ? c.lines.filter((_, i) => i !== index)
+                                  : [emptyLine()],
+                            }))
+                          }
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    ))}
                     <button
                       type="button"
-                      className={buttonClass}
+                      className={`${buttonClass} self-start`}
                       onClick={() =>
-                        update(category.slug, (c) => ({
-                          ...c,
-                          lines: c.lines.length > 1 ? c.lines.filter((_, i) => i !== index) : [emptyLine()],
-                        }))
+                        update(category.slug, (c) => ({ ...c, lines: [...c.lines, emptyLine()] }))
                       }
                     >
-                      Supprimer
+                      + {isTransport ? "Ajouter un transport" : "Ajouter un élément"}
                     </button>
                   </div>
-                ))}
-                <button
-                  type="button"
-                  className={`${buttonClass} self-start`}
-                  onClick={() => update(category.slug, (c) => ({ ...c, lines: [...c.lines, emptyLine()] }))}
-                >
-                  {isTransport ? "Ajouter un transport" : "Ajouter un élément"}
-                </button>
-              </div>
-            )}
-          </section>
-        );
-      })}
+                )}
+              </section>
+            );
+          })}
+        </div>
 
-      <button
-        type="button"
-        onClick={submit}
-        disabled={pending}
-        className="h-12 self-start rounded-full bg-foreground px-6 font-medium text-background transition-opacity hover:opacity-80 disabled:opacity-50"
-      >
-        {pending ? "Calcul..." : "Calculer le bilan"}
-      </button>
+        <aside className="flex flex-col gap-5 rounded-3xl bg-forest p-6 text-cream lg:sticky lg:top-24">
+          <div className="mx-auto -mb-4 w-36">
+            <GlobeScene small />
+          </div>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">
+            Ton bilan
+          </span>
+          <p className="font-display text-5xl font-extrabold tabular-nums">
+            {includedCategories.length}
+            <span className="ml-2 text-xl font-bold text-cream/70">
+              / {categories.length}
+            </span>
+          </p>
+          <p className="-mt-3 text-sm text-cream/80">
+            {includedCategories.length > 1 ? "catégories incluses" : "catégorie incluse"}
+          </p>
+          {includedCategories.length > 0 && (
+            <ul className="flex flex-wrap gap-2">
+              {includedCategories.map((c) => (
+                <li
+                  key={c.slug}
+                  className="rounded-full bg-cream/15 px-3 py-1 text-xs font-semibold"
+                >
+                  {c.name}
+                </li>
+              ))}
+            </ul>
+          )}
+          <button
+            type="button"
+            onClick={submit}
+            disabled={pending || includedCategories.length === 0}
+            className="h-12 rounded-full bg-gold px-6 font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-50"
+          >
+            {pending ? "Calcul..." : "Calculer le bilan"}
+          </button>
+          {includedCategories.length === 0 && (
+            <p className="text-sm text-cream/75">
+              Active au moins une catégorie pour lancer le calcul.
+            </p>
+          )}
+        </aside>
+      </div>
 
       {result && "error" in result && (
-        <p role="alert" className="text-red-600">
+        <p
+          role="alert"
+          className="rounded-2xl border-2 border-red-700/30 bg-red-50 px-5 py-4 font-medium text-red-800"
+        >
           {result.error}
         </p>
       )}
 
       {result && "total" in result && (
-        <section className="flex flex-col gap-6 rounded-2xl border border-black/[.1] p-6 dark:border-white/[.2]">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold">Résultats</h2>
-              <p className="text-sm opacity-70">Total en kgCO2e avec détail par catégorie.</p>
-            </div>
-            <p className="text-right">
-              <span className="block text-sm opacity-70">Total</span>
-              <span className="text-3xl font-semibold">{nf.format(result.total)}</span>
-              <span className="block text-sm">kgCO2e</span>
-            </p>
-          </div>
-
-          {result.categories.map((category) => (
-            <div key={category.name} className="flex flex-col gap-2">
-              <h3 className="flex justify-between font-medium">
-                <span>{category.name}</span>
-                <span>{nf.format(category.subtotal)} kgCO2e</span>
-              </h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-black/[.1] dark:border-white/[.2]">
-                      <th className="py-2 pr-4 font-medium">Élément</th>
-                      <th className="py-2 pr-4 font-medium">Quantité</th>
-                      <th className="py-2 pr-4 font-medium">Facteur (kgCO2e/unité)</th>
-                      <th className="py-2 font-medium">Émissions (kgCO2e)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {category.lines.map((line, i) => (
-                      <tr key={i} className="border-b border-black/[.06] dark:border-white/[.1]">
-                        <td className="py-2 pr-4">{line.name}</td>
-                        <td className="py-2 pr-4">
-                          {nf.format(line.quantity)} {line.unit}
-                        </td>
-                        <td className="py-2 pr-4">
-                          {new Intl.NumberFormat("fr-FR", { maximumSignificantDigits: 3 }).format(line.factor)}
-                        </td>
-                        <td className="py-2">{nf.format(line.emissions)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <div ref={resultRef} className="flex scroll-mt-24 flex-col gap-6">
+          <section className="relative grid items-center gap-6 overflow-hidden rounded-[2rem] bg-night p-7 text-cream md:grid-cols-[1fr_auto] md:p-10">
+            <span className="absolute -bottom-28 -left-20 h-64 w-64 rounded-full border-[24px] border-blue/50" />
+            <div className="relative flex flex-col gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">
+                Résultats
+              </span>
+              <p className="flex flex-wrap items-baseline gap-3">
+                <span className="font-display text-6xl font-extrabold tabular-nums sm:text-7xl">
+                  {nf.format(result.total)}
+                </span>
+                <span className="text-xl font-semibold text-cream/80">kgCO2e</span>
+              </p>
+              <p className="max-w-[46ch] text-cream/80">
+                Total des catégories incluses, avec le détail par catégorie ci-dessous.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => runExport("pdf")}
+                  disabled={exporting !== null}
+                  className="h-11 rounded-full bg-gold px-6 font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-60"
+                >
+                  {exporting === "pdf" ? "Export..." : "Exporter en PDF"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => runExport("xlsx")}
+                  disabled={exporting !== null}
+                  className="h-11 rounded-full border-2 border-cream/60 px-6 font-semibold transition-colors hover:bg-cream hover:text-night disabled:opacity-60"
+                >
+                  {exporting === "xlsx" ? "Export..." : "Exporter en Excel"}
+                </button>
               </div>
+              {exportError && (
+                <p role="alert" className="text-sm font-medium text-gold">
+                  L&apos;export a échoué, réessaie.
+                </p>
+              )}
             </div>
-          ))}
-        </section>
+            <div className="w-44 justify-self-center">
+              <GlobeScene small />
+            </div>
+          </section>
+
+          <section className="flex flex-col gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-6">
+            <h2 className="font-display text-2xl font-bold text-night">Répartition</h2>
+            <ul className="flex flex-col gap-4">
+              {result.categories.map((category, i) => {
+                const pct = result.total > 0 ? (category.subtotal / result.total) * 100 : 0;
+                return (
+                  <li key={category.name} className="flex flex-col gap-1.5">
+                    <div className="flex justify-between gap-4 text-sm font-semibold">
+                      <span>{category.name}</span>
+                      <span className="tabular-nums">
+                        {nf.format(category.subtotal)} kgCO2e · {nf.format(pct)} %
+                      </span>
+                    </div>
+                    <div className="h-3.5 overflow-hidden rounded-full bg-ink/10">
+                      <div
+                        className={`bar-grow h-full rounded-full ${TONES[i % TONES.length]}`}
+                        style={{ width: `${Math.max(pct, 1.5)}%` }}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          <div className="grid gap-6">
+            {result.categories.map((category) => (
+              <section
+                key={category.name}
+                className="flex flex-col gap-3 rounded-3xl border border-ink/10 bg-cream-soft p-6"
+              >
+                <h3 className="flex flex-wrap justify-between gap-2 font-display text-xl font-bold text-night">
+                  <span>{category.name}</span>
+                  <span className="tabular-nums text-forest">
+                    {nf.format(category.subtotal)} kgCO2e
+                  </span>
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm tabular-nums">
+                    <thead>
+                      <tr className="border-b-2 border-ink/15 text-xs uppercase tracking-[0.08em] text-ink/70">
+                        <th className="py-2 pr-4 font-semibold">Élément</th>
+                        <th className="py-2 pr-4 font-semibold">Quantité</th>
+                        <th className="py-2 pr-4 font-semibold">Facteur (kgCO2e/unité)</th>
+                        <th className="py-2 font-semibold">Émissions (kgCO2e)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {category.lines.map((line, i) => (
+                        <tr key={i} className="border-b border-ink/10 last:border-0">
+                          <td className="py-2.5 pr-4 font-medium">{line.name}</td>
+                          <td className="py-2.5 pr-4">
+                            {nf.format(line.quantity)} {line.unit}
+                          </td>
+                          <td className="py-2.5 pr-4">
+                            {new Intl.NumberFormat("fr-FR", {
+                              maximumSignificantDigits: 3,
+                            }).format(line.factor)}
+                          </td>
+                          <td className="py-2.5 font-semibold">{nf.format(line.emissions)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
