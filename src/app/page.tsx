@@ -24,6 +24,12 @@ export default function Home() {
         >
           Mon bilan
         </Link>
+        <Link
+          href="/event"
+          className="flex h-12 flex-1 items-center justify-center rounded-full border border-solid border-black/[.15] px-5 transition-colors hover:bg-black/[.05] dark:border-white/[.25] dark:hover:bg-white/[.1]"
+        >
+          Event
+        </Link>
       </div>
     </main>
   );
