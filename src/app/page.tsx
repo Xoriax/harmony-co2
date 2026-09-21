@@ -4,15 +4,39 @@ import { GlobeScene } from "./globe-scene";
 import { SiteHeader } from "./site-header";
 
 const CARDS = [
-  { href: "/bilan", tone: "bg-leaf", title: "Lorem ipsum dolor" },
-  { href: "/event", tone: "bg-sky", title: "Consectetur elit" },
-  { href: "/connexion", tone: "bg-gold", title: "Sed do eiusmod" },
+  {
+    href: "/bilan",
+    tone: "bg-leaf",
+    title: "Mon bilan",
+    text: "Sélectionne tes catégories (numérique, repas, transport…) et calcule ton empreinte carbone.",
+    cta: "Calculer un bilan",
+  },
+  {
+    href: "/event",
+    tone: "bg-sky",
+    title: "Événements",
+    text: "Retrouve les prochains événements, avec leurs dates, leur lieu et un compte à rebours.",
+    cta: "Voir les événements",
+  },
+  {
+    href: "/mandat",
+    tone: "bg-gold",
+    title: "Mandat",
+    text: "Découvre le Responsable RSE et le Bureau restreint, et comment les contacter.",
+    cta: "Voir l'équipe",
+  },
 ];
 
-const POINTS = [
-  "Lorem ipsum dolor sit amet consectetur",
-  "Adipiscing elit sed do eiusmod tempor",
-  "Incididunt ut labore et dolore magna",
+const STEPS = [
+  "Choisis les catégories qui concernent ton association.",
+  "Renseigne les quantités : repas, distances, appareils…",
+  "Télécharge ton bilan en PDF ou en Excel.",
+];
+
+const HIGHLIGHTS = [
+  "Facteurs Impact CO2 (ADEME)",
+  "Export PDF et Excel",
+  "Historique de tes bilans",
 ];
 
 function Arrow() {
@@ -44,27 +68,26 @@ export default function Home() {
             <div className="flex flex-col gap-7">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-forest/25 bg-cream-soft px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-forest">
                 <span className="h-2 w-2 rounded-full bg-emerald" />
-                Lorem ipsum
+                Bilan carbone associatif
               </span>
               <h1 className="font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-night [text-wrap:balance] sm:text-6xl lg:text-7xl">
-                Lorem ipsum{" "}
+                Mesure l&apos;
                 <span className="relative whitespace-nowrap text-forest">
-                  dolor
-                  <span className="absolute -bottom-1 left-0 h-3 w-full -skew-x-12 rounded-sm bg-leaf/70 -z-10" />
+                  impact
+                  <span className="absolute -bottom-1 left-0 -z-10 h-3 w-full -skew-x-12 rounded-sm bg-leaf/70" />
                 </span>{" "}
-                sit amet
+                de ton association
               </h1>
               <p className="max-w-[52ch] text-lg leading-relaxed text-ink/80">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation.
+                Choisis les postes qui te concernent, renseigne tes quantités et
+                obtiens ton total en kgCO2e, avec le détail par catégorie.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/bilan"
                   className="group flex items-center gap-2 rounded-full bg-forest px-7 py-3.5 font-semibold text-cream shadow-[0_10px_24px_-10px_rgb(7_80_74/0.7)] transition-transform hover:-translate-y-0.5"
                 >
-                  Lorem ipsum
+                  Calculer mon bilan
                   <span className="transition-transform group-hover:translate-x-1">
                     <Arrow />
                   </span>
@@ -73,11 +96,11 @@ export default function Home() {
                   href="/event"
                   className="rounded-full border-2 border-night px-7 py-3.5 font-semibold text-night transition-colors hover:bg-night hover:text-cream"
                 >
-                  Dolor sit
+                  Voir les événements
                 </Link>
               </div>
               <ul className="flex flex-wrap gap-x-8 gap-y-3 pt-2 text-sm font-medium text-ink/75">
-                {["Lorem ipsum", "Dolor sit", "Amet elit"].map((t) => (
+                {HIGHLIGHTS.map((t) => (
                   <li key={t} className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-gold" />
                     {t}
@@ -93,14 +116,14 @@ export default function Home() {
         <section className="mx-auto max-w-6xl px-5 py-16 md:py-24">
           <div className="mb-12 flex flex-col gap-4 md:max-w-2xl">
             <span className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
-              Lorem ipsum
+              Ce que tu peux faire
             </span>
             <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-night [text-wrap:balance] md:text-5xl">
-              Lorem ipsum dolor sit amet consectetur
+              Suivre, agir et retrouver l&apos;équipe
             </h2>
             <p className="text-lg leading-relaxed text-ink/75">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore.
+              Un outil simple pour les associations qui veulent mesurer leur
+              empreinte carbone et faire vivre leur mandat.
             </p>
           </div>
           <div className="tilt-wrap grid gap-6 md:grid-cols-3">
@@ -119,12 +142,9 @@ export default function Home() {
                   <h3 className="font-display text-2xl font-bold text-night">
                     {c.title}
                   </h3>
-                  <p className="leading-relaxed text-ink/75">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit sed
-                    do eiusmod tempor.
-                  </p>
+                  <p className="leading-relaxed text-ink/75">{c.text}</p>
                   <span className="mt-2 inline-flex items-center gap-2 font-semibold text-blue">
-                    Lorem ipsum
+                    {c.cta}
                     <span className="transition-transform group-hover:translate-x-1">
                       <Arrow />
                     </span>
@@ -149,28 +169,30 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-6">
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">
-                Lorem ipsum
+                Comment ça marche
               </span>
               <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight [text-wrap:balance] md:text-5xl">
-                Dolor sit amet consectetur adipiscing
+                Un bilan, étape par étape
               </h2>
               <p className="max-w-[52ch] text-lg leading-relaxed text-cream/85">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Pas besoin d&apos;être expert : le site s&apos;occupe des calculs
+                avec les facteurs d&apos;émission officiels.
               </p>
-              <ul className="flex flex-col gap-4">
-                {POINTS.map((p) => (
-                  <li key={p} className="flex items-start gap-3">
-                    <span className="mt-1.5 h-3 w-3 shrink-0 rounded-[0_100%_0_100%] bg-leaf" />
-                    <span className="leading-relaxed">{p}</span>
+              <ol className="flex flex-col gap-4">
+                {STEPS.map((step, i) => (
+                  <li key={step} className="flex items-start gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-leaf text-sm font-bold text-ink">
+                      {i + 1}
+                    </span>
+                    <span className="pt-0.5 leading-relaxed">{step}</span>
                   </li>
                 ))}
-              </ul>
+              </ol>
               <Link
-                href="/event"
+                href="/bilan"
                 className="mt-2 flex w-fit items-center gap-2 rounded-full bg-leaf px-7 py-3.5 font-semibold text-ink transition-transform hover:-translate-y-0.5"
               >
-                Lorem ipsum
+                Commencer mon bilan
                 <Arrow />
               </Link>
             </div>
@@ -184,24 +206,24 @@ export default function Home() {
             <span className="absolute -bottom-32 right-24 h-64 w-64 rounded-full border-[24px] border-emerald/50" />
             <div className="relative flex max-w-2xl flex-col gap-6">
               <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight [text-wrap:balance] md:text-5xl">
-                Lorem ipsum dolor sit amet
+                Prêt à mesurer ton empreinte ?
               </h2>
               <p className="text-lg leading-relaxed text-cream/85">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Connecte-toi avec Discord pour retrouver automatiquement tous
+                tes bilans dans ton historique.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/connexion"
                   className="rounded-full bg-gold px-7 py-3.5 font-semibold text-ink transition-transform hover:-translate-y-0.5"
                 >
-                  Lorem ipsum
+                  Connexion
                 </Link>
                 <Link
                   href="/bilan"
                   className="rounded-full border-2 border-cream/60 px-7 py-3.5 font-semibold transition-colors hover:bg-cream hover:text-night"
                 >
-                  Dolor sit
+                  Mon bilan
                 </Link>
               </div>
             </div>
@@ -213,9 +235,9 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8 text-sm text-ink/70">
           <span className="flex items-center gap-3">
             <Image src="/logo.svg" alt="" width={32} height={32} />
-            Lorem ipsum dolor sit amet
+            Harmony · Bilan carbone pour les associations
           </span>
-          <span>Consectetur adipiscing elit</span>
+          <span>Facteurs d&apos;émission : Impact CO2 (ADEME)</span>
         </div>
       </footer>
     </>

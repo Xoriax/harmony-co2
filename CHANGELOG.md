@@ -2,6 +2,18 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.1] - 2026-09-22
+
+Textes de la page d'accueil.
+
+### Modifié
+- Les textes provisoires (lorem ipsum) de la page d'accueil sont remplacés par le contenu définitif : en-tête, cartes, étapes « Comment ça marche », appel à l'action et pied de page.
+- La troisième carte de l'accueil pointe désormais vers la page Mandat au lieu de la connexion.
+- Les étapes du bandeau vert sont numérotées.
+
+### Notes
+- Les images de la page d'accueil restent des blocs noirs en attendant les vraies photos.
+
 ## [0.8.0] - 2026-09-22
 
 Page Mandat gérable depuis le backoffice et animations 3D sur Event et Historique.
@@ -156,6 +168,7 @@ Première version fonctionnelle.
 - Les identifiants de connexion sont provisoires et seront remplacés par une vraie authentification.
 - Dépendance `@supabase/ssr` installée en prévision de l'authentification, non utilisée pour l'instant.
 
+[0.8.1]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.1
 [0.8.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.8.0
 [0.7.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.7.0
 [0.6.0]: https://github.com/Xoriax/harmony-co2/releases/tag/v0.6.0

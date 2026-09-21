@@ -42,7 +42,7 @@ Le fichier `.env` est ignoré par git.
 
 | Route | Description |
 |---|---|
-| `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, sections |
+| `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, présentation du site et étapes du bilan |
 | `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
 | `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements, synchronisés avec les événements programmés du serveur Discord |
 | `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
