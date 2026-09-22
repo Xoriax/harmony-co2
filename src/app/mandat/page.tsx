@@ -1,12 +1,21 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { groupByTeam, toPublicMember, type PublicMember } from "@/lib/mandat-format";
 import { listMembers } from "@/lib/mandat";
+import { pageMetadata } from "@/lib/seo";
 import { GlobeScene } from "../globe-scene";
 import LeafLayer from "../leaf-layer";
 import { DARK_LEAVES } from "../leaf-presets";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import TiltCard from "../tilt-card";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Le mandat",
+  description:
+    "Le Responsable RSE et le Bureau restreint de l'association, et comment les contacter.",
+  path: "/mandat",
+});
 
 const TONES = ["bg-leaf", "bg-sky", "bg-gold", "bg-emerald", "bg-blue"];
 

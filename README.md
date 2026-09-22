@@ -72,6 +72,14 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 - **Exports** : jsPDF et ExcelJS ne sont chargés qu'à l'approche ou au clic d'un bouton d'export. `npm run size` le vérifie après chaque build.
 - **Web Vitals en production** : chaque page envoie ses métriques de chargement (LCP, CLS, INP…) à `/api/vitals`, qui les enregistre dans la table `web_vitals`, sans cookie ni identifiant de visiteur (voir `/confidentialite`). Rien n'est envoyé en développement.
 
+## SEO et découvrabilité
+
+- **`/sitemap.xml`** (`src/app/sitemap.ts`) et **`/robots.txt`** (`src/app/robots.ts`) : générés par Next. Le backoffice et `/api` sont exclus de l'indexation ; `/connexion` et `/historique` restent accessibles mais en `noindex` (pages personnelles ou d'action, sans intérêt à indexer).
+- **Métadonnées par page** (`src/lib/seo.ts`) : titre, description, URL canonique, Open Graph et Twitter Card, posées par chaque `page.tsx` via `pageMetadata(...)`.
+- **Images Open Graph** générées à la volée (`opengraph-image.tsx`, avec `next/og`) pour l'accueil, `/bilan`, `/event` et `/mandat` ; les autres pages héritent de celle de l'accueil. Le gabarit commun est dans `src/app/og-image.tsx`.
+- **Données structurées** (schema.org `Event`, JSON-LD) sur `/event`, pour chaque événement publié et pas encore terminé (`src/lib/event-jsonld.ts`).
+- **Favicon complet et PWA** : icônes 16/32/48/180/192/512 px et une version « maskable » dans `public/icons/`, référencées dans `src/app/layout.tsx` (favicon) et `src/app/manifest.ts` (manifest de l'application). Régénérer ces PNG après une modification de `public/logo.svg` avec `node scripts/generate-icons.mjs` (nécessite `sharp`, présent tant que Next l'installe pour l'optimisation d'image).
+
 ## Qualité du code
 
 - **Tests unitaires** (`tests/`, Vitest) : calcul du bilan, conversion des heures de Paris (changements d'heure inclus), statut et compte à rebours d'un événement, éléments masqués des cartes du mandat, validation des formulaires du backoffice, session signée (falsification, expiration, secret manquant), synchronisation Discord, validation des images, téléchargement de l'historique, mesures Web Vitals et pages d'erreur. Ils tournent dans un fuseau horaire éloigné de Paris pour prouver qu'aucun calcul ne dépend de la machine.

@@ -1,14 +1,23 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { TEAMS } from "@/lib/mandat-format";
 import { getMember, listMembers } from "@/lib/mandat";
+import { pageMetadata } from "@/lib/seo";
 import { SiteHeader } from "../../site-header";
 import { PageFallback } from "../../page-fallback";
 import { BackofficeTabs } from "../tabs";
 import DeleteMemberButton from "./delete-member-button";
 import MemberForm from "./member-form";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Backoffice · Mandat",
+  description: "Gestion des membres du mandat, réservée aux administrateurs.",
+  path: "/backoffice/mandat",
+  noIndex: true,
+});
 
 async function BackofficeMandatContent({
   searchParams,

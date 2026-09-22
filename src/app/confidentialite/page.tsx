@@ -4,6 +4,7 @@ import { Fill, LegalPage, List, Section, legalMetadata } from "../legal/legal-pa
 export const metadata = legalMetadata(
   "Politique de confidentialité",
   "Quelles données Harmony CO2 collecte, pourquoi, combien de temps, et comment exercer tes droits.",
+  "/confidentialite",
 );
 
 const link = "font-semibold text-forest underline hover:text-blue";

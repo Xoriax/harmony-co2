@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -6,11 +7,19 @@ import { eventStatus, formatEventDate, nowParisFull } from "@/lib/event-format";
 import { eventsOnDiscord } from "@/lib/discord-sync";
 import { getEvent, listEvents } from "@/lib/events";
 import { getSession } from "@/lib/session";
+import { pageMetadata } from "@/lib/seo";
 import { SiteHeader } from "../site-header";
 import { PageFallback } from "../page-fallback";
 import { BackofficeTabs } from "./tabs";
 import DeleteEventButton from "./delete-event-button";
 import EventForm from "./event-form";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Backoffice",
+  description: "Gestion des événements et du mandat, réservée aux administrateurs.",
+  path: "/backoffice",
+  noIndex: true,
+});
 
 const NOTICES: Record<string, { ok: boolean; text: string }> = {
   synced: { ok: true, text: "Événement enregistré et synchronisé avec Discord." },

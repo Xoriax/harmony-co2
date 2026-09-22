@@ -1,10 +1,20 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
+import { pageMetadata } from "@/lib/seo";
 import LeafLayer from "../leaf-layer";
 import { sideLeaves } from "../leaf-presets";
 import { SiteHeader } from "../site-header";
 import { PageFallback } from "../page-fallback";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Connexion",
+  description:
+    "Connecte-toi avec ton compte Discord pour accéder à ton historique ou au backoffice.",
+  path: "/connexion",
+  noIndex: true,
+});
 
 const ERRORS: Record<string, string> = {
   not_member: "Ton compte Discord n'est pas membre du serveur : connexion refusée.",

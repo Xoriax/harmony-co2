@@ -1,11 +1,21 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import { nowParisFull } from "@/lib/event-format";
 import { listEvents } from "@/lib/events";
+import { pageMetadata } from "@/lib/seo";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import { GlobeScene } from "../globe-scene";
 import EventBoard from "./event-board";
+import EventsJsonLd from "./events-json-ld";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Événements",
+  description:
+    "Retrouve les prochains événements de l'association, avec leurs dates, leur lieu et un compte à rebours.",
+  path: "/event",
+});
 
 // Bloc rendu à chaque requête : les statuts (en cours, à venir, passé) dépendent de l'heure exacte.
 // La liste elle-même vient du cache ; le reste de la page est prérendu.
@@ -23,7 +33,12 @@ async function EventsSection() {
           Impossible de charger les événements, réessaie plus tard.
         </p>
       )}
-      {!error && <EventBoard events={events} serverNow={nowParisFull()} />}
+      {!error && (
+        <>
+          <EventsJsonLd events={events} now={nowParisFull()} />
+          <EventBoard events={events} serverNow={nowParisFull()} />
+        </>
+      )}
     </>
   );
 }

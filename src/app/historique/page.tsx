@@ -1,14 +1,24 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { listBilans } from "@/lib/bilans";
 import { getSession } from "@/lib/session";
+import { pageMetadata } from "@/lib/seo";
 import { GlobeScene } from "../globe-scene";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import { PageFallback } from "../page-fallback";
 import TiltCard from "../tilt-card";
 import DeleteBilanButton from "./delete-bilan-button";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Mon historique",
+  description:
+    "Les bilans carbone que tu as générés en étant connecté, à télécharger ou supprimer.",
+  path: "/historique",
+  noIndex: true,
+});
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LEGAL } from "@/lib/legal";
+import { pageMetadata } from "@/lib/seo";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 
@@ -68,7 +69,5 @@ export function LegalPage({
   );
 }
 
-export const legalMetadata = (title: string, description: string): Metadata => ({
-  title,
-  description,
-});
+export const legalMetadata = (title: string, description: string, path: string): Metadata =>
+  pageMetadata({ title, description, path });

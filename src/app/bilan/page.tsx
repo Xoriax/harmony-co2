@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
+import { pageMetadata } from "@/lib/seo";
 import { GlobeScene } from "../globe-scene";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import BilanForm from "./bilan-form";
 import type { BilanCategory } from "./types";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Calculer mon bilan carbone",
+  description:
+    "Sélectionne les catégories qui concernent ton association (numérique, repas, transport…), renseigne tes quantités et obtiens ton total en kgCO2e, avec le détail par poste, exportable en PDF ou en Excel.",
+  path: "/bilan",
+});
 
 async function loadCategories(): Promise<BilanCategory[] | null> {
   try {

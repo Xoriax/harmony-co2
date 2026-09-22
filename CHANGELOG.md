@@ -2,6 +2,21 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.13.0] - 2026-09-22
+
+SEO et découvrabilité.
+
+### Ajouté
+- `/sitemap.xml` et `/robots.txt`, générés par Next (`src/app/sitemap.ts`, `src/app/robots.ts`) ; le backoffice et `/api` sont exclus de l'indexation.
+- Métadonnées par page (titre, description, URL canonique, Open Graph, Twitter Card) via un helper commun `src/lib/seo.ts` ; `/connexion` et `/historique` sont en `noindex`.
+- Images Open Graph générées à la volée pour l'accueil, `/bilan`, `/event` et `/mandat` (`opengraph-image.tsx`, `next/og`), avec un gabarit commun aux couleurs du site.
+- Données structurées schema.org `Event` (JSON-LD) sur `/event`, pour chaque événement publié et pas encore terminé.
+- Favicon complet (16/32/48/180/192/512 px, plus une version « maskable ») et manifeste PWA (`src/app/manifest.ts`), avec un script de régénération des icônes depuis le logo (`scripts/generate-icons.mjs`).
+
+### Notes
+- Les données structurées ne couvrent que les événements à venir ou en cours : Google déconseille d'y lister des événements déjà terminés.
+- Il n'y a pas de page dédiée par événement : l'URL de chaque événement dans les données structurées pointe vers `/event`, qui les liste tous.
+
 ## [0.12.0] - 2026-09-22
 
 Qualité et outillage : tests de bout en bout, mises à jour automatiques, suivi de la performance en production.

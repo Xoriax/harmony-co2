@@ -4,6 +4,7 @@ import { Fill, LegalPage, List, Section, legalMetadata } from "../legal/legal-pa
 export const metadata = legalMetadata(
   "Mentions légales",
   "Éditeur, hébergeur et conditions d'utilisation du site Harmony CO2.",
+  "/mentions-legales",
 );
 
 const link = "font-semibold text-forest underline hover:text-blue";
