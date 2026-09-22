@@ -13,6 +13,14 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: "development"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+    ignore:
+      # TypeScript 7 n'est pas encore supporté par typescript-eslint / eslint-config-next.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore"
       include: "scope"

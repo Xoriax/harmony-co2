@@ -2,6 +2,15 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.15.3] - 2026-09-22
+
+Mise à jour des dépendances.
+
+### Modifié
+- React et React DOM passent à la version 19.3.0 (mis à jour ensemble, les deux packages doivent toujours avoir la même version).
+- `@types/node` passe à la version 26.6.2.
+- `.github/dependabot.yml` : React et React DOM sont désormais groupés dans une seule PR (évite les mises à jour désynchronisées) ; TypeScript 7 est ignoré pour l'instant, `typescript-eslint`/`eslint-config-next` ne le supportent pas encore.
+
 ## [0.15.2] - 2026-09-22
 
 Correction de l'intégration continue.
