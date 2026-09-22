@@ -125,6 +125,11 @@ export default function ConfidentialitePage() {
           Les polices sont incluses dans le site : ton navigateur ne contacte aucun service de
           polices externe.
         </p>
+        <p>
+          Le site mesure aussi, sans cookie ni identifiant, la vitesse de chargement de chaque page
+          (temps d&apos;affichage, stabilité visuelle) : cette mesure technique est anonyme et ne
+          permet pas de suivre un visiteur d&apos;une page à l&apos;autre.
+        </p>
       </Section>
 
       <Section title="Qui reçoit les données ?">

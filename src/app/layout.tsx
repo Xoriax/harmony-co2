@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "./site-footer";
+import { WebVitals } from "./web-vitals";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${figtree.variable} ${bricolage.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <WebVitals />
         {children}
         <SiteFooter />
       </body>

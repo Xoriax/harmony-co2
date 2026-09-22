@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # Dépendances npm : une seule PR groupée pour les dépendances de développement (moins de bruit),
+  # une PR par dépendance de production (à vérifier individuellement).
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 10
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Versions des actions utilisées dans .github/workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Paris"
+    commit-message:
+      prefix: "chore"
+      include: "scope"

@@ -2,6 +2,24 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.12.0] - 2026-09-22
+
+Qualité et outillage : tests de bout en bout, mises à jour automatiques, suivi de la performance en production.
+
+### Ajouté
+- Tests de bout en bout (`e2e/`, Playwright) sur les trois parcours critiques : connexion (accès au backoffice selon le rôle, déconnexion), création d'un bilan, export PDF et Excel. La connexion Discord n'étant pas automatisable, ces tests injectent un cookie de session signé au même format que la vraie session, dont la parité avec `src/lib/session.ts` est vérifiée par un test unitaire dédié. Commandes `npm run e2e` et `npm run e2e:ui`.
+- Job `e2e` dans la CI GitHub Actions, lancé après les vérifications habituelles si le secret `IMPACTCO2_TOKEN` est configuré sur le dépôt ; ignoré sinon (forks, dépôt sans secret) plutôt que de bloquer.
+- Mise à jour automatique des dépendances (`.github/dependabot.yml`) : une pull request hebdomadaire par dépendance de production, une seule groupant les dépendances de développement, plus les versions des actions GitHub.
+- Suivi des Web Vitals en production (`src/app/web-vitals.tsx`, route `/api/vitals`, table `web_vitals`) : LCP, CLS, INP et consorts, envoyés sans cookie ni identifiant de visiteur, en complément de `npm run size` qui ne mesure qu'en local.
+
+### Modifié
+- `.env.example` complété avec les variables Supabase, déjà documentées dans le README mais absentes du modèle.
+- Politique de confidentialité : mention de la mesure anonyme de performance, dans la section Cookies.
+
+### Notes
+- Les tests de bout en bout calculent un vrai bilan via l'API Impact CO2 : `IMPACTCO2_TOKEN` doit être une vraie valeur, en local comme dans le secret GitHub.
+- Le serveur de test tourne sur le port 3100 (`npm run build` + `npm run start`), pour ne jamais entrer en conflit avec un `npm run dev` déjà lancé sur le port 3000 ni hériter de son `SESSION_SECRET`.
+
 ## [0.11.0] - 2026-09-22
 
 Pages légales (RGPD).

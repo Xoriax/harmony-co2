@@ -21,6 +21,8 @@ import {
   type Session,
 } from "@/lib/session";
 
+import { buildSessionCookie as buildE2ECookie, admin as e2eAdmin } from "../e2e/utils/session";
+
 const admin: Session = { id: "42", name: "Camille", avatar: "42/abc", admin: true };
 const member: Session = { id: "7", name: "Alex", avatar: null, admin: false };
 
@@ -153,5 +155,15 @@ describe("session : expiration", () => {
 
     vi.setSystemTime(new Date("2026-09-21T18:00:01Z"));
     expect(await getSession()).toBeNull();
+  });
+});
+
+describe("session : parité avec le cookie injecté par les tests E2E", () => {
+  // Les tests E2E (Playwright) ne peuvent pas importer src/lib/session.ts directement (il
+  // commence par `import "server-only"`) : ils reconstruisent le format du cookie eux-mêmes.
+  // Ce test garantit que cette reconstruction reste bit à bit identique à la vraie fonction.
+  it("un cookie construit par le helper E2E est accepté tel quel", async () => {
+    store.set(SESSION_COOKIE, buildE2ECookie(e2eAdmin, process.env.SESSION_SECRET!));
+    expect(await getSession()).toEqual(e2eAdmin);
   });
 });

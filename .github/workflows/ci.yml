@@ -64,3 +64,57 @@ jobs:
 
       - name: Poids du JavaScript
         run: npm run size
+
+  e2e:
+    name: Tests de bout en bout (Playwright)
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # `secrets` n'est pas utilisable dans un `if` de job : la vérification se fait plus bas, sur
+    # chaque étape (env.IMPACTCO2_TOKEN). Ce `if` évite seulement de lancer le job sur un fork.
+    if: github.repository == 'Xoriax/harmony-co2'
+
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      IMPACTCO2_TOKEN: ${{ secrets.IMPACTCO2_TOKEN }}
+      SITE_URL: http://localhost:3100
+      # Valeurs factices : les parcours testés (connexion, bilan, export) ne les utilisent pas ;
+      # elles évitent seulement une erreur au chargement des pages qui les lisent.
+      NEXT_PUBLIC_SUPABASE_URL: https://ci.invalid
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-publishable-key
+      SUPABASE_SECRET_KEY: ci-secret-key
+      DISCORD_CLIENT_ID: ci
+      DISCORD_CLIENT_SECRET: ci
+      DISCORD_GUILD_ID: ci
+      DISCORD_ADMIN_ROLE_ID: ci
+      DISCORD_BOT_TOKEN: ci
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Installer Chromium (Playwright)
+        # Sans le secret IMPACTCO2_TOKEN (absent sur les forks), on saute la suite plutôt que de
+        # bloquer la pull request : les tests de bilan et d'export ont besoin des vraies données
+        # d'Impact CO2. Les parcours testés ne touchent ni Discord ni Supabase.
+        if: env.IMPACTCO2_TOKEN != ''
+        run: npx playwright install --with-deps chromium
+
+      - name: Tests de bout en bout
+        if: env.IMPACTCO2_TOKEN != ''
+        run: npm run e2e
+
+      - name: Rapport Playwright (en cas d'échec)
+        if: failure() && env.IMPACTCO2_TOKEN != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

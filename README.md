@@ -63,17 +63,21 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, `20260921_require_event_end.sql`, puis `20260921_add_discord_event_id.sql`.
 3. `20260921_create_bilans.sql` : crée la table de l'historique des bilans.
 4. `20260922_create_mandat_members.sql` : crée la table des membres du mandat.
+5. `20260922_create_web_vitals.sql` : crée la table des mesures de performance (Web Vitals).
 
 ## Performance
 
 - **Cache Components** (Next 16) : les pages sont prérendues (coquille statique) et seules les parties liées à la session ou à l'heure exacte arrivent en streaming (pseudo dans la barre du haut, historique, backoffice, liste des événements).
 - **Données publiques en cache** : la liste des événements (étiquette `events`) et celle des membres du mandat (étiquette `mandat`) sont mises en cache 1 heure et rafraîchies aussitôt qu'on les modifie depuis le backoffice. Une modification faite directement dans Supabase n'apparaît qu'après l'expiration du cache.
 - **Exports** : jsPDF et ExcelJS ne sont chargés qu'à l'approche ou au clic d'un bouton d'export. `npm run size` le vérifie après chaque build.
+- **Web Vitals en production** : chaque page envoie ses métriques de chargement (LCP, CLS, INP…) à `/api/vitals`, qui les enregistre dans la table `web_vitals`, sans cookie ni identifiant de visiteur (voir `/confidentialite`). Rien n'est envoyé en développement.
 
 ## Qualité du code
 
-- **Tests** (`tests/`, Vitest) : calcul du bilan, conversion des heures de Paris (changements d'heure inclus), statut et compte à rebours d'un événement, éléments masqués des cartes du mandat, validation des formulaires du backoffice, session signée (falsification, expiration, secret manquant), synchronisation Discord, validation des images, téléchargement de l'historique et pages d'erreur. Ils tournent dans un fuseau horaire éloigné de Paris pour prouver qu'aucun calcul ne dépend de la machine.
-- **Intégration continue** (`.github/workflows/ci.yml`) : à chaque push et pull request, GitHub lance ESLint, TypeScript, Prettier, les tests, le build (avec de fausses clés) et `npm run size`.
+- **Tests unitaires** (`tests/`, Vitest) : calcul du bilan, conversion des heures de Paris (changements d'heure inclus), statut et compte à rebours d'un événement, éléments masqués des cartes du mandat, validation des formulaires du backoffice, session signée (falsification, expiration, secret manquant), synchronisation Discord, validation des images, téléchargement de l'historique, mesures Web Vitals et pages d'erreur. Ils tournent dans un fuseau horaire éloigné de Paris pour prouver qu'aucun calcul ne dépend de la machine.
+- **Tests de bout en bout** (`e2e/`, Playwright) : parcours de connexion (accès au backoffice selon le rôle, déconnexion), création d'un bilan et export PDF/Excel, dans un vrai navigateur. La connexion Discord elle-même n'est pas automatisable : ces tests injectent un cookie de session signé avec le même format que la vraie session (voir `e2e/utils/session.ts`, dont la parité avec `src/lib/session.ts` est vérifiée par un test unitaire). `npm run e2e` (ou `npm run e2e:ui` pour l'interface pas à pas) lance un vrai build sur le port 3100, avec le `.env` local ; `IMPACTCO2_TOKEN` doit être une vraie valeur, ces tests calculent un vrai bilan.
+- **Intégration continue** (`.github/workflows/ci.yml`) : à chaque push et pull request, GitHub lance ESLint, TypeScript, Prettier, les tests unitaires, le build (avec de fausses clés) et `npm run size` ; un second job lance les tests de bout en bout si le secret `IMPACTCO2_TOKEN` est configuré sur le dépôt (Settings > Secrets and variables > Actions), sinon il est ignoré sans faire échouer la vérification.
+- **Mise à jour des dépendances** : Dependabot (`.github/dependabot.yml`) ouvre chaque semaine une pull request par dépendance de production, et une seule groupant les dépendances de développement.
 - **Formatage** : Prettier (`.prettierrc.json`), `.editorconfig` et `.gitattributes` (fins de ligne LF partout, y compris sous Windows). Lancer `npm run format` avant de commiter.
 - **Erreurs** : pages « introuvable » (404), erreur d'une page (avec « Réessayer »), erreur grave (layout) et écrans de chargement. Le message technique d'une erreur n'est jamais affiché aux visiteurs. Si `SESSION_SECRET` manque, le site reste utilisable mais personne ne peut se connecter (un message est écrit dans les journaux).
 
