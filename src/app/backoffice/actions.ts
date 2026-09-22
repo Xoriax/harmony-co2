@@ -59,7 +59,11 @@ export async function createEvent(
   // Annonce dans le salon dédié, seulement à la création et seulement si l'événement est publié.
   if (row.published) {
     await postEventAnnouncement(
-      eventAnnouncementPayload(row, siteUrl(), process.env.DISCORD_EVENT_ANNOUNCE_ROLE_ID ?? null),
+      eventAnnouncementPayload(
+        { ...row, cover_url: coverUrl },
+        siteUrl(),
+        process.env.DISCORD_EVENT_ANNOUNCE_ROLE_ID ?? null,
+      ),
     );
   }
   updateTag("events");

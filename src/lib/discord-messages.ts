@@ -7,11 +7,21 @@ const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 const FOREST = 0x07504a;
 const GOLD = 0xe3aa3b;
 
+const clip = (text: string, max: number) =>
+  text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`;
+
 // Messages postés via les webhooks Discord (voir discord-notify.ts). Fonctions pures, testées
 // seules.
 
 export function eventAnnouncementPayload(
-  event: { title: string; location: string; starts_at: string },
+  event: {
+    title: string;
+    description: string;
+    location: string;
+    starts_at: string;
+    ends_at: string;
+    cover_url: string | null;
+  },
   siteUrl: string,
   roleId: string | null,
   now: Date = new Date(),
@@ -23,11 +33,18 @@ export function eventAnnouncementPayload(
     allowed_mentions: roleId ? { roles: [roleId] } : undefined,
     embeds: [
       {
-        title: `📅 ${event.title}`,
-        description: `🗓️ ${formatEventDate(event.starts_at)}\n📍 ${event.location || "Lieu à préciser"}`,
+        title: clip(`📅 ${event.title}`, 256),
+        // Limite Discord : 4096 caractères ; largement suffisant, on garde une marge généreuse.
+        description: event.description ? clip(event.description, 2000) : undefined,
         color: FOREST,
         url: `${siteUrl}/event`,
         timestamp: now.toISOString(),
+        fields: [
+          { name: "Début", value: formatEventDate(event.starts_at), inline: true },
+          { name: "Fin", value: formatEventDate(event.ends_at), inline: true },
+          { name: "Lieu", value: clip(event.location || "Lieu à préciser", 1024), inline: true },
+        ],
+        image: event.cover_url ? { url: event.cover_url } : undefined,
       },
     ],
   };

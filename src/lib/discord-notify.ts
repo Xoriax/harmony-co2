@@ -2,10 +2,12 @@ import "server-only";
 
 type DiscordEmbed = {
   title: string;
-  description: string;
+  description?: string;
   color: number;
   url?: string;
   timestamp?: string;
+  fields?: { name: string; value: string; inline?: boolean }[];
+  image?: { url: string };
 };
 
 export type WebhookPayload = {

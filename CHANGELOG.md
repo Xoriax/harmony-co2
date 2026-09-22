@@ -2,6 +2,13 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.15.1] - 2026-09-22
+
+Annonce d'événement plus complète.
+
+### Modifié
+- L'annonce Discord d'un nouvel événement inclut maintenant sa description, sa date de fin et son image de couverture (en plus du titre, de la date de début et du lieu déjà présents), sous forme de champs d'embed plutôt qu'une seule ligne de texte.
+
 ## [0.15.0] - 2026-09-22
 
 Annonces Discord : deux salons séparés, via des webhooks.

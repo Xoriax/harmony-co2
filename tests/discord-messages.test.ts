@@ -3,54 +3,87 @@ import { bilanAlertPayload, eventAnnouncementPayload } from "@/lib/discord-messa
 
 const now = new Date("2026-09-22T10:00:00Z");
 
+const event = {
+  title: "Collecte de vêtements",
+  description: "Une après-midi pour trier et donner des vêtements.",
+  location: "Local associatif",
+  starts_at: "2026-10-01T14:00",
+  ends_at: "2026-10-01T18:00",
+  cover_url: null as string | null,
+};
+
 describe("eventAnnouncementPayload", () => {
-  it("inclut le titre, la date, le lieu et le lien vers /event dans l'embed", () => {
+  it("inclut le titre, la description, les dates, le lieu et le lien vers /event", () => {
+    const payload = eventAnnouncementPayload(event, "https://harmony.example", null, now);
+    const [embed] = payload.embeds;
+
+    expect(embed.title).toContain("Collecte de vêtements");
+    expect(embed.description).toContain("Une après-midi pour trier et donner");
+    expect(embed.url).toBe("https://harmony.example/event");
+    expect(embed.fields).toEqual([
+      { name: "Début", value: expect.stringContaining("14:00"), inline: true },
+      { name: "Fin", value: expect.stringContaining("18:00"), inline: true },
+      { name: "Lieu", value: "Local associatif", inline: true },
+    ]);
+  });
+
+  it("inclut l'image de couverture quand il y en a une", () => {
     const payload = eventAnnouncementPayload(
-      {
-        title: "Collecte de vêtements",
-        location: "Local associatif",
-        starts_at: "2026-10-01T14:00",
-      },
+      { ...event, cover_url: "https://harmony.example/cover.jpg" },
       "https://harmony.example",
       null,
       now,
     );
-    const [embed] = payload.embeds;
-    expect(embed.title).toContain("Collecte de vêtements");
-    expect(embed.description).toContain("Local associatif");
-    expect(embed.url).toBe("https://harmony.example/event");
+    expect(payload.embeds[0].image).toEqual({ url: "https://harmony.example/cover.jpg" });
+  });
+
+  it("omet l'image quand il n'y en a pas", () => {
+    const payload = eventAnnouncementPayload(event, "https://harmony.example", null, now);
+    expect(payload.embeds[0].image).toBeUndefined();
+  });
+
+  it("omet la description quand elle est vide", () => {
+    const payload = eventAnnouncementPayload(
+      { ...event, description: "" },
+      "https://harmony.example",
+      null,
+      now,
+    );
+    expect(payload.embeds[0].description).toBeUndefined();
   });
 
   it("propose un lieu par défaut quand il est vide", () => {
     const payload = eventAnnouncementPayload(
-      { title: "Réunion", location: "", starts_at: "2026-10-01T14:00" },
+      { ...event, location: "" },
       "https://harmony.example",
       null,
       now,
     );
-    expect(payload.embeds[0].description).toContain("Lieu à préciser");
+    expect(payload.embeds[0].fields?.find((f) => f.name === "Lieu")?.value).toBe("Lieu à préciser");
   });
 
   it("sans rôle : aucune mention dans content", () => {
-    const payload = eventAnnouncementPayload(
-      { title: "Réunion", location: "Local", starts_at: "2026-10-01T14:00" },
-      "https://harmony.example",
-      null,
-      now,
-    );
+    const payload = eventAnnouncementPayload(event, "https://harmony.example", null, now);
     expect(payload.content).toBeUndefined();
     expect(payload.allowed_mentions).toBeUndefined();
   });
 
   it("avec un rôle : mention dans content et liste blanche explicite", () => {
-    const payload = eventAnnouncementPayload(
-      { title: "Réunion", location: "Local", starts_at: "2026-10-01T14:00" },
-      "https://harmony.example",
-      "999",
-      now,
-    );
+    const payload = eventAnnouncementPayload(event, "https://harmony.example", "999", now);
     expect(payload.content).toBe("<@&999>");
     expect(payload.allowed_mentions).toEqual({ roles: ["999"] });
+  });
+
+  it("tronque un titre ou une description trop longs", () => {
+    const long = "a".repeat(3000);
+    const payload = eventAnnouncementPayload(
+      { ...event, title: long, description: long },
+      "https://harmony.example",
+      null,
+      now,
+    );
+    expect(payload.embeds[0].title.length).toBeLessThanOrEqual(256);
+    expect(payload.embeds[0].description?.length).toBeLessThanOrEqual(2000);
   });
 });
 
