@@ -22,6 +22,7 @@ const ERRORS: Record<string, string> = {
   state: "La connexion a expiré, réessaie.",
   failed: "Discord n'a pas répondu correctement, réessaie dans un instant.",
   config: "La connexion Discord n'est pas configurée (variables d'environnement manquantes).",
+  rate_limit: "Trop de tentatives de connexion en peu de temps. Réessaie dans quelques minutes.",
 };
 
 async function ConnexionContent({ searchParams }: { searchParams: Promise<{ error?: string }> }) {

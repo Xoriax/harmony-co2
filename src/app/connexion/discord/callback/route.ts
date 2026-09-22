@@ -7,6 +7,7 @@ import {
   OAUTH_STATE_COOKIE,
   siteUrl,
 } from "@/lib/discord";
+import { clientIp, hitRateLimit } from "@/lib/rate-limit";
 import { buildSessionCookie } from "@/lib/session";
 
 function redirectTo(path: string) {
@@ -15,8 +16,21 @@ function redirectTo(path: string) {
   return response;
 }
 
+// Au-delà, quelqu'un essaie de forcer le callback (code/state invalides) : inutile de continuer
+// à solliciter l'API Discord.
+const CALLBACK_LIMIT = 15;
+const CALLBACK_WINDOW_SECONDS = 10 * 60;
+
 export async function GET(request: NextRequest) {
   if (!isDiscordConfigured()) return redirectTo("/connexion?error=config");
+
+  const { allowed } = await hitRateLimit(
+    "oauth-callback",
+    clientIp(request.headers),
+    CALLBACK_LIMIT,
+    CALLBACK_WINDOW_SECONDS,
+  );
+  if (!allowed) return redirectTo("/connexion?error=rate_limit");
 
   const params = request.nextUrl.searchParams;
   if (params.get("error")) return redirectTo("/connexion?error=denied");

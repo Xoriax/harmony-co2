@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { logAudit } from "@/lib/audit-log";
 import { buildBilan } from "@/lib/bilan-calc";
 import { buildComparison } from "@/lib/bilan-comparison";
@@ -7,6 +8,7 @@ import { listBilans, saveBilan } from "@/lib/bilans";
 import { bilanAlertPayload } from "@/lib/discord-messages";
 import { postBilanAlert } from "@/lib/discord-notify";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
+import { clientIp, hitRateLimit } from "@/lib/rate-limit";
 import { siteUrl } from "@/lib/seo";
 import { getSession } from "@/lib/session";
 import { getSettings } from "@/lib/settings";
@@ -14,7 +16,17 @@ import type { BilanInput, BilanResult } from "./types";
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 
+// Au-delà, l'API Impact CO2 est appelée en pure perte : mieux vaut refuser que la faire spammer.
+const BILAN_LIMIT = 20;
+const BILAN_WINDOW_SECONDS = 10 * 60;
+
 export async function computeBilan(input: BilanInput): Promise<BilanResult> {
+  const ip = clientIp(await headers());
+  const { allowed } = await hitRateLimit("bilan", ip, BILAN_LIMIT, BILAN_WINDOW_SECONDS);
+  if (!allowed) {
+    return { error: "Trop de calculs en peu de temps. Réessaie dans quelques minutes." };
+  }
+
   const result = await buildBilan(input, {
     categories: CATEGORIES,
     loadItems: (category) => getCategoryItems(CATEGORIES.find((c) => c.slug === category.slug)!),

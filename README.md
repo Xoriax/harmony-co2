@@ -67,7 +67,7 @@ Les informations de l'association (nom, adresse, e-mail, hébergeur, région de 
 
 ## Base de données (Supabase)
 
-Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`), les membres du mandat dans la table `mandat_members` (photos dans le bucket public `mandat-photos`), l'objectif et le seuil d'alerte dans la table `settings`, le journal d'audit dans la table `audit_log`. Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
+Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`), les membres du mandat dans la table `mandat_members` (photos dans le bucket public `mandat-photos`), l'objectif et le seuil d'alerte dans la table `settings`, le journal d'audit dans la table `audit_log`, la limitation de débit anti-abus dans la table `rate_limits`. Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
 
 1. `supabase/migrations/20260921_create_events.sql` : crée la table (version à jour, avec `cover_url` et `ends_at` obligatoire).
 2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, `20260921_require_event_end.sql`, puis `20260921_add_discord_event_id.sql`.
@@ -76,6 +76,7 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 5. `20260922_create_web_vitals.sql` : crée la table des mesures de performance (Web Vitals).
 6. `20260922_create_settings.sql` : crée la table des réglages (objectif de bilan, seuil d'alerte Discord).
 7. `20260922_create_audit_log.sql` : crée la table du journal d'audit (`/backoffice/journal`).
+8. `20260922_create_rate_limits.sql` : crée la table et la fonction de limitation de débit (calcul de bilan, connexion Discord).
 
 ## Performance
 

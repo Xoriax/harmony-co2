@@ -26,7 +26,12 @@ function sign(value: string) {
   return createHmac("sha256", secret).update(value).digest("hex");
 }
 
-// Cookie signé (HMAC) contenant la session et sa date d'expiration.
+// Cookie signé (HMAC-SHA256) contenant la session et sa date d'expiration — pas chiffré : id,
+// nom, avatar et statut admin sont lisibles en clair (base64) par quiconque inspecte le cookie.
+// La signature garantit seulement que le contenu n'a pas été modifié, pas qu'il reste secret.
+// Comme aucune de ces informations n'est sensible (tout vient du profil Discord public du
+// membre), ce n'est pas un problème aujourd'hui. Si un champ secret devait un jour y être ajouté,
+// il faudrait chiffrer le payload (par ex. AES-GCM avec SESSION_SECRET) au lieu de le signer.
 export function buildSessionCookie(session: Session) {
   const payload: Payload = {
     ...session,

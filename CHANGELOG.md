@@ -2,6 +2,18 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.17.0] - 2026-09-22
+
+Sécurité : limitation de débit et documentation du cookie de session.
+
+### Ajouté
+- Limitation de débit (anti-abus) sur le calcul de bilan (20 par IP / 10 min) et sur le callback de connexion Discord (15 par IP / 10 min), pour éviter qu'un abus ne spamme l'API Impact CO2 ou Supabase. Table `rate_limits` (migration `20260922_create_rate_limits.sql`, à exécuter dans Supabase).
+
+### Modifié
+- `src/lib/session.ts` : commentaire explicite sur le cookie de session — signé (HMAC) mais pas chiffré, donc lisible en clair (id, nom, avatar, statut admin ne sont pas des informations sensibles aujourd'hui).
+
+Vérifié : toutes les tables Supabase ont bien la RLS activée sans policy (accès serveur uniquement via la clé secrète), sauf `events` qui a volontairement une policy de lecture publique limitée aux événements publiés — c'est le comportement voulu, rien à changer.
+
 ## [0.16.1] - 2026-09-22
 
 Correction de formatage sur la page Journal.
