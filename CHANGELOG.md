@@ -2,6 +2,13 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.15.2] - 2026-09-22
+
+Correction de l'intégration continue.
+
+### Corrigé
+- `package-lock.json` régénéré : il n'était plus synchronisé avec `package.json` (dépendances optionnelles de `sharp` manquantes), ce qui faisait échouer `npm ci` sur toutes les CI, y compris les mises à jour automatiques de dépendances.
+
 ## [0.15.1] - 2026-09-22
 
 Annonce d'événement plus complète.
