@@ -2,6 +2,13 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.16.1] - 2026-09-22
+
+Correction de formatage sur la page Journal.
+
+### Corrigé
+- `src/app/backoffice/journal/page.tsx` ne respectait pas le style Prettier (CI en échec sur le job « Prettier »).
+
 ## [0.16.0] - 2026-09-22
 
 Journal d'audit du backoffice.

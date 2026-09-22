@@ -56,8 +56,8 @@ async function BackofficeJournalContent() {
               Journal
             </h1>
             <p className="max-w-[56ch] text-lg text-ink/80">
-              Les 200 dernières actions : connexions, déconnexions, bilans calculés, et
-              création / modification / suppression des événements et du mandat.
+              Les 200 dernières actions : connexions, déconnexions, bilans calculés, et création /
+              modification / suppression des événements et du mandat.
             </p>
             <BackofficeTabs active="journal" />
           </div>
@@ -83,9 +83,7 @@ async function BackofficeJournalContent() {
                   />
                   <span className="font-semibold text-night">{auditActionLabel(entry.action)}</span>
                   <span className="text-ink/70">{entry.userName}</span>
-                  {entry.targetLabel && (
-                    <span className="text-ink/60">— {entry.targetLabel}</span>
-                  )}
+                  {entry.targetLabel && <span className="text-ink/60">— {entry.targetLabel}</span>}
                   <span className="ml-auto shrink-0 text-sm tabular-nums text-ink/50">
                     {formatEntryDate(entry.createdAt)}
                   </span>
