@@ -1,5 +1,6 @@
 "use server";
 
+import { logAudit } from "@/lib/audit-log";
 import { buildBilan } from "@/lib/bilan-calc";
 import { buildComparison } from "@/lib/bilan-comparison";
 import { listBilans, saveBilan } from "@/lib/bilans";
@@ -10,6 +11,8 @@ import { siteUrl } from "@/lib/seo";
 import { getSession } from "@/lib/session";
 import { getSettings } from "@/lib/settings";
 import type { BilanInput, BilanResult } from "./types";
+
+const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 
 export async function computeBilan(input: BilanInput): Promise<BilanResult> {
   const result = await buildBilan(input, {
@@ -33,9 +36,11 @@ export async function computeBilan(input: BilanInput): Promise<BilanResult> {
       ) ?? undefined;
 
     // Connecté : le PDF et l'Excel sont générés et enregistrés automatiquement dans l'historique.
-    result.history = (await saveBilan({ id: session.id, name: session.name }, result))
-      ? "saved"
-      : "failed";
+    const saved = await saveBilan({ id: session.id, name: session.name }, result);
+    result.history = saved ? "saved" : "failed";
+    if (saved) {
+      await logAudit("bilan_create", session, `${nf.format(result.total)} kgCO2e`);
+    }
 
     if (settings.alertThreshold !== null && result.total >= settings.alertThreshold) {
       await postBilanAlert(

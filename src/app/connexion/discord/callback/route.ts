@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { logAudit } from "@/lib/audit-log";
 import {
   exchangeCode,
   fetchGuildMember,
@@ -43,5 +44,6 @@ export async function GET(request: NextRequest) {
     admin,
   });
   response.cookies.set(name, value, options);
+  await logAudit("login", { id: member.id, name: member.name });
   return response;
 }

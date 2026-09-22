@@ -2,6 +2,14 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.16.0] - 2026-09-22
+
+Journal d'audit du backoffice.
+
+### Ajouté
+- Nouvel onglet `/backoffice/journal` : les 200 dernières actions du site, avec qui et quand — connexions, déconnexions, bilans calculés, et création/modification/suppression des événements et des membres du mandat.
+- Table `audit_log` (migration `20260922_create_audit_log.sql`, à exécuter dans Supabase).
+
 ## [0.15.4] - 2026-09-22
 
 Vrai correctif de l'intégration continue (le fix de la v0.15.2 était incomplet).

@@ -3,6 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
+import { logAudit } from "@/lib/audit-log";
 import { PHOTO_BUCKET, removeCover, uploadCover } from "@/lib/covers";
 import { parseMemberForm } from "@/lib/member-form";
 import { MISSING_MANDAT_TABLE } from "@/lib/mandat";
@@ -27,7 +28,7 @@ export async function createMember(
   _prev: MemberFormState,
   formData: FormData,
 ): Promise<MemberFormState> {
-  await requireAdmin();
+  const session = await requireAdmin();
   const { values, row, position, photo, error } = parseMemberForm(formData);
   if (error) return { error, values };
 
@@ -60,6 +61,7 @@ export async function createMember(
     await removeCover(photoUrl, PHOTO_BUCKET);
     return { error: dbError(dbErr.code), values };
   }
+  await logAudit("mandat_create", session, row.name);
   done();
   return null;
 }
@@ -69,7 +71,7 @@ export async function updateMember(
   _prev: MemberFormState,
   formData: FormData,
 ): Promise<MemberFormState> {
-  await requireAdmin();
+  const session = await requireAdmin();
   const { values, row, position, photo, removePhoto, error } = parseMemberForm(formData);
   if (error) return { error, values };
 
@@ -104,24 +106,28 @@ export async function updateMember(
     return { error: dbError(dbErr.code), values };
   }
   if ("photo_url" in photoChange) await removeCover(oldUrl, PHOTO_BUCKET);
+  await logAudit("mandat_update", session, row.name);
 
   done();
   return null;
 }
 
 export async function deleteMember(formData: FormData) {
-  await requireAdmin();
+  const session = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 
   const db = supabaseAdmin();
   const { data: current } = await db
     .from("mandat_members")
-    .select("photo_url")
+    .select("name,photo_url")
     .eq("id", id)
     .maybeSingle();
   const { error } = await db.from("mandat_members").delete().eq("id", id);
-  if (!error) await removeCover(current?.photo_url as string | null | undefined, PHOTO_BUCKET);
+  if (!error) {
+    await removeCover(current?.photo_url as string | null | undefined, PHOTO_BUCKET);
+    await logAudit("mandat_delete", session, (current?.name as string | undefined) ?? null);
+  }
 
   updateTag("mandat");
   revalidatePath("/backoffice/mandat");

@@ -2,6 +2,8 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/admin";
+import { logAudit } from "@/lib/audit-log";
 import { removeCover, uploadCover } from "@/lib/covers";
 import { deleteDiscordEvent } from "@/lib/discord-events";
 import { eventAnnouncementPayload } from "@/lib/discord-messages";
@@ -10,19 +12,12 @@ import { discordIdOf, syncEventToDiscord } from "@/lib/discord-sync";
 import { parseEventForm } from "@/lib/event-form";
 import { MISSING_COLUMN, MISSING_TABLE } from "@/lib/events";
 import { siteUrl } from "@/lib/seo";
-import { getSession } from "@/lib/session";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export type EventFormState = {
   error?: string;
   values?: Record<string, string>;
 } | null;
-
-async function requireSession() {
-  const session = await getSession();
-  if (!session) redirect("/connexion");
-  if (!session.admin) redirect("/");
-}
 
 function dbError(code?: string) {
   if (code === "PGRST205") return MISSING_TABLE;
@@ -34,7 +29,7 @@ export async function createEvent(
   _prev: EventFormState,
   formData: FormData,
 ): Promise<EventFormState> {
-  await requireSession();
+  const session = await requireAdmin();
   const { values, row, cover, error } = parseEventForm(formData);
   if (error) return { error, values };
 
@@ -54,6 +49,7 @@ export async function createEvent(
     await removeCover(coverUrl);
     return { error: dbError(dbErr?.code), values };
   }
+  await logAudit("event_create", session, row.title);
 
   const notice = await syncEventToDiscord(created.id);
   // Annonce dans le salon dédié, seulement à la création et seulement si l'événement est publié.
@@ -76,7 +72,7 @@ export async function updateEvent(
   _prev: EventFormState,
   formData: FormData,
 ): Promise<EventFormState> {
-  await requireSession();
+  const session = await requireAdmin();
   const { values, row, cover, removeCoverRequested, error } = parseEventForm(formData);
   if (error) return { error, values };
 
@@ -102,6 +98,7 @@ export async function updateEvent(
     return { error: dbError(dbErr.code), values };
   }
   if ("cover_url" in coverChange) await removeCover(oldUrl);
+  await logAudit("event_update", session, row.title);
 
   const notice = await syncEventToDiscord(id);
   updateTag("events");
@@ -110,17 +107,22 @@ export async function updateEvent(
 }
 
 export async function deleteEvent(formData: FormData) {
-  await requireSession();
+  const session = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 
   const db = supabaseAdmin();
-  const { data: current } = await db.from("events").select("cover_url").eq("id", id).maybeSingle();
+  const { data: current } = await db
+    .from("events")
+    .select("title,cover_url")
+    .eq("id", id)
+    .maybeSingle();
   const discordId = await discordIdOf(id);
   const { error } = await db.from("events").delete().eq("id", id);
   if (!error) {
     await removeCover(current?.cover_url as string | null | undefined);
     if (discordId) await deleteDiscordEvent(discordId);
+    await logAudit("event_delete", session, (current?.title as string | undefined) ?? null);
   }
   updateTag("events");
   revalidatePath("/backoffice");
