@@ -2,6 +2,19 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.15.0] - 2026-09-22
+
+Annonces Discord : deux salons séparés, via des webhooks.
+
+### Modifié
+- Les annonces passent désormais par des **webhooks Discord** (un par salon) plutôt que par le bot : plus besoin de lui donner la permission « Envoyer des messages », un webhook se crée directement dans les réglages du salon.
+- **Deux salons distincts** : les nouveaux événements publiés vont dans le salon public d'annonces (`DISCORD_EVENTS_WEBHOOK_URL`) ; les bilans au-dessus du seuil d'alerte vont dans un salon réservé aux administrateurs (`DISCORD_BILAN_ALERT_WEBHOOK_URL`).
+- L'annonce d'un nouvel événement peut mentionner un rôle (`DISCORD_EVENT_ANNOUNCE_ROLE_ID`, facultatif) ; l'alerte de bilan n'en mentionne pas (le salon est déjà réservé aux admins).
+- Les deux messages sont désormais des embeds Discord (couleurs de la charte, lien cliquable, horodatage) plutôt que du texte brut.
+
+### Supprimé
+- La variable `DISCORD_ANNOUNCE_CHANNEL_ID` (un seul salon, via le bot) : remplacée par les deux webhooks ci-dessus.
+
 ## [0.14.0] - 2026-09-22
 
 Comparaison de bilan, export .ics et CSV, annonces Discord, recherche, statistiques.

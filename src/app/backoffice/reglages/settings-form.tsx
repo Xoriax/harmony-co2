@@ -53,9 +53,9 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
         />
       </label>
       <p className="text-sm text-ink/65">
-        Un bilan dont le total dépasse ce seuil déclenche une annonce dans le salon Discord
-        configuré (<code className="rounded bg-cream-soft px-1.5">DISCORD_ANNOUNCE_CHANNEL_ID</code>
-        ).
+        Un bilan dont le total dépasse ce seuil déclenche une alerte dans le salon Discord réservé
+        aux administrateurs (webhook{" "}
+        <code className="rounded bg-cream-soft px-1.5">DISCORD_BILAN_ALERT_WEBHOOK_URL</code>).
       </p>
 
       {state?.error && (

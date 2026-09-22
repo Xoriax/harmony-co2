@@ -4,8 +4,8 @@ import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { removeCover, uploadCover } from "@/lib/covers";
 import { deleteDiscordEvent } from "@/lib/discord-events";
-import { eventAnnouncement } from "@/lib/discord-messages";
-import { postAnnouncement } from "@/lib/discord-notify";
+import { eventAnnouncementPayload } from "@/lib/discord-messages";
+import { postEventAnnouncement } from "@/lib/discord-notify";
 import { discordIdOf, syncEventToDiscord } from "@/lib/discord-sync";
 import { parseEventForm } from "@/lib/event-form";
 import { MISSING_COLUMN, MISSING_TABLE } from "@/lib/events";
@@ -58,7 +58,9 @@ export async function createEvent(
   const notice = await syncEventToDiscord(created.id);
   // Annonce dans le salon dédié, seulement à la création et seulement si l'événement est publié.
   if (row.published) {
-    await postAnnouncement(eventAnnouncement(row, siteUrl()));
+    await postEventAnnouncement(
+      eventAnnouncementPayload(row, siteUrl(), process.env.DISCORD_EVENT_ANNOUNCE_ROLE_ID ?? null),
+    );
   }
   updateTag("events");
   revalidatePath("/backoffice");

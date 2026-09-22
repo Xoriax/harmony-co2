@@ -35,7 +35,9 @@ jobs:
       DISCORD_GUILD_ID: ci
       DISCORD_ADMIN_ROLE_ID: ci
       DISCORD_BOT_TOKEN: ci
-      DISCORD_ANNOUNCE_CHANNEL_ID: ci
+      DISCORD_EVENTS_WEBHOOK_URL: https://discord.com/api/webhooks/ci/ci
+      DISCORD_EVENT_ANNOUNCE_ROLE_ID: ci
+      DISCORD_BILAN_ALERT_WEBHOOK_URL: https://discord.com/api/webhooks/ci/ci
 
     steps:
       - uses: actions/checkout@v7
@@ -89,7 +91,9 @@ jobs:
       DISCORD_GUILD_ID: ci
       DISCORD_ADMIN_ROLE_ID: ci
       DISCORD_BOT_TOKEN: ci
-      DISCORD_ANNOUNCE_CHANNEL_ID: ci
+      DISCORD_EVENTS_WEBHOOK_URL: https://discord.com/api/webhooks/ci/ci
+      DISCORD_EVENT_ANNOUNCE_ROLE_ID: ci
+      DISCORD_BILAN_ALERT_WEBHOOK_URL: https://discord.com/api/webhooks/ci/ci
 
     steps:
       - uses: actions/checkout@v7

@@ -1,35 +1,57 @@
 import "server-only";
 
-const API = "https://discord.com/api/v10";
+type DiscordEmbed = {
+  title: string;
+  description: string;
+  color: number;
+  url?: string;
+  timestamp?: string;
+};
 
-export function isAnnounceConfigured() {
-  return Boolean(process.env.DISCORD_BOT_TOKEN && process.env.DISCORD_ANNOUNCE_CHANNEL_ID);
+export type WebhookPayload = {
+  content?: string;
+  embeds: DiscordEmbed[];
+  // Liste blanche explicite des mentions à activer : plus sûr qu'un simple `<@&id>` dans le
+  // texte, qui ne notifierait personne sans ça.
+  allowed_mentions?: { roles?: string[] };
+};
+
+// Deux salons, deux webhooks : les événements sont publics (salon annonces), les alertes de
+// bilan réservées aux administrateurs (salon log-bilan, visible uniquement par leur rôle). Un
+// webhook Discord se crée dans Réglages du salon > Intégrations > Webhooks, sans toucher aux
+// permissions du bot.
+export function isEventsWebhookConfigured() {
+  return Boolean(process.env.DISCORD_EVENTS_WEBHOOK_URL);
+}
+export function isBilanAlertWebhookConfigured() {
+  return Boolean(process.env.DISCORD_BILAN_ALERT_WEBHOOK_URL);
 }
 
-// Poste un message dans le salon d'annonces Discord. Le bot doit y avoir la permission
-// « Envoyer des messages » (en plus de « Gérer les événements », déjà nécessaire pour synchroniser
-// les événements programmés) : sans elle, Discord répond 403 et l'appel échoue silencieusement
-// (l'anomalie est journalisée, jamais montrée au visiteur).
-export async function postAnnouncement(content: string): Promise<boolean> {
-  if (!isAnnounceConfigured()) return false;
+async function postWebhook(url: string | undefined, payload: WebhookPayload): Promise<boolean> {
+  if (!url) return false;
 
   try {
-    const res = await fetch(`${API}/channels/${process.env.DISCORD_ANNOUNCE_CHANNEL_ID}/messages`, {
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
       cache: "no-store",
     });
     if (!res.ok) {
-      console.error(`[discord] annonce refusée (${res.status})`);
+      console.error(`[discord] webhook refusé (${res.status})`);
       return false;
     }
     return true;
   } catch (error) {
-    console.error("[discord] annonce impossible", error instanceof Error ? error.message : error);
+    console.error("[discord] webhook impossible", error instanceof Error ? error.message : error);
     return false;
   }
+}
+
+export function postEventAnnouncement(payload: WebhookPayload) {
+  return postWebhook(process.env.DISCORD_EVENTS_WEBHOOK_URL, payload);
+}
+
+export function postBilanAlert(payload: WebhookPayload) {
+  return postWebhook(process.env.DISCORD_BILAN_ALERT_WEBHOOK_URL, payload);
 }

@@ -3,8 +3,8 @@
 import { buildBilan } from "@/lib/bilan-calc";
 import { buildComparison } from "@/lib/bilan-comparison";
 import { listBilans, saveBilan } from "@/lib/bilans";
-import { bilanAlertAnnouncement } from "@/lib/discord-messages";
-import { postAnnouncement } from "@/lib/discord-notify";
+import { bilanAlertPayload } from "@/lib/discord-messages";
+import { postBilanAlert } from "@/lib/discord-notify";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
 import { siteUrl } from "@/lib/seo";
 import { getSession } from "@/lib/session";
@@ -38,8 +38,8 @@ export async function computeBilan(input: BilanInput): Promise<BilanResult> {
       : "failed";
 
     if (settings.alertThreshold !== null && result.total >= settings.alertThreshold) {
-      await postAnnouncement(
-        bilanAlertAnnouncement(
+      await postBilanAlert(
+        bilanAlertPayload(
           { userName: session.name, total: result.total },
           settings.alertThreshold,
           siteUrl(),

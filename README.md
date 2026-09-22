@@ -34,10 +34,16 @@ L'application tourne sur http://localhost:3000.
 | `DISCORD_GUILD_ID` | Identifiant du serveur Discord dont il faut être membre |
 | `DISCORD_ADMIN_ROLE_ID` | Identifiant du rôle qui donne accès au backoffice |
 | `DISCORD_BOT_TOKEN` | Jeton du bot Discord (permissions « Créer des événements » et « Gérer les événements ») : crée, met à jour et supprime les événements programmés du serveur |
-| `DISCORD_ANNOUNCE_CHANNEL_ID` | Salon où le bot poste ses annonces (nouvel événement publié, bilan au-dessus du seuil d'alerte). Il y faut en plus la permission « Envoyer des messages » |
+| `DISCORD_EVENTS_WEBHOOK_URL` | Webhook du salon public d'annonces : un message à la création de chaque événement publié |
+| `DISCORD_EVENT_ANNOUNCE_ROLE_ID` | Rôle mentionné dans l'annonce d'un nouvel événement (facultatif) |
+| `DISCORD_BILAN_ALERT_WEBHOOK_URL` | Webhook du salon réservé aux administrateurs : un message quand un bilan dépasse le seuil d'alerte (réglable dans `/backoffice/reglages`) |
 | `SESSION_SECRET` | Secret de signature du cookie de session (chaîne aléatoire d'au moins 32 octets) |
 
 Le fichier `.env` est ignoré par git.
+
+Les annonces (nouvel événement, bilan important) passent par des **webhooks Discord**, pas par le
+bot : un webhook se crée dans le salon visé (Réglages du salon > Intégrations > Webhooks) sans
+toucher aux permissions du bot, qui ne gère que les événements programmés (`DISCORD_BOT_TOKEN`).
 
 ## Pages
 
