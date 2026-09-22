@@ -2,6 +2,13 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.15.4] - 2026-09-22
+
+Vrai correctif de l'intégration continue (le fix de la v0.15.2 était incomplet).
+
+### Corrigé
+- `npm ci` échouait encore : la dépendance optionnelle `@img/sharp-wasm32` (via Next.js) demande `@emnapi/runtime`/`@emnapi/core` en `^1.11.3`, mais `npm install` ne les ajoutait au fichier de lock qu'en version 1.10.0 (bug connu de résolution npm pour les dépendances optionnelles multiplateformes). Épinglé ces deux paquets en `1.11.3` via `overrides` dans `package.json`, ce qui force un fichier de lock cohérent.
+
 ## [0.15.3] - 2026-09-22
 
 Mise à jour des dépendances.
