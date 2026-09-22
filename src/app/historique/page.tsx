@@ -9,8 +9,7 @@ import { GlobeScene } from "../globe-scene";
 import { LeafPage } from "../leaf-page";
 import { SiteHeader } from "../site-header";
 import { PageFallback } from "../page-fallback";
-import TiltCard from "../tilt-card";
-import DeleteBilanButton from "./delete-bilan-button";
+import HistoriqueList from "./historique-list";
 
 export const metadata: Metadata = pageMetadata({
   title: "Mon historique",
@@ -19,23 +18,6 @@ export const metadata: Metadata = pageMetadata({
   path: "/historique",
   noIndex: true,
 });
-
-const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
-
-const TONES = ["bg-leaf", "bg-sky", "bg-gold", "bg-emerald", "bg-blue", "bg-night", "bg-forest"];
-
-const dateFormat = new Intl.DateTimeFormat("fr-FR", {
-  timeZone: "Europe/Paris",
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-const linkClass =
-  "flex h-10 items-center rounded-full border-2 border-night/80 px-5 text-sm font-semibold text-night transition-colors hover:bg-night hover:text-cream";
 
 const NOTICES: Record<string, string> = {
   missing: "Ce fichier n'existe plus, ou il ne fait pas partie de tes bilans.",
@@ -69,8 +51,8 @@ async function HistoriqueContent({ searchParams }: { searchParams: Promise<{ not
                 </span>
               </h1>
               <p className="max-w-[52ch] text-lg leading-relaxed text-ink/80">
-                Chaque bilan généré quand tu es connecté est enregistré ici, avec son PDF et son
-                fichier Excel.
+                Chaque bilan généré quand tu es connecté est enregistré ici, avec son PDF, son
+                fichier Excel et un export CSV.
               </p>
             </div>
             <div className="hidden w-full max-w-[260px] justify-self-center md:block">
@@ -109,53 +91,7 @@ async function HistoriqueContent({ searchParams }: { searchParams: Promise<{ not
             </div>
           )}
 
-          <ul className="flex flex-col gap-5">
-            {bilans.map((b, index) => (
-              <li
-                key={b.id}
-                className="rise"
-                style={{ animationDelay: `${Math.min(index, 8) * 80}ms` }}
-              >
-                <TiltCard
-                  strength={0.35}
-                  className="grid gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-6 md:grid-cols-[auto_1fr_auto] md:items-center"
-                >
-                  <div className="depth-1 flex flex-col">
-                    <span className="font-display text-4xl font-extrabold tabular-nums text-night">
-                      {nf.format(b.total)}
-                    </span>
-                    <span className="text-sm font-semibold text-forest">kgCO2e</span>
-                  </div>
-                  <div className="depth-2 flex min-w-0 flex-col gap-3">
-                    <p className="text-sm font-medium capitalize text-ink/75">
-                      {dateFormat.format(new Date(b.created_at))}
-                    </p>
-                    <ul className="flex flex-wrap gap-2">
-                      {b.categories.map((c, i) => (
-                        <li
-                          key={c.name}
-                          className="flex items-center gap-2 rounded-full bg-cream px-3 py-1 text-xs font-semibold"
-                        >
-                          <span className={`h-2.5 w-2.5 rounded-full ${TONES[i % TONES.length]}`} />
-                          {c.name} · {nf.format(c.subtotal)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="depth-2 flex flex-wrap gap-3">
-                    {/* Liens classiques : la route redirige vers une URL de téléchargement signée. */}
-                    <a href={`/historique/fichier/${b.id}?format=pdf`} className={linkClass}>
-                      PDF
-                    </a>
-                    <a href={`/historique/fichier/${b.id}?format=xlsx`} className={linkClass}>
-                      Excel
-                    </a>
-                    <DeleteBilanButton id={b.id} />
-                  </div>
-                </TiltCard>
-              </li>
-            ))}
-          </ul>
+          {!error && bilans.length > 0 && <HistoriqueList bilans={bilans} />}
         </div>
       </LeafPage>
     </>

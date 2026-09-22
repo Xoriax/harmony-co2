@@ -2,6 +2,23 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.14.0] - 2026-09-22
+
+Comparaison de bilan, export .ics et CSV, annonces Discord, recherche, statistiques.
+
+### Ajouté
+- **Comparaison d'un bilan** à la moyenne des bilans précédents de l'utilisateur et/ou à un objectif défini dans le backoffice, affichée sur `/bilan`.
+- **Export `.ics`** des événements : bouton « + Agenda » sur chaque carte et lien d'abonnement à tous les événements (`/event/calendar.ics`).
+- **Annonces Discord automatiques** dans un salon dédié : à la création d'un événement publié, et pour un bilan dont le total dépasse un seuil configurable. Nécessite la permission « Envoyer des messages » pour le bot, en plus de « Gérer les événements » déjà utilisée (voir les Notes).
+- **Recherche et filtres** : par titre et par lieu sur `/event` (avec un filtre de statut), par date et par catégorie sur `/historique`.
+- **Export CSV** du bilan, en plus du PDF et de l'Excel : détail ligne à ligne sur `/bilan`, sous-totaux par catégorie sur `/historique` (généré à la volée, sans stockage).
+- **Statistiques du backoffice** (`/backoffice/statistiques`) : nombre de bilans, total cumulé, moyenne par bilan et catégories les plus utilisées, tous utilisateurs confondus.
+- **Réglages du backoffice** (`/backoffice/reglages`) : objectif de bilan carbone (libellé + valeur) et seuil d'alerte Discord, stockés dans une nouvelle table `settings`.
+
+### Notes
+- Le bot Discord n'avait jusqu'ici que les permissions de création et de gestion des événements programmés : il faut lui ajouter « Envoyer des messages » sur le salon d'annonces (variable `DISCORD_ANNOUNCE_CHANNEL_ID`) pour que les annonces fonctionnent. Sans cette permission, l'appel échoue silencieusement (journalisé côté serveur, jamais montré au visiteur).
+- L'export CSV de l'historique n'a que les sous-totaux par catégorie (ce qui est enregistré à la génération du bilan), pas le détail ligne à ligne : celui-ci n'est disponible que sur `/bilan`, au moment du calcul.
+
 ## [0.13.0] - 2026-09-22
 
 SEO et découvrabilité.

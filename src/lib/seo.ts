@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
+import { siteUrl } from "./discord";
 
 export const SITE_NAME = "Harmony CO2";
-
-// Même valeur que SITE_URL utilisée pour Discord (src/lib/discord.ts) : l'URL publique du site,
-// sans "/" final.
-export function siteUrl() {
-  return (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
-}
+export { siteUrl };
 
 // Métadonnées communes à une page : titre, description, URL canonique, Open Graph et Twitter Card.
 // L'image (og:image) vient toujours du fichier opengraph-image.tsx du segment (ou de celui d'un

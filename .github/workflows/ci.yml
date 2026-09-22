@@ -35,6 +35,7 @@ jobs:
       DISCORD_GUILD_ID: ci
       DISCORD_ADMIN_ROLE_ID: ci
       DISCORD_BOT_TOKEN: ci
+      DISCORD_ANNOUNCE_CHANNEL_ID: ci
 
     steps:
       - uses: actions/checkout@v7
@@ -88,6 +89,7 @@ jobs:
       DISCORD_GUILD_ID: ci
       DISCORD_ADMIN_ROLE_ID: ci
       DISCORD_BOT_TOKEN: ci
+      DISCORD_ANNOUNCE_CHANNEL_ID: ci
 
     steps:
       - uses: actions/checkout@v7

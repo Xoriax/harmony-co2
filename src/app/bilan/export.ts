@@ -1,3 +1,4 @@
+import { bilanLinesToCsv } from "@/lib/csv";
 import type { BilanResult } from "./types";
 
 type Result = Extract<BilanResult, { total: number }>;
@@ -429,4 +430,23 @@ export async function exportPdf(result: Result) {
 
 export async function exportExcel(result: Result) {
   download(new Blob([await buildExcel(result)], { type: XLSX_TYPE }), fileName("xlsx"));
+}
+
+// Aucune librairie lourde nécessaire : le CSV est construit directement, contrairement au PDF et
+// à l'Excel dont les modules ne sont chargés qu'à l'usage.
+export function exportCsv(result: Result) {
+  const lines = result.categories.flatMap((category) =>
+    category.lines.map((line) => ({
+      categorie: category.name,
+      element: line.name,
+      quantite: line.quantity,
+      unite: line.unit,
+      facteur: line.factor,
+      emissions: line.emissions,
+    })),
+  );
+  download(
+    new Blob([bilanLinesToCsv(lines, result.total)], { type: "text/csv;charset=utf-8" }),
+    fileName("csv"),
+  );
 }

@@ -4,9 +4,12 @@ import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { removeCover, uploadCover } from "@/lib/covers";
 import { deleteDiscordEvent } from "@/lib/discord-events";
+import { eventAnnouncement } from "@/lib/discord-messages";
+import { postAnnouncement } from "@/lib/discord-notify";
 import { discordIdOf, syncEventToDiscord } from "@/lib/discord-sync";
 import { parseEventForm } from "@/lib/event-form";
 import { MISSING_COLUMN, MISSING_TABLE } from "@/lib/events";
+import { siteUrl } from "@/lib/seo";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -53,6 +56,10 @@ export async function createEvent(
   }
 
   const notice = await syncEventToDiscord(created.id);
+  // Annonce dans le salon dédié, seulement à la création et seulement si l'événement est publié.
+  if (row.published) {
+    await postAnnouncement(eventAnnouncement(row, siteUrl()));
+  }
   updateTag("events");
   revalidatePath("/backoffice");
   redirect(notice === "none" ? "/backoffice" : `/backoffice?notice=${notice}`);

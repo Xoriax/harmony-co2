@@ -3,6 +3,8 @@ import Link from "next/link";
 const TABS = [
   { href: "/backoffice", key: "events", label: "Événements" },
   { href: "/backoffice/mandat", key: "mandat", label: "Mandat" },
+  { href: "/backoffice/statistiques", key: "statistiques", label: "Statistiques" },
+  { href: "/backoffice/reglages", key: "reglages", label: "Réglages" },
 ] as const;
 
 export function BackofficeTabs({ active }: { active: (typeof TABS)[number]["key"] }) {

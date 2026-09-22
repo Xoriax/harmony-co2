@@ -86,6 +86,13 @@ export function remainingMs(event: EventRow, now: string) {
   return Date.parse(`${eventEnd(event)}Z`) - Date.parse(`${full(now)}Z`);
 }
 
+// Recherche libre sur le titre et le lieu (page Event). Fonction pure, testée seule.
+export function matchesEventSearch(event: EventRow, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return event.title.toLowerCase().includes(q) || event.location.toLowerCase().includes(q);
+}
+
 export function formatCountdown(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(total / 86400);

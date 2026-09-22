@@ -6,6 +6,7 @@ import {
   formatCountdown,
   formatShortDate,
   formatTime,
+  matchesEventSearch,
   nowParis,
   nowParisFull,
   remainingMs,
@@ -127,5 +128,23 @@ describe("formats d'affichage", () => {
   it("prépare la valeur d'un champ datetime-local", () => {
     expect(toInputValue("2026-09-21T18:00:00")).toBe("2026-09-21T18:00");
     expect(toInputValue(null)).toBe("");
+  });
+});
+
+describe("matchesEventSearch", () => {
+  const workshop: EventRow = { ...multiDay, title: "Atelier compost", location: "Jardin partagé" };
+
+  it("accepte tout sans recherche", () => {
+    expect(matchesEventSearch(workshop, "")).toBe(true);
+    expect(matchesEventSearch(workshop, "   ")).toBe(true);
+  });
+
+  it("cherche dans le titre, insensible à la casse", () => {
+    expect(matchesEventSearch(workshop, "COMPOST")).toBe(true);
+    expect(matchesEventSearch(workshop, "conférence")).toBe(false);
+  });
+
+  it("cherche aussi dans le lieu", () => {
+    expect(matchesEventSearch(workshop, "jardin")).toBe(true);
   });
 });

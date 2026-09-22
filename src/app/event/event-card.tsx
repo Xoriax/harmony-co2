@@ -128,9 +128,20 @@ export default function EventCard({
                     </p>
                   </div>
                 )}
-                <p className="mt-auto text-xs font-semibold text-blue">
-                  Cliquer pour lire la description
-                </p>
+                <div className="mt-auto flex items-center justify-between gap-2">
+                  <p className="text-xs font-semibold text-blue">
+                    Cliquer pour lire la description
+                  </p>
+                  {status !== "ended" && (
+                    <a
+                      href={`/event/calendar.ics?id=${event.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="shrink-0 rounded-full border border-ink/20 px-3 py-1 text-xs font-semibold text-ink/75 transition-colors hover:border-forest hover:text-forest"
+                    >
+                      + Agenda
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
 

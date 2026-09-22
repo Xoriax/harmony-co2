@@ -28,6 +28,41 @@ const buttonClass =
   "h-10 rounded-full border-2 border-night/80 px-4 text-sm font-semibold text-night transition-colors hover:bg-night hover:text-cream disabled:opacity-50";
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
+const pctFormat = new Intl.NumberFormat("fr-FR", {
+  maximumFractionDigits: 1,
+  signDisplay: "always",
+});
+
+// Un écart négatif ou nul (moins d'émissions) est en vert ; un écart positif est en doré.
+function ComparisonCard({
+  label,
+  reference,
+  deltaPct,
+}: {
+  label: string;
+  reference: number;
+  deltaPct: number | null;
+}) {
+  const better = deltaPct !== null && deltaPct <= 0;
+  return (
+    <div className="flex flex-col gap-1.5 rounded-2xl bg-cream p-5">
+      <span className="text-sm font-semibold text-ink/70">{label}</span>
+      <span className="font-display text-3xl font-extrabold tabular-nums text-night">
+        {nf.format(reference)}
+        <span className="ml-1 text-base font-semibold text-ink/60">kgCO2e</span>
+      </span>
+      {deltaPct !== null && (
+        <span
+          className={`w-fit rounded-full px-3 py-1 text-sm font-bold tabular-nums ${
+            better ? "bg-emerald/20 text-forest" : "bg-gold/25 text-ink"
+          }`}
+        >
+          {pctFormat.format(deltaPct)} %
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function BilanForm({ categories }: { categories: BilanCategory[] }) {
   const [state, setState] = useState<Record<string, CategoryState>>(() =>
@@ -36,7 +71,7 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
   const [result, setResult] = useState<BilanResult | null>(null);
   const [pending, startTransition] = useTransition();
   const resultRef = useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = useState<"pdf" | "xlsx" | null>(null);
+  const [exporting, setExporting] = useState<"pdf" | "xlsx" | "csv" | null>(null);
   const [exportError, setExportError] = useState(false);
 
   useEffect(() => {
@@ -56,7 +91,8 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
     }));
   }
 
-  // Le module d'export (et ses librairies PDF/Excel) n'est chargé qu'à l'usage ou à l'approche du bouton.
+  // Le module d'export (et ses librairies PDF/Excel) n'est chargé qu'à l'usage ou à l'approche du
+  // bouton ; le CSV ne dépend d'aucune librairie lourde, pas besoin de le précharger.
   function preloadExport(kind: "pdf" | "xlsx") {
     import("./export")
       .then(async (m) => {
@@ -65,13 +101,15 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
       .catch(() => {});
   }
 
-  async function runExport(kind: "pdf" | "xlsx") {
+  async function runExport(kind: "pdf" | "xlsx" | "csv") {
     if (!result || !("total" in result)) return;
     setExporting(kind);
     setExportError(false);
     try {
-      const { exportExcel, exportPdf } = await import("./export");
-      await (kind === "pdf" ? exportPdf(result) : exportExcel(result));
+      const { exportCsv, exportExcel, exportPdf } = await import("./export");
+      if (kind === "pdf") await exportPdf(result);
+      else if (kind === "xlsx") await exportExcel(result);
+      else exportCsv(result);
     } catch {
       setExportError(true);
     } finally {
@@ -309,6 +347,14 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
                 >
                   {exporting === "xlsx" ? "Export..." : "Exporter en Excel"}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => runExport("csv")}
+                  disabled={exporting !== null}
+                  className="h-11 rounded-full border-2 border-cream/60 px-6 font-semibold transition-colors hover:bg-cream hover:text-night disabled:opacity-60"
+                >
+                  {exporting === "csv" ? "Export..." : "Exporter en CSV"}
+                </button>
               </div>
               {result.history === "saved" && (
                 <p className="text-sm font-medium text-leaf">
@@ -334,6 +380,27 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
               <GlobeScene small />
             </div>
           </section>
+
+          {result.comparison &&
+            (result.comparison.previousAverage !== null ||
+              result.comparison.goalTotal !== null) && (
+              <section className="grid gap-4 sm:grid-cols-2">
+                {result.comparison.previousAverage !== null && (
+                  <ComparisonCard
+                    label="Vs. ta moyenne précédente"
+                    reference={result.comparison.previousAverage}
+                    deltaPct={result.comparison.previousDeltaPct}
+                  />
+                )}
+                {result.comparison.goalTotal !== null && (
+                  <ComparisonCard
+                    label={result.comparison.goalLabel ?? "Vs. l'objectif"}
+                    reference={result.comparison.goalTotal}
+                    deltaPct={result.comparison.goalDeltaPct}
+                  />
+                )}
+              </section>
+            )}
 
           <section className="flex flex-col gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-6">
             <h2 className="font-display text-2xl font-bold text-night">Répartition</h2>

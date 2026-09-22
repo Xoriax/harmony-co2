@@ -75,6 +75,12 @@ export default function EventPage() {
               <p className="max-w-[48ch] text-lg leading-relaxed text-ink/80">
                 Clique sur une carte pour la retourner et lire la description de l&apos;événement.
               </p>
+              <a
+                href="/event/calendar.ics"
+                className="flex w-fit items-center gap-2 rounded-full border-2 border-night/80 px-5 py-2.5 text-sm font-semibold text-night transition-colors hover:bg-night hover:text-cream"
+              >
+                S&apos;abonner au calendrier (.ics)
+              </a>
             </div>
             <div className="hidden w-full max-w-[300px] justify-self-center md:block">
               <GlobeScene small />

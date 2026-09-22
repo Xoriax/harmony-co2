@@ -34,6 +34,7 @@ L'application tourne sur http://localhost:3000.
 | `DISCORD_GUILD_ID` | Identifiant du serveur Discord dont il faut être membre |
 | `DISCORD_ADMIN_ROLE_ID` | Identifiant du rôle qui donne accès au backoffice |
 | `DISCORD_BOT_TOKEN` | Jeton du bot Discord (permissions « Créer des événements » et « Gérer les événements ») : crée, met à jour et supprime les événements programmés du serveur |
+| `DISCORD_ANNOUNCE_CHANNEL_ID` | Salon où le bot poste ses annonces (nouvel événement publié, bilan au-dessus du seuil d'alerte). Il y faut en plus la permission « Envoyer des messages » |
 | `SESSION_SECRET` | Secret de signature du cookie de session (chaîne aléatoire d'au moins 32 octets) |
 
 Le fichier `.env` est ignoré par git.
@@ -45,11 +46,13 @@ Le fichier `.env` est ignoré par git.
 | `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, présentation du site et étapes du bilan |
 | `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
 | `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements, synchronisés avec les événements programmés du serveur Discord |
-| `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage) et Excel |
-| `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF et Excel), téléchargement et suppression |
-| `/event` | Événements publiés : cartes qui se retournent, compte à rebours, passage automatique en « passés » |
+| `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage), Excel et CSV, comparaison à la moyenne des bilans précédents et/ou à l'objectif |
+| `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF, Excel, CSV), recherche par date et par catégorie, téléchargement et suppression |
+| `/event` | Événements publiés : recherche et filtre par statut, cartes qui se retournent, compte à rebours, passage automatique en « passés », export `.ics` (par événement ou abonnement à tous) |
 | `/mandat` | Équipe du mandat (Responsable RSE et Bureau restreint) : cartes avec photo, poste, e-mail et Discord, éléments affichables au choix |
 | `/backoffice/mandat` | Gestion des membres du mandat (même accès que `/backoffice`) |
+| `/backoffice/statistiques` | Nombre de bilans, total cumulé, moyenne et catégories les plus utilisées, tous utilisateurs confondus |
+| `/backoffice/reglages` | Objectif de bilan carbone (comparaison sur `/bilan`) et seuil d'alerte Discord |
 | `/mentions-legales` | Mentions légales : éditeur, hébergeur, propriété intellectuelle, responsabilité |
 | `/confidentialite` | Politique de confidentialité (RGPD) : données, bases légales, durées, cookies, destinataires, droits |
 
@@ -57,13 +60,14 @@ Les informations de l'association (nom, adresse, e-mail, hébergeur, région de 
 
 ## Base de données (Supabase)
 
-Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`), les membres du mandat dans la table `mandat_members` (photos dans le bucket public `mandat-photos`). Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
+Les événements sont stockés dans la table `events` (couvertures dans le bucket public `event-covers`), l'historique dans la table `bilans` (fichiers dans le bucket privé `bilans`), les membres du mandat dans la table `mandat_members` (photos dans le bucket public `mandat-photos`), l'objectif et le seuil d'alerte dans la table `settings`. Les buckets sont créés automatiquement. Exécuter une fois, dans l'ordre, dans le SQL Editor de Supabase :
 
 1. `supabase/migrations/20260921_create_events.sql` : crée la table (version à jour, avec `cover_url` et `ends_at` obligatoire).
 2. Uniquement si la table existait déjà avant : `20260921_add_event_cover.sql`, `20260921_require_event_end.sql`, puis `20260921_add_discord_event_id.sql`.
 3. `20260921_create_bilans.sql` : crée la table de l'historique des bilans.
 4. `20260922_create_mandat_members.sql` : crée la table des membres du mandat.
 5. `20260922_create_web_vitals.sql` : crée la table des mesures de performance (Web Vitals).
+6. `20260922_create_settings.sql` : crée la table des réglages (objectif de bilan, seuil d'alerte Discord).
 
 ## Performance
 
@@ -82,7 +86,7 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 
 ## Qualité du code
 
-- **Tests unitaires** (`tests/`, Vitest) : calcul du bilan, conversion des heures de Paris (changements d'heure inclus), statut et compte à rebours d'un événement, éléments masqués des cartes du mandat, validation des formulaires du backoffice, session signée (falsification, expiration, secret manquant), synchronisation Discord, validation des images, téléchargement de l'historique, mesures Web Vitals et pages d'erreur. Ils tournent dans un fuseau horaire éloigné de Paris pour prouver qu'aucun calcul ne dépend de la machine.
+- **Tests unitaires** (`tests/`, Vitest) : calcul du bilan (et sa comparaison à la moyenne ou à un objectif), conversion des heures de Paris (changements d'heure inclus), statut et compte à rebours d'un événement, recherche et filtres (événements, historique), export `.ics` et CSV, messages d'annonce Discord, statistiques du backoffice, éléments masqués des cartes du mandat, validation des formulaires du backoffice, session signée (falsification, expiration, secret manquant), synchronisation Discord, validation des images, téléchargement de l'historique, mesures Web Vitals et pages d'erreur. Ils tournent dans un fuseau horaire éloigné de Paris pour prouver qu'aucun calcul ne dépend de la machine.
 - **Tests de bout en bout** (`e2e/`, Playwright) : parcours de connexion (accès au backoffice selon le rôle, déconnexion), création d'un bilan et export PDF/Excel, dans un vrai navigateur. La connexion Discord elle-même n'est pas automatisable : ces tests injectent un cookie de session signé avec le même format que la vraie session (voir `e2e/utils/session.ts`, dont la parité avec `src/lib/session.ts` est vérifiée par un test unitaire). `npm run e2e` (ou `npm run e2e:ui` pour l'interface pas à pas) lance un vrai build sur le port 3100, avec le `.env` local ; `IMPACTCO2_TOKEN` doit être une vraie valeur, ces tests calculent un vrai bilan.
 - **Intégration continue** (`.github/workflows/ci.yml`) : à chaque push et pull request, GitHub lance ESLint, TypeScript, Prettier, les tests unitaires, le build (avec de fausses clés) et `npm run size` ; un second job lance les tests de bout en bout si le secret `IMPACTCO2_TOKEN` est configuré sur le dépôt (Settings > Secrets and variables > Actions), sinon il est ignoré sans faire échouer la vérification.
 - **Mise à jour des dépendances** : Dependabot (`.github/dependabot.yml`) ouvre chaque semaine une pull request par dépendance de production, et une seule groupant les dépendances de développement.
