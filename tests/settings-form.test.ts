@@ -7,21 +7,64 @@ function formData(fields: Record<string, string>) {
   return fd;
 }
 
+const EMPTY = {
+  goalTotal: "",
+  goalLabel: "",
+  alertThreshold: "",
+  auditLogRetentionDays: "",
+  webVitalsRetentionDays: "",
+};
+
 describe("parseSettingsForm", () => {
-  it("accepte des valeurs vides : ni objectif ni alerte", () => {
-    const { patch, error } = parseSettingsForm(
-      formData({ goalTotal: "", goalLabel: "", alertThreshold: "" }),
-    );
+  it("accepte des valeurs vides : ni objectif, ni alerte, ni conservation", () => {
+    const { patch, error } = parseSettingsForm(formData(EMPTY));
     expect(error).toBeNull();
-    expect(patch).toEqual({ goalTotal: null, goalLabel: null, alertThreshold: null });
+    expect(patch).toEqual({
+      goalTotal: null,
+      goalLabel: null,
+      alertThreshold: null,
+      auditLogRetentionDays: null,
+      webVitalsRetentionDays: null,
+    });
   });
 
   it("accepte une virgule décimale", () => {
     const { patch, error } = parseSettingsForm(
-      formData({ goalTotal: "1234,5", goalLabel: "Objectif 2026", alertThreshold: "500" }),
+      formData({
+        ...EMPTY,
+        goalTotal: "1234,5",
+        goalLabel: "Objectif 2026",
+        alertThreshold: "500",
+      }),
     );
     expect(error).toBeNull();
-    expect(patch).toEqual({ goalTotal: 1234.5, goalLabel: "Objectif 2026", alertThreshold: 500 });
+    expect(patch).toMatchObject({
+      goalTotal: 1234.5,
+      goalLabel: "Objectif 2026",
+      alertThreshold: 500,
+    });
+  });
+
+  it("accepte des durées de conservation entières positives", () => {
+    const { patch, error } = parseSettingsForm(
+      formData({ ...EMPTY, auditLogRetentionDays: "90", webVitalsRetentionDays: "30" }),
+    );
+    expect(error).toBeNull();
+    expect(patch).toMatchObject({ auditLogRetentionDays: 90, webVitalsRetentionDays: 30 });
+  });
+
+  it("refuse une durée de conservation non entière", () => {
+    const { error } = parseSettingsForm(formData({ ...EMPTY, auditLogRetentionDays: "1.5" }));
+    expect(error).toMatch(/journal/i);
+  });
+
+  it("refuse une durée de conservation nulle ou négative", () => {
+    expect(parseSettingsForm(formData({ ...EMPTY, auditLogRetentionDays: "0" })).error).toMatch(
+      /journal/i,
+    );
+    expect(parseSettingsForm(formData({ ...EMPTY, webVitalsRetentionDays: "-5" })).error).toMatch(
+      /performance/i,
+    );
   });
 
   it("refuse un objectif non numérique", () => {

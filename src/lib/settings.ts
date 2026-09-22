@@ -12,9 +12,19 @@ export type Settings = {
   goalLabel: string | null;
   /** Seuil (kgCO2e) au-delà duquel un bilan déclenche une annonce Discord. */
   alertThreshold: number | null;
+  /** Jours de conservation du journal d'audit avant purge automatique ; null = indéfiniment. */
+  auditLogRetentionDays: number | null;
+  /** Jours de conservation des mesures Web Vitals avant purge automatique ; null = indéfiniment. */
+  webVitalsRetentionDays: number | null;
 };
 
-const DEFAULTS: Settings = { goalTotal: null, goalLabel: null, alertThreshold: null };
+const DEFAULTS: Settings = {
+  goalTotal: null,
+  goalLabel: null,
+  alertThreshold: null,
+  auditLogRetentionDays: null,
+  webVitalsRetentionDays: null,
+};
 
 // Mis en cache (étiquette « settings »), rafraîchi aussitôt qu'un réglage change depuis le
 // backoffice. Utilisé par /bilan (objectif) et par le calcul d'un bilan (seuil d'alerte).
@@ -40,6 +50,10 @@ async function fetchSettings(): Promise<{ settings: Settings; error: string | nu
       goalTotal: typeof goal.total === "number" ? goal.total : null,
       goalLabel: typeof goal.label === "string" ? goal.label : null,
       alertThreshold: typeof map.alert_threshold === "number" ? map.alert_threshold : null,
+      auditLogRetentionDays:
+        typeof map.audit_log_retention_days === "number" ? map.audit_log_retention_days : null,
+      webVitalsRetentionDays:
+        typeof map.web_vitals_retention_days === "number" ? map.web_vitals_retention_days : null,
     },
     error: null,
   };
@@ -55,6 +69,8 @@ export async function saveSettings(patch: {
   goalTotal?: number | null;
   goalLabel?: string | null;
   alertThreshold?: number | null;
+  auditLogRetentionDays?: number | null;
+  webVitalsRetentionDays?: number | null;
 }) {
   const db = supabaseAdmin();
   const writes: PromiseLike<{ error: { message: string } | null }>[] = [];
@@ -74,6 +90,20 @@ export async function saveSettings(patch: {
   if (patch.alertThreshold !== undefined) {
     writes.push(
       db.from("settings").upsert({ key: "alert_threshold", value: patch.alertThreshold }),
+    );
+  }
+  if (patch.auditLogRetentionDays !== undefined) {
+    writes.push(
+      db
+        .from("settings")
+        .upsert({ key: "audit_log_retention_days", value: patch.auditLogRetentionDays }),
+    );
+  }
+  if (patch.webVitalsRetentionDays !== undefined) {
+    writes.push(
+      db
+        .from("settings")
+        .upsert({ key: "web_vitals_retention_days", value: patch.webVitalsRetentionDays }),
     );
   }
 

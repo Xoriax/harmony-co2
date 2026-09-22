@@ -2,6 +2,14 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.18.0] - 2026-09-22
+
+Purge automatique du journal d'audit et des mesures de performance.
+
+### Ajouté
+- `/backoffice/reglages` : deux nouveaux champs pour régler la durée de conservation (en jours) du journal d'audit et des mesures Web Vitals ; laisser vide conserve indéfiniment.
+- Purge automatique quotidienne (job `pg_cron`, 3h du matin) qui applique ces durées. Migration `20260923_create_log_purge.sql`, à exécuter dans Supabase (active aussi l'extension `pg_cron` si besoin).
+
 ## [0.17.0] - 2026-09-22
 
 Sécurité : limitation de débit et documentation du cookie de session.

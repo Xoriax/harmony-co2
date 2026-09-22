@@ -77,6 +77,7 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 6. `20260922_create_settings.sql` : crée la table des réglages (objectif de bilan, seuil d'alerte Discord).
 7. `20260922_create_audit_log.sql` : crée la table du journal d'audit (`/backoffice/journal`).
 8. `20260922_create_rate_limits.sql` : crée la table et la fonction de limitation de débit (calcul de bilan, connexion Discord).
+9. `20260923_create_log_purge.sql` : active l'extension `pg_cron` et planifie la purge quotidienne du journal d'audit et des mesures Web Vitals, selon la durée réglée dans `/backoffice/reglages` (si l'extension n'est pas activable directement, l'active d'abord via Database > Extensions dans le tableau de bord Supabase).
 
 ## Performance
 

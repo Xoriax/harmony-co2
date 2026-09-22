@@ -10,7 +10,8 @@ import SettingsForm from "./settings-form";
 
 export const metadata: Metadata = pageMetadata({
   title: "Backoffice · Réglages",
-  description: "Objectif de bilan carbone et seuil d'alerte Discord, réservés aux administrateurs.",
+  description:
+    "Objectif de bilan carbone, seuil d'alerte Discord et durée de conservation des journaux, réservés aux administrateurs.",
   path: "/backoffice/reglages",
   noIndex: true,
 });
@@ -33,8 +34,8 @@ async function BackofficeReglagesContent() {
               Réglages
             </h1>
             <p className="max-w-[56ch] text-lg text-ink/80">
-              L&apos;objectif de bilan carbone (comparaison sur la page Bilan) et le seuil qui
-              déclenche une annonce Discord.
+              L&apos;objectif de bilan carbone (comparaison sur la page Bilan), le seuil qui
+              déclenche une annonce Discord, et la durée de conservation des journaux.
             </p>
             <BackofficeTabs active="reglages" />
           </div>

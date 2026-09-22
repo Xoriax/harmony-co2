@@ -58,6 +58,35 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
         <code className="rounded bg-cream-soft px-1.5">DISCORD_BILAN_ALERT_WEBHOOK_URL</code>).
       </p>
 
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <label className="flex flex-1 flex-col gap-1.5 text-sm font-medium">
+          Conservation du journal d&apos;audit (jours)
+          <input
+            name="auditLogRetentionDays"
+            inputMode="numeric"
+            placeholder="Vide = indéfiniment"
+            defaultValue={v?.auditLogRetentionDays ?? settings.auditLogRetentionDays ?? ""}
+            className={`${fieldClass} h-11`}
+          />
+        </label>
+        <label className="flex flex-1 flex-col gap-1.5 text-sm font-medium">
+          Conservation des mesures de performance (jours)
+          <input
+            name="webVitalsRetentionDays"
+            inputMode="numeric"
+            placeholder="Vide = indéfiniment"
+            defaultValue={v?.webVitalsRetentionDays ?? settings.webVitalsRetentionDays ?? ""}
+            className={`${fieldClass} h-11`}
+          />
+        </label>
+      </div>
+      <p className="text-sm text-ink/65">
+        Une purge automatique tourne chaque nuit : les entrées plus vieilles que la durée indiquée
+        sont supprimées du journal d&apos;audit (
+        <code className="rounded bg-cream-soft px-1.5">/backoffice/journal</code>) et des mesures
+        Web Vitals. Laisser vide conserve tout indéfiniment.
+      </p>
+
       {state?.error && (
         <p role="alert" className="text-sm font-medium text-red-700">
           {state.error}
