@@ -2,17 +2,18 @@
 
 import { headers } from "next/headers";
 import { logAudit } from "@/lib/audit-log";
-import { buildBilan } from "@/lib/bilan-calc";
+import { buildBilan, validateAssociationName } from "@/lib/bilan-calc";
 import { buildComparison } from "@/lib/bilan-comparison";
 import { listBilans, saveBilan } from "@/lib/bilans";
 import { bilanAlertPayload } from "@/lib/discord-messages";
 import { postBilanAlert } from "@/lib/discord-notify";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
+import { parisYear } from "@/lib/paris-time";
 import { clientIp, hitRateLimit } from "@/lib/rate-limit";
 import { siteUrl } from "@/lib/seo";
 import { getSession } from "@/lib/session";
 import { getSettings } from "@/lib/settings";
-import type { BilanInput, BilanResult } from "./types";
+import type { BilanOutcome, BilanRecord, BilanSubmission } from "./types";
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 
@@ -20,18 +21,28 @@ const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 const BILAN_LIMIT = 20;
 const BILAN_WINDOW_SECONDS = 10 * 60;
 
-export async function computeBilan(input: BilanInput): Promise<BilanResult> {
+export async function computeBilan(submission: BilanSubmission): Promise<BilanOutcome> {
+  const nameError = validateAssociationName(submission.associationName);
+  if (nameError) return { error: nameError };
+
   const ip = clientIp(await headers());
   const { allowed } = await hitRateLimit("bilan", ip, BILAN_LIMIT, BILAN_WINDOW_SECONDS);
   if (!allowed) {
     return { error: "Trop de calculs en peu de temps. Réessaie dans quelques minutes." };
   }
 
-  const result = await buildBilan(input, {
+  const result = await buildBilan(submission.categories, {
     categories: CATEGORIES,
     loadItems: (category) => getCategoryItems(CATEGORIES.find((c) => c.slug === category.slug)!),
   });
   if ("error" in result) return result;
+
+  // Année du bilan : dérivée de la date de génération (à Paris), non modifiable.
+  const record: BilanRecord = {
+    ...result,
+    associationName: submission.associationName.trim(),
+    year: parisYear(),
+  };
 
   const [session, { settings }] = await Promise.all([getSession(), getSettings()]);
   const goal = { total: settings.goalTotal, label: settings.goalLabel };
@@ -40,32 +51,32 @@ export async function computeBilan(input: BilanInput): Promise<BilanResult> {
     // La moyenne des bilans précédents est lue avant l'enregistrement du bilan en cours, pour ne
     // pas s'y comparer lui-même.
     const { bilans: previous } = await listBilans(session.id);
-    result.comparison =
+    record.comparison =
       buildComparison(
-        result.total,
+        record.total,
         previous.map((b) => b.total),
         goal,
       ) ?? undefined;
 
     // Connecté : le PDF et l'Excel sont générés et enregistrés automatiquement dans l'historique.
-    const saved = await saveBilan({ id: session.id, name: session.name }, result);
-    result.history = saved ? "saved" : "failed";
+    const saved = await saveBilan({ id: session.id, name: session.name }, record);
+    record.history = saved ? "saved" : "failed";
     if (saved) {
-      await logAudit("bilan_create", session, `${nf.format(result.total)} kgCO2e`);
+      await logAudit("bilan_create", session, `${nf.format(record.total)} kgCO2e`);
     }
 
-    if (settings.alertThreshold !== null && result.total >= settings.alertThreshold) {
+    if (settings.alertThreshold !== null && record.total >= settings.alertThreshold) {
       await postBilanAlert(
         bilanAlertPayload(
-          { userName: session.name, total: result.total },
+          { userName: session.name, total: record.total },
           settings.alertThreshold,
           siteUrl(),
         ),
       );
     }
   } else {
-    result.comparison = buildComparison(result.total, [], goal) ?? undefined;
+    record.comparison = buildComparison(record.total, [], goal) ?? undefined;
   }
 
-  return result;
+  return record;
 }

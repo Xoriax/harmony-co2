@@ -2,6 +2,17 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.19.0] - 2026-09-23
+
+Nom de l'association et année du bilan.
+
+### Ajouté
+- Champ **Nom de l'association**, obligatoire, sur `/bilan` : enregistré avec chaque bilan (colonne `association_name`, migration `20260923_add_bilan_association_name.sql`), affiché dans les résultats, l'historique, le PDF et l'Excel.
+- Champ **Année du bilan** : auto-complété à partir de la date de génération (heure de Paris) et non modifiable.
+
+### Modifié
+- Le PDF et l'Excel exportés affichent désormais le nom de l'association et l'année du bilan.
+
 ## [0.18.0] - 2026-09-22
 
 Purge automatique du journal d'audit et des mesures de performance.

@@ -35,3 +35,8 @@ export function parisToDate(local: string): Date {
   ts = guess - offsetAt(ts);
   return new Date(ts);
 }
+
+// Année en cours à Paris : utilisée pour l'« année du bilan », auto-complétée et non modifiable.
+export function parisYear(date = new Date()): number {
+  return Number(date.toLocaleString("sv-SE", { timeZone: "Europe/Paris" }).slice(0, 4));
+}

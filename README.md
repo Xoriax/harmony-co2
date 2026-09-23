@@ -52,7 +52,7 @@ toucher aux permissions du bot, qui ne gère que les événements programmés (`
 | `/` | Accueil : navigation (Mon bilan, Event, Mandat, Connexion), hero 3D, présentation du site et étapes du bilan |
 | `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
 | `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements, synchronisés avec les événements programmés du serveur Discord |
-| `/bilan` | Formulaire et calcul du bilan carbone, export PDF (1 page paysage), Excel et CSV, comparaison à la moyenne des bilans précédents et/ou à l'objectif |
+| `/bilan` | Formulaire et calcul du bilan carbone (nom de l'association obligatoire, année du bilan auto-complétée), export PDF (1 page paysage), Excel et CSV, comparaison à la moyenne des bilans précédents et/ou à l'objectif |
 | `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF, Excel, CSV), recherche par date et par catégorie, téléchargement et suppression |
 | `/event` | Événements publiés : recherche et filtre par statut, cartes qui se retournent, compte à rebours, passage automatique en « passés », export `.ics` (par événement ou abonnement à tous) |
 | `/mandat` | Équipe du mandat (Responsable RSE et Bureau restreint) : cartes avec photo, poste, e-mail et Discord, éléments affichables au choix |
@@ -78,6 +78,7 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 7. `20260922_create_audit_log.sql` : crée la table du journal d'audit (`/backoffice/journal`).
 8. `20260922_create_rate_limits.sql` : crée la table et la fonction de limitation de débit (calcul de bilan, connexion Discord).
 9. `20260923_create_log_purge.sql` : active l'extension `pg_cron` et planifie la purge quotidienne du journal d'audit et des mesures Web Vitals, selon la durée réglée dans `/backoffice/reglages` (si l'extension n'est pas activable directement, l'active d'abord via Database > Extensions dans le tableau de bord Supabase).
+10. `20260923_add_bilan_association_name.sql` : ajoute la colonne `association_name` à la table `bilans` (nom de l'association, obligatoire dans le formulaire).
 
 ## Performance
 

@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildBilan, type BilanDeps, type CatalogItem } from "@/lib/bilan-calc";
+import {
+  buildBilan,
+  validateAssociationName,
+  type BilanDeps,
+  type CatalogItem,
+} from "@/lib/bilan-calc";
 import type { BilanInput } from "@/app/bilan/types";
 
 const CATALOG: Record<string, CatalogItem[]> = {
@@ -214,5 +219,23 @@ describe("buildBilan : erreurs", () => {
     expect(result).toEqual({
       error: "Le service Impact CO2 est indisponible, réessaie plus tard.",
     });
+  });
+});
+
+describe("validateAssociationName", () => {
+  it("exige un nom", () => {
+    expect(validateAssociationName("")).toBe("Le nom de l'association est obligatoire.");
+    expect(validateAssociationName("   ")).toBe("Le nom de l'association est obligatoire.");
+  });
+
+  it("accepte un nom renseigné", () => {
+    expect(validateAssociationName("Harmony")).toBeNull();
+  });
+
+  it("limite le nom à 120 caractères", () => {
+    expect(validateAssociationName("A".repeat(120))).toBeNull();
+    expect(validateAssociationName("A".repeat(121))).toBe(
+      "Le nom de l'association ne doit pas dépasser 120 caractères.",
+    );
   });
 });

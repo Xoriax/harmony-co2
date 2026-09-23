@@ -14,6 +14,10 @@ export type BilanLineInput = {
 
 export type BilanInput = { categorySlug: string; lines: BilanLineInput[] }[];
 
+// Envoyé par le formulaire : les catégories à calculer, plus le nom de l'association (seule
+// donnée saisie en dehors des postes d'émission).
+export type BilanSubmission = { associationName: string; categories: BilanInput };
+
 export type BilanSuccess = {
   total: number;
   categories: {
@@ -35,3 +39,9 @@ export type BilanSuccess = {
 };
 
 export type BilanResult = { error: string } | BilanSuccess;
+
+// Bilan calculé et complété par le serveur : le nom de l'association saisi dans le formulaire, et
+// l'année de génération (à Paris), non modifiable. C'est ce qui est enregistré, exporté et affiché.
+export type BilanRecord = BilanSuccess & { associationName: string; year: number };
+
+export type BilanOutcome = { error: string } | BilanRecord;

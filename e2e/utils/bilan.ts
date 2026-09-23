@@ -6,6 +6,8 @@ import type { Page } from "@playwright/test";
 export async function computeMinimalBilan(page: Page) {
   await page.goto("/bilan");
 
+  await page.getByLabel("Nom de l'association").fill("Association Test");
+
   // hasText fait une recherche de sous-chaîne insensible à la casse : un simple "Numérique"
   // accrocherait aussi la section "Usage numérique". Le nom exact isole la bonne section.
   const section = page

@@ -97,9 +97,16 @@ export default function HistoriqueList({ bilans }: { bilans: BilanRow[] }) {
                   <span className="text-sm font-semibold text-forest">kgCO2e</span>
                 </div>
                 <div className="depth-2 flex min-w-0 flex-col gap-3">
-                  <p className="text-sm font-medium capitalize text-ink/75">
-                    {dateFormat.format(new Date(b.created_at))}
-                  </p>
+                  <div>
+                    {b.association_name && (
+                      <p className="truncate font-display text-lg font-bold text-night">
+                        {b.association_name}
+                      </p>
+                    )}
+                    <p className="text-sm font-medium capitalize text-ink/75">
+                      {dateFormat.format(new Date(b.created_at))}
+                    </p>
+                  </div>
                   <ul className="flex flex-wrap gap-2">
                     {b.categories.map((c, i) => (
                       <li

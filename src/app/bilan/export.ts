@@ -1,7 +1,7 @@
 import { bilanLinesToCsv } from "@/lib/csv";
-import type { BilanResult } from "./types";
+import type { BilanRecord } from "./types";
 
-type Result = Extract<BilanResult, { total: number }>;
+type Result = BilanRecord;
 type Rgb = [number, number, number];
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
@@ -72,10 +72,13 @@ export async function buildPdf(result: Result): Promise<ArrayBuffer> {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
   doc.text("Bilan carbone", M, 35);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text(pdfText(result.associationName), W - M, 22, { align: "right" });
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.text(
-    `Harmony  |  ${now.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })} à ${now.toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" })}`,
+    `Harmony  |  Année ${result.year}  |  ${now.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })} à ${now.toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" })}`,
     W - M,
     33,
     { align: "right" },
@@ -395,6 +398,8 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
   ];
   const rows: [string, string | number][] = [
     ["Rapport", "Bilan carbone Harmony"],
+    ["Association", result.associationName],
+    ["Année du bilan", result.year],
     ["Date de génération", now.toLocaleString("fr-FR", { timeZone: "Europe/Paris" })],
     ["Total (kgCO2e)", result.total],
     ["Nombre de catégories", result.categories.length],
@@ -412,7 +417,7 @@ export async function buildExcel(result: Result): Promise<ArrayBuffer> {
     ["Source des facteurs", "Impact CO2 (ADEME) - https://impactco2.fr"],
   ];
   rows.forEach(([k, v]) => info.addRow({ k, v }));
-  info.getCell("B4").numFmt = "#,##0.00";
+  info.getCell("B6").numFmt = "#,##0.00";
   styleSheet(info, rows.length);
   info.eachRow((row, r) => {
     if (r > 1) row.getCell(1).font = { bold: true };

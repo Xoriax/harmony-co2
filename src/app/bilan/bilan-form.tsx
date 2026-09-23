@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { GlobeScene } from "../globe-scene";
 import { computeBilan } from "./actions";
-import type { BilanCategory, BilanInput, BilanResult } from "./types";
+import type { BilanCategory, BilanInput, BilanOutcome, BilanSubmission } from "./types";
 
 type Line = { itemId: string; quantity: string; trips: string };
 type CategoryState = { included: boolean; lines: Line[] };
@@ -68,7 +68,10 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
   const [state, setState] = useState<Record<string, CategoryState>>(() =>
     Object.fromEntries(categories.map((c) => [c.slug, { included: false, lines: [emptyLine()] }])),
   );
-  const [result, setResult] = useState<BilanResult | null>(null);
+  const [associationName, setAssociationName] = useState("");
+  // Aperçu avant calcul : l'année réelle du bilan vient du serveur (result.year), à Paris.
+  const [previewYear] = useState(() => new Date().getFullYear());
+  const [result, setResult] = useState<BilanOutcome | null>(null);
   const [pending, startTransition] = useTransition();
   const resultRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<"pdf" | "xlsx" | "csv" | null>(null);
@@ -118,7 +121,7 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
   }
 
   function submit() {
-    const input: BilanInput = categories
+    const categoryInput: BilanInput = categories
       .filter((c) => state[c.slug].included)
       .map((c) => ({
         categorySlug: c.slug,
@@ -132,13 +135,42 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
       }))
       .filter((c) => c.lines.length > 0);
 
-    startTransition(async () => setResult(await computeBilan(input)));
+    const submission: BilanSubmission = { associationName, categories: categoryInput };
+    startTransition(async () => setResult(await computeBilan(submission)));
   }
 
   return (
     <div className="flex flex-col gap-12">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-5">
+          <section className="rounded-3xl border-2 border-ink/10 bg-cream-soft/60 p-5">
+            <div className="flex flex-wrap gap-4">
+              <label className="flex min-w-56 flex-1 flex-col gap-1.5 text-sm font-medium">
+                Nom de l&apos;association
+                <input
+                  type="text"
+                  required
+                  maxLength={120}
+                  placeholder="Ex. Harmony"
+                  value={associationName}
+                  onChange={(e) => setAssociationName(e.target.value)}
+                  className={inputClass}
+                />
+              </label>
+              <label className="flex w-40 flex-col gap-1.5 text-sm font-medium">
+                Année du bilan
+                <input
+                  type="text"
+                  value={previewYear}
+                  disabled
+                  readOnly
+                  title="Complétée automatiquement à partir de la date de génération."
+                  className={`${inputClass} tabular-nums`}
+                />
+              </label>
+            </div>
+          </section>
+
           {categories.map((category, ci) => {
             const { included, lines } = state[category.slug];
             const isTransport = category.slug === "transport";
@@ -287,12 +319,17 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
           <button
             type="button"
             onClick={submit}
-            disabled={pending || includedCategories.length === 0}
+            disabled={pending || includedCategories.length === 0 || !associationName.trim()}
             className="h-12 rounded-full bg-gold px-6 font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-50"
           >
             {pending ? "Calcul..." : "Calculer le bilan"}
           </button>
-          {includedCategories.length === 0 && (
+          {!associationName.trim() && (
+            <p className="text-sm text-cream/75">
+              Renseigne le nom de l&apos;association pour lancer le calcul.
+            </p>
+          )}
+          {associationName.trim() && includedCategories.length === 0 && (
             <p className="text-sm text-cream/75">
               Active au moins une catégorie pour lancer le calcul.
             </p>
@@ -317,6 +354,9 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">
                 Résultats
               </span>
+              <p className="text-sm font-semibold text-cream/85">
+                {result.associationName} · {result.year}
+              </p>
               <p className="flex flex-wrap items-baseline gap-3">
                 <span className="font-display text-6xl font-extrabold tabular-nums sm:text-7xl">
                   {nf.format(result.total)}

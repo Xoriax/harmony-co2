@@ -1,7 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { buildExcel, buildPdf } from "@/app/bilan/export";
-import type { BilanSuccess } from "@/app/bilan/types";
+import type { BilanRecord } from "@/app/bilan/types";
 import { supabaseAdmin } from "./supabase";
 
 export const BILAN_BUCKET = "bilans";
@@ -17,14 +17,15 @@ export type BilanRow = {
   pdf_path: string;
   xlsx_path: string;
   created_at: string;
+  association_name: string;
 };
 
-const COLUMNS = "id,total,categories,pdf_path,xlsx_path,created_at";
+const COLUMNS = "id,total,categories,pdf_path,xlsx_path,created_at,association_name";
 
 // Génère le PDF et l'Excel du bilan et les enregistre pour l'utilisateur. Renvoie false en cas d'échec.
 export async function saveBilan(
   user: { id: string; name: string },
-  result: BilanSuccess,
+  result: BilanRecord,
 ): Promise<boolean> {
   const db = supabaseAdmin();
   const id = randomUUID();
@@ -66,6 +67,7 @@ export async function saveBilan(
       })),
       pdf_path: pdfPath,
       xlsx_path: xlsxPath,
+      association_name: result.associationName,
     });
     if (error) throw new Error("insert");
     return true;

@@ -12,6 +12,7 @@ const bilan: BilanRow = {
   pdf_path: "x.pdf",
   xlsx_path: "x.xlsx",
   created_at: "2026-06-15T10:00:00.000Z",
+  association_name: "Association Test",
 };
 
 describe("matchesBilanFilters", () => {

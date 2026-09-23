@@ -16,9 +16,21 @@ const UNITS: Record<string, string> = {
 };
 
 const MAX_VALUE = 1e9;
+export const ASSOCIATION_NAME_MAX = 120;
 
 function isValidNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value > 0 && value <= MAX_VALUE;
+}
+
+// Seule donnée saisie en dehors des postes d'émission : obligatoire, comme sur les formulaires du
+// backoffice (nom d'événement, de membre...).
+export function validateAssociationName(name: string): string | null {
+  const trimmed = name.trim();
+  if (!trimmed) return "Le nom de l'association est obligatoire.";
+  if (trimmed.length > ASSOCIATION_NAME_MAX) {
+    return `Le nom de l'association ne doit pas dépasser ${ASSOCIATION_NAME_MAX} caractères.`;
+  }
+  return null;
 }
 
 // Calcule le bilan. Le client n'envoie que des références et des quantités : les facteurs

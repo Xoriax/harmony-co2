@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parisToDate } from "@/lib/paris-time";
+import { parisToDate, parisYear } from "@/lib/paris-time";
 
 const iso = (local: string) => parisToDate(local).toISOString();
 
@@ -44,5 +44,17 @@ describe("parisToDate", () => {
   it("ne dépend pas du fuseau de la machine", () => {
     expect(process.env.TZ).toBe("Pacific/Auckland");
     expect(iso("2026-07-15T12:00:00")).toBe("2026-07-15T10:00:00.000Z");
+  });
+});
+
+describe("parisYear", () => {
+  it("lit l'année à Paris, pas celle de la machine", () => {
+    // La machine des tests est en Pacific/Auckland (en avance) : au réveillon, minuit à Auckland
+    // est encore la veille à Paris.
+    expect(parisYear(new Date("2027-01-01T00:30:00+13:00"))).toBe(2026);
+  });
+
+  it("passe à l'année suivante une fois minuit passé à Paris", () => {
+    expect(parisYear(new Date("2026-12-31T23:30:00Z"))).toBe(2027);
   });
 });
