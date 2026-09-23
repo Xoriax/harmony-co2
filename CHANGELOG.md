@@ -13,6 +13,9 @@ Nom de l'association et année du bilan.
 ### Modifié
 - Le PDF et l'Excel exportés affichent désormais le nom de l'association et l'année du bilan.
 
+### Corrigé
+- L'aperçu de l'année, sur `/bilan`, lisait l'heure pendant le prérendu de la page (`new Date()` au premier rendu) : Next.js bloquait la page. L'année ne s'affiche désormais qu'une fois la page chargée dans le navigateur.
+
 ## [0.18.0] - 2026-09-22
 
 Purge automatique du journal d'audit et des mesures de performance.
