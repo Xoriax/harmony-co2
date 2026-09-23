@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "size": "node scripts/check-bundle-size.mjs",
+    "purge:bilan-files": "node --env-file=.env scripts/purge-bilan-files.mjs",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

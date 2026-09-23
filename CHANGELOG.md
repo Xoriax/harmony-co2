@@ -7,7 +7,8 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), ver
 Script de purge de l'historique des bilans.
 
 ### Ajouté
-- `supabase/scripts/purge-bilans.sql` : vide entièrement la table `bilans` et les fichiers PDF/Excel associés dans le bucket de stockage `bilans`. Script ponctuel, à exécuter à la demande dans le SQL Editor de Supabase ; irréversible. N'affecte ni les événements, ni le mandat, ni les réglages.
+- `supabase/scripts/purge-bilans.sql` : vide entièrement la table `bilans`. Script ponctuel, à exécuter à la demande dans le SQL Editor de Supabase ; irréversible. N'affecte ni les événements, ni le mandat, ni les réglages.
+- `scripts/purge-bilan-files.mjs` : supprime les fichiers PDF/Excel du bucket de stockage privé `bilans`, via l'API Storage (Supabase refuse un DELETE SQL direct sur les fichiers). Sans `--yes`, liste seulement ce qui serait supprimé.
 
 ## [0.19.0] - 2026-09-23
 

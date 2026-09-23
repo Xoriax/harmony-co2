@@ -80,7 +80,7 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 9. `20260923_create_log_purge.sql` : active l'extension `pg_cron` et planifie la purge quotidienne du journal d'audit et des mesures Web Vitals, selon la durée réglée dans `/backoffice/reglages` (si l'extension n'est pas activable directement, l'active d'abord via Database > Extensions dans le tableau de bord Supabase).
 10. `20260923_add_bilan_association_name.sql` : ajoute la colonne `association_name` à la table `bilans` (nom de l'association, obligatoire dans le formulaire).
 
-`supabase/scripts/` contient des scripts ponctuels, à exécuter à la demande (pas des migrations) : `purge-bilans.sql` vide entièrement l'historique des bilans (table et fichiers PDF/Excel), irréversible.
+Vider entièrement l'historique des bilans (irréversible) demande deux étapes, car Supabase refuse un DELETE SQL direct sur les fichiers de stockage : `supabase/scripts/purge-bilans.sql` (table `bilans`, dans le SQL Editor de Supabase) et `npm run purge:bilan-files -- --yes` (fichiers PDF/Excel du bucket `bilans`, en local avec le vrai `.env` ; sans `--yes`, liste les fichiers sans rien supprimer).
 
 ## Performance
 
