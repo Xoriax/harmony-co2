@@ -69,13 +69,22 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
     Object.fromEntries(categories.map((c) => [c.slug, { included: false, lines: [emptyLine()] }])),
   );
   const [associationName, setAssociationName] = useState("");
-  // Aperçu avant calcul : l'année réelle du bilan vient du serveur (result.year), à Paris.
-  const [previewYear] = useState(() => new Date().getFullYear());
+  // Aperçu avant calcul : l'année réelle du bilan vient du serveur (result.year), à Paris. `null`
+  // le temps du premier rendu : lire l'heure pendant le prérendu casserait la mise en cache de la
+  // page (l'année dépendrait alors du moment du build, pas de la visite).
+  const [previewYear, setPreviewYear] = useState<number | null>(null);
   const [result, setResult] = useState<BilanOutcome | null>(null);
   const [pending, startTransition] = useTransition();
   const resultRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<"pdf" | "xlsx" | "csv" | null>(null);
   const [exportError, setExportError] = useState(false);
+
+  useEffect(() => {
+    // Lire l'heure pendant le rendu (serveur ou premier rendu client) casserait le prérendu de la
+    // page : l'année doit venir du navigateur, une fois monté.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- valeur du navigateur (Date), pas dérivable des props/état
+    setPreviewYear(new Date().getFullYear());
+  }, []);
 
   useEffect(() => {
     if (result) resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -161,7 +170,7 @@ export default function BilanForm({ categories }: { categories: BilanCategory[] 
                 Année du bilan
                 <input
                   type="text"
-                  value={previewYear}
+                  value={previewYear ?? "…"}
                   disabled
                   readOnly
                   title="Complétée automatiquement à partir de la date de génération."
