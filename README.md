@@ -80,6 +80,8 @@ Les événements sont stockés dans la table `events` (couvertures dans le bucke
 9. `20260923_create_log_purge.sql` : active l'extension `pg_cron` et planifie la purge quotidienne du journal d'audit et des mesures Web Vitals, selon la durée réglée dans `/backoffice/reglages` (si l'extension n'est pas activable directement, l'active d'abord via Database > Extensions dans le tableau de bord Supabase).
 10. `20260923_add_bilan_association_name.sql` : ajoute la colonne `association_name` à la table `bilans` (nom de l'association, obligatoire dans le formulaire).
 
+`supabase/scripts/` contient des scripts ponctuels, à exécuter à la demande (pas des migrations) : `purge-bilans.sql` vide entièrement l'historique des bilans (table et fichiers PDF/Excel), irréversible.
+
 ## Performance
 
 - **Cache Components** (Next 16) : les pages sont prérendues (coquille statique) et seules les parties liées à la session ou à l'heure exacte arrivent en streaming (pseudo dans la barre du haut, historique, backoffice, liste des événements).

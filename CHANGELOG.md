@@ -2,6 +2,13 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.19.1] - 2026-09-23
+
+Script de purge de l'historique des bilans.
+
+### Ajouté
+- `supabase/scripts/purge-bilans.sql` : vide entièrement la table `bilans` et les fichiers PDF/Excel associés dans le bucket de stockage `bilans`. Script ponctuel, à exécuter à la demande dans le SQL Editor de Supabase ; irréversible. N'affecte ni les événements, ni le mandat, ni les réglages.
+
 ## [0.19.0] - 2026-09-23
 
 Nom de l'association et année du bilan.
