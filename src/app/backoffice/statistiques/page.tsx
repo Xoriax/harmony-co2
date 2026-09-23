@@ -16,6 +16,10 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
+const pctFormat = new Intl.NumberFormat("fr-FR", {
+  maximumFractionDigits: 1,
+  signDisplay: "always",
+});
 const TONES = ["bg-leaf", "bg-sky", "bg-gold", "bg-emerald", "bg-blue", "bg-night", "bg-forest"];
 
 function StatCard({ label, value, unit }: { label: string; value: string; unit?: string }) {
@@ -80,6 +84,67 @@ async function BackofficeStatistiquesContent() {
                   unit="kgCO2e"
                 />
               </div>
+
+              {stats.monthComparison && (
+                <section className="grid gap-4 sm:grid-cols-2">
+                  {(["previous", "current"] as const).map((key) => {
+                    const month = stats.monthComparison![key];
+                    const isCurrent = key === "current";
+                    const delta = stats.monthComparison!.deltaPct;
+                    return (
+                      <div key={key} className="flex flex-col gap-1.5 rounded-2xl bg-cream p-5">
+                        <span className="text-sm font-semibold text-ink/70 capitalize">
+                          {month.label} {isCurrent ? "(dernier mois)" : ""}
+                        </span>
+                        <span className="font-display text-3xl font-extrabold tabular-nums text-night">
+                          {nf.format(month.total)}
+                          <span className="ml-1 text-base font-semibold text-ink/60">kgCO2e</span>
+                        </span>
+                        <span className="text-sm text-ink/60">
+                          {month.count} bilan{month.count > 1 ? "s" : ""}
+                        </span>
+                        {isCurrent && delta !== null && (
+                          <span
+                            className={`w-fit rounded-full px-3 py-1 text-sm font-bold tabular-nums ${
+                              delta <= 0 ? "bg-emerald/20 text-forest" : "bg-gold/25 text-ink"
+                            }`}
+                          >
+                            {pctFormat.format(delta)} % vs {stats.monthComparison!.previous.label}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </section>
+              )}
+
+              {stats.monthly.length > 0 && (
+                <section className="flex flex-col gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-6">
+                  <h2 className="font-display text-2xl font-bold text-night">Total par mois</h2>
+                  <ul className="flex flex-col gap-4">
+                    {(() => {
+                      const maxTotal = Math.max(...stats.monthly.map((m) => m.total), 1);
+                      return stats.monthly.map((month, i) => (
+                        <li key={month.month} className="flex flex-col gap-1.5">
+                          <div className="flex justify-between gap-4 text-sm font-semibold">
+                            <span className="capitalize">{month.label}</span>
+                            <span className="tabular-nums">
+                              {nf.format(month.total)} kgCO2e · {month.count} bilan
+                              {month.count > 1 ? "s" : ""}
+                            </span>
+                          </div>
+                          <div className="h-3.5 overflow-hidden rounded-full bg-ink/10">
+                            <div
+                              className={`h-full rounded-full ${TONES[i % TONES.length]}`}
+                              style={{ width: `${Math.max((month.total / maxTotal) * 100, 1.5)}%` }}
+                            />
+                          </div>
+                        </li>
+                      ));
+                    })()}
+                  </ul>
+                </section>
+              )}
 
               <section className="flex flex-col gap-5 rounded-3xl border border-ink/10 bg-cream-soft p-6">
                 <h2 className="font-display text-2xl font-bold text-night">

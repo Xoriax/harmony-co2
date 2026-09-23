@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parisToDate, parisYear } from "@/lib/paris-time";
+import { parisMonthKey, parisToDate, parisYear } from "@/lib/paris-time";
 
 const iso = (local: string) => parisToDate(local).toISOString();
 
@@ -56,5 +56,16 @@ describe("parisYear", () => {
 
   it("passe à l'année suivante une fois minuit passé à Paris", () => {
     expect(parisYear(new Date("2026-12-31T23:30:00Z"))).toBe(2027);
+  });
+});
+
+describe("parisMonthKey", () => {
+  it("donne le mois au format AAAA-MM, à Paris", () => {
+    expect(parisMonthKey(new Date("2026-07-15T10:00:00Z"))).toBe("2026-07");
+  });
+
+  it("bascule au mois suivant après minuit à Paris, pas à la machine", () => {
+    // 23:30 UTC le 30 juin = 01:30 le 1er juillet à Paris (heure d'été, UTC+2).
+    expect(parisMonthKey(new Date("2026-06-30T23:30:00Z"))).toBe("2026-07");
   });
 });

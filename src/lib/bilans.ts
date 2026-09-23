@@ -7,6 +7,12 @@ import { supabaseAdmin } from "./supabase";
 export const BILAN_BUCKET = "bilans";
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
+// Auteur des bilans générés sans connexion : ils sont enregistrés (visibles dans
+// /backoffice/historique) mais ne peuvent être retrouvés dans l'historique personnel de personne,
+// puisqu'aucune vraie session n'a cet identifiant.
+export const ANONYMOUS_USER_ID = "anonyme";
+export const ANONYMOUS_USER_NAME = "Visiteur anonyme";
+
 export const MISSING_BILANS_TABLE =
   "La table « bilans » n'existe pas encore : exécute supabase/migrations/20260921_create_bilans.sql dans le SQL Editor de Supabase.";
 
@@ -21,6 +27,12 @@ export type BilanRow = {
 };
 
 const COLUMNS = "id,total,categories,pdf_path,xlsx_path,created_at,association_name";
+
+// Vue admin (/backoffice/historique) : tous les bilans, tous auteurs confondus, avec de quoi
+// afficher qui (ou « anonyme ») l'a généré.
+export type AdminBilanRow = BilanRow & { user_id: string; user_name: string };
+const ADMIN_COLUMNS = `${COLUMNS},user_id,user_name`;
+const ADMIN_LIMIT = 1000;
 
 // Génère le PDF et l'Excel du bilan et les enregistre pour l'utilisateur. Renvoie false en cas d'échec.
 export async function saveBilan(
@@ -103,6 +115,35 @@ export async function getBilan(id: string, userId: string) {
     .eq("user_id", userId)
     .maybeSingle();
   return (data as BilanRow | null) ?? null;
+}
+
+// Réservé au backoffice (/backoffice/historique) : tous les bilans, y compris ceux générés sans
+// connexion. Pas de cache : réservé aux administrateurs, consulté rarement.
+export async function listAllBilans() {
+  const { data, error } = await supabaseAdmin()
+    .from("bilans")
+    .select(ADMIN_COLUMNS)
+    .order("created_at", { ascending: false })
+    .limit(ADMIN_LIMIT);
+
+  if (error) {
+    return {
+      bilans: [] as AdminBilanRow[],
+      error:
+        error.code === "PGRST205" ? MISSING_BILANS_TABLE : "Impossible de charger l'historique.",
+    };
+  }
+  return { bilans: data as AdminBilanRow[], error: null };
+}
+
+// Réservé au backoffice : un bilan par id, sans filtre de propriétaire (contrairement à getBilan).
+export async function getBilanById(id: string) {
+  const { data } = await supabaseAdmin()
+    .from("bilans")
+    .select(ADMIN_COLUMNS)
+    .eq("id", id)
+    .maybeSingle();
+  return (data as AdminBilanRow | null) ?? null;
 }
 
 export async function signedFileUrl(path: string, downloadName: string) {

@@ -2,6 +2,19 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnement [SemVer](https://semver.org/lang/fr/).
 
+## [0.20.0] - 2026-09-23
+
+Historique bilan (backoffice) et comparatif mensuel.
+
+### Ajouté
+- `/backoffice/historique` : nouvel onglet listant tous les bilans générés, connectés ou non, filtrables par association et par année, avec téléchargement PDF/Excel/CSV. Réservé aux administrateurs.
+- `/backoffice/statistiques` : total par mois et comparatif des deux derniers mois actifs (delta en %).
+
+### Modifié
+- Les bilans générés **sans connexion** sont désormais enregistrés (auteur « Visiteur anonyme », sans aucune donnée personnelle) : ils apparaissent dans `/backoffice/historique` mais ne rejoignent l'historique d'aucun compte. Auparavant, un bilan calculé sans connexion n'était pas conservé.
+- Politique de confidentialité (`/confidentialite`) mise à jour en conséquence : ce que devient un bilan généré sans connexion, et l'accès des administrateurs à tous les bilans.
+- L'alerte Discord de dépassement de seuil (réglable dans `/backoffice/reglages`) se déclenche désormais aussi pour un bilan généré sans connexion (elle ne concernait auparavant que les bilans d'utilisateurs connectés).
+
 ## [0.19.1] - 2026-09-23
 
 Script de purge de l'historique des bilans.

@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { logAudit } from "@/lib/audit-log";
 import { buildBilan, validateAssociationName } from "@/lib/bilan-calc";
 import { buildComparison } from "@/lib/bilan-comparison";
-import { listBilans, saveBilan } from "@/lib/bilans";
+import { ANONYMOUS_USER_ID, ANONYMOUS_USER_NAME, listBilans, saveBilan } from "@/lib/bilans";
 import { bilanAlertPayload } from "@/lib/discord-messages";
 import { postBilanAlert } from "@/lib/discord-notify";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";
@@ -57,25 +57,28 @@ export async function computeBilan(submission: BilanSubmission): Promise<BilanOu
         previous.map((b) => b.total),
         goal,
       ) ?? undefined;
-
-    // Connecté : le PDF et l'Excel sont générés et enregistrés automatiquement dans l'historique.
-    const saved = await saveBilan({ id: session.id, name: session.name }, record);
-    record.history = saved ? "saved" : "failed";
-    if (saved) {
-      await logAudit("bilan_create", session, `${nf.format(record.total)} kgCO2e`);
-    }
-
-    if (settings.alertThreshold !== null && record.total >= settings.alertThreshold) {
-      await postBilanAlert(
-        bilanAlertPayload(
-          { userName: session.name, total: record.total },
-          settings.alertThreshold,
-          siteUrl(),
-        ),
-      );
-    }
   } else {
     record.comparison = buildComparison(record.total, [], goal) ?? undefined;
+  }
+
+  // Le PDF et l'Excel sont générés et enregistrés pour tout le monde, connecté ou non : sans
+  // connexion, le bilan reste consultable par les administrateurs (/backoffice/historique) mais ne
+  // rejoint l'historique personnel de personne, faute de session à laquelle le rattacher.
+  const author = session ?? { id: ANONYMOUS_USER_ID, name: ANONYMOUS_USER_NAME };
+  const saved = await saveBilan(author, record);
+  if (session) {
+    record.history = saved ? "saved" : "failed";
+    if (saved) await logAudit("bilan_create", session, `${nf.format(record.total)} kgCO2e`);
+  }
+
+  if (settings.alertThreshold !== null && record.total >= settings.alertThreshold) {
+    await postBilanAlert(
+      bilanAlertPayload(
+        { userName: session?.name ?? ANONYMOUS_USER_NAME, total: record.total },
+        settings.alertThreshold,
+        siteUrl(),
+      ),
+    );
   }
 
   return record;

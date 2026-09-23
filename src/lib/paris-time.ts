@@ -40,3 +40,9 @@ export function parisToDate(local: string): Date {
 export function parisYear(date = new Date()): number {
   return Number(date.toLocaleString("sv-SE", { timeZone: "Europe/Paris" }).slice(0, 4));
 }
+
+// Mois à Paris, au format "AAAA-MM" : utilisé pour regrouper les bilans par mois dans les
+// statistiques du backoffice.
+export function parisMonthKey(date = new Date()): string {
+  return date.toLocaleString("sv-SE", { timeZone: "Europe/Paris" }).slice(0, 7);
+}

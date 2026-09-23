@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { matchesBilanFilters } from "@/lib/bilan-filter";
-import type { BilanRow } from "@/lib/bilans";
+import { matchesAdminBilanFilters, matchesBilanFilters } from "@/lib/bilan-filter";
+import type { AdminBilanRow, BilanRow } from "@/lib/bilans";
 
 const bilan: BilanRow = {
   id: "1",
@@ -43,5 +43,39 @@ describe("matchesBilanFilters", () => {
     const filters = { category: "Numérique", from: "2026-06-10", to: "2026-06-20" };
     expect(matchesBilanFilters(bilan, filters)).toBe(true);
     expect(matchesBilanFilters(bilan, { ...filters, category: "Boisson" })).toBe(false);
+  });
+});
+
+describe("matchesAdminBilanFilters", () => {
+  const adminBilan: AdminBilanRow = { ...bilan, user_id: "42", user_name: "Camille" };
+
+  it("accepte tout sans filtre", () => {
+    expect(matchesAdminBilanFilters(adminBilan, { association: null, year: null })).toBe(true);
+  });
+
+  it("filtre par nom d'association, insensible à la casse et en sous-chaîne", () => {
+    expect(matchesAdminBilanFilters(adminBilan, { association: "association", year: null })).toBe(
+      true,
+    );
+    expect(matchesAdminBilanFilters(adminBilan, { association: "TEST", year: null })).toBe(true);
+    expect(matchesAdminBilanFilters(adminBilan, { association: "Harmony", year: null })).toBe(
+      false,
+    );
+  });
+
+  it("ignore un filtre d'association vide ou fait uniquement d'espaces", () => {
+    expect(matchesAdminBilanFilters(adminBilan, { association: "", year: null })).toBe(true);
+    expect(matchesAdminBilanFilters(adminBilan, { association: "   ", year: null })).toBe(true);
+  });
+
+  it("filtre par année (à Paris)", () => {
+    expect(matchesAdminBilanFilters(adminBilan, { association: null, year: 2026 })).toBe(true);
+    expect(matchesAdminBilanFilters(adminBilan, { association: null, year: 2025 })).toBe(false);
+  });
+
+  it("combine les deux filtres", () => {
+    const filters = { association: "test", year: 2026 };
+    expect(matchesAdminBilanFilters(adminBilan, filters)).toBe(true);
+    expect(matchesAdminBilanFilters(adminBilan, { ...filters, year: 2025 })).toBe(false);
   });
 });

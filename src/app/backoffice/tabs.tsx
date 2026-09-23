@@ -4,6 +4,7 @@ const TABS = [
   { href: "/backoffice", key: "events", label: "Événements" },
   { href: "/backoffice/mandat", key: "mandat", label: "Mandat" },
   { href: "/backoffice/statistiques", key: "statistiques", label: "Statistiques" },
+  { href: "/backoffice/historique", key: "historique", label: "Historique bilan" },
   { href: "/backoffice/journal", key: "journal", label: "Journal" },
   { href: "/backoffice/reglages", key: "reglages", label: "Réglages" },
 ] as const;

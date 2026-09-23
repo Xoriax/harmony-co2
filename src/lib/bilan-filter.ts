@@ -1,4 +1,5 @@
-import type { BilanRow } from "./bilans";
+import type { AdminBilanRow, BilanRow } from "./bilans";
+import { parisYear } from "./paris-time";
 
 export type BilanFilters = { category: string | null; from: string | null; to: string | null };
 
@@ -11,5 +12,21 @@ export function matchesBilanFilters(bilan: BilanRow, filters: BilanFilters): boo
   const day = bilan.created_at.slice(0, 10);
   if (filters.from && day < filters.from) return false;
   if (filters.to && day > filters.to) return false;
+  return true;
+}
+
+export type AdminBilanFilters = { association: string | null; year: number | null };
+
+// Filtre par nom d'association (recherche insensible à la casse) et par année du bilan (à Paris),
+// pour /backoffice/historique. Fonction pure, testée seule.
+export function matchesAdminBilanFilters(
+  bilan: AdminBilanRow,
+  filters: AdminBilanFilters,
+): boolean {
+  const needle = filters.association?.trim().toLowerCase();
+  if (needle && !bilan.association_name.toLowerCase().includes(needle)) return false;
+  if (filters.year !== null && parisYear(new Date(bilan.created_at)) !== filters.year) {
+    return false;
+  }
   return true;
 }

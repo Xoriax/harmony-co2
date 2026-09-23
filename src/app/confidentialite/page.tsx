@@ -38,18 +38,24 @@ export default function ConfidentialitePage() {
           </li>
         </List>
 
-        <p className="font-semibold text-night">Si tu génères un bilan en étant connecté</p>
+        <p className="font-semibold text-night">Quand tu génères un bilan</p>
         <List>
           <li>
-            Les résultats du bilan (total et sous-totaux par catégorie), le PDF et l&apos;Excel
-            générés, leur date, ainsi que ton identifiant et ton pseudo Discord pour te les
-            rattacher.
+            Les résultats (total et sous-totaux par catégorie), le nom d&apos;association que tu
+            saisis, ainsi que le PDF et l&apos;Excel générés sont toujours enregistrés, connecté ou
+            non : ils servent de registre interne à l&apos;association (onglet Historique bilan du
+            backoffice, réservé aux administrateurs).
           </li>
           <li>
-            Les fichiers sont stockés dans un espace privé : seul toi peux les télécharger depuis
-            l&apos;onglet Historique.
+            Connecté, ton identifiant et ton pseudo Discord y sont associés, pour que tu retrouves
+            ce bilan dans ton propre onglet Historique. Les fichiers sont alors stockés dans un
+            espace privé : seul toi (et les administrateurs) peux les y télécharger.
           </li>
-          <li>Sans connexion, le bilan est calculé mais rien n&apos;est enregistré sur le site.</li>
+          <li>
+            Sans connexion, le bilan est enregistré comme « visiteur anonyme », sans aucune donnée
+            permettant de t&apos;identifier : il n&apos;apparaît dans l&apos;historique d&apos;aucun
+            compte et toi-même ne peux pas le retrouver plus tard.
+          </li>
         </List>
 
         <p className="font-semibold text-night">Les membres du mandat</p>
@@ -96,9 +102,14 @@ export default function ConfidentialitePage() {
         <List>
           <li>Session de connexion : 8 heures au maximum.</li>
           <li>
-            Bilans de l&apos;historique : jusqu&apos;à ce que tu les supprimes depuis l&apos;onglet
-            Historique (la suppression efface aussi les fichiers) ou que tu demandes
+            Bilans de ton historique personnel : jusqu&apos;à ce que tu les supprimes depuis
+            l&apos;onglet Historique (la suppression efface aussi les fichiers) ou que tu demandes
             l&apos;effacement de tes données.
+          </li>
+          <li>
+            Bilans générés sans connexion, et registre interne conservé par l&apos;association
+            (onglet Historique bilan du backoffice) : sans durée fixe, jusqu&apos;à suppression
+            manuelle par un administrateur.
           </li>
           <li>
             Fiche d&apos;un membre du mandat : pendant la durée du mandat, puis supprimée à la fin
@@ -155,8 +166,10 @@ export default function ConfidentialitePage() {
           </li>
         </List>
         <p>
-          Les administrateurs de l&apos;association gèrent les fiches du mandat et les événements.
-          Le site ne leur donne pas accès à l&apos;historique des bilans des autres utilisateurs.
+          Les administrateurs de l&apos;association gèrent les fiches du mandat et les événements,
+          et consultent tous les bilans générés (onglet Historique bilan du backoffice) : c&apos;est
+          le registre interne de l&apos;association, y compris pour les bilans générés sans
+          connexion.
         </p>
       </Section>
 

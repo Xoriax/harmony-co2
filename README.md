@@ -1,6 +1,6 @@
 # harmony-co2
 
-Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les postes qui le concernent (numérique, repas, boissons, habillement, usage numérique, mobilier, transport) et obtient un total en kgCO2e avec le détail par catégorie, exportable en PDF ou en Excel et enregistré dans l'historique quand on est connecté. Les facteurs d'émission viennent de l'API [Impact CO2](https://impactco2.fr) (ADEME).
+Bilan carbone pour les associations, by Harmony. L'utilisateur sélectionne les postes qui le concernent (numérique, repas, boissons, habillement, usage numérique, mobilier, transport) et obtient un total en kgCO2e avec le détail par catégorie, exportable en PDF ou en Excel. Le bilan est toujours enregistré (registre interne de l'association) ; connecté, il rejoint en plus l'historique personnel de l'utilisateur. Les facteurs d'émission viennent de l'API [Impact CO2](https://impactco2.fr) (ADEME).
 
 ## Stack
 
@@ -53,11 +53,12 @@ toucher aux permissions du bot, qui ne gère que les événements programmés (`
 | `/connexion` | Connexion avec Discord (membres du serveur ciblé) |
 | `/backoffice` | Espace réservé au rôle Discord autorisé (redirige vers `/connexion` ou `/` sinon) : créer, modifier, supprimer les événements, synchronisés avec les événements programmés du serveur Discord |
 | `/bilan` | Formulaire et calcul du bilan carbone (nom de l'association obligatoire, année du bilan auto-complétée), export PDF (1 page paysage), Excel et CSV, comparaison à la moyenne des bilans précédents et/ou à l'objectif |
-| `/historique` | Bilans enregistrés de l'utilisateur connecté (PDF, Excel, CSV), recherche par date et par catégorie, téléchargement et suppression |
+| `/historique` | Historique personnel de l'utilisateur connecté (PDF, Excel, CSV), recherche par date et par catégorie, téléchargement et suppression |
 | `/event` | Événements publiés : recherche et filtre par statut, cartes qui se retournent, compte à rebours, passage automatique en « passés », export `.ics` (par événement ou abonnement à tous) |
 | `/mandat` | Équipe du mandat (Responsable RSE et Bureau restreint) : cartes avec photo, poste, e-mail et Discord, éléments affichables au choix |
 | `/backoffice/mandat` | Gestion des membres du mandat (même accès que `/backoffice`) |
-| `/backoffice/statistiques` | Nombre de bilans, total cumulé, moyenne et catégories les plus utilisées, tous utilisateurs confondus |
+| `/backoffice/statistiques` | Nombre de bilans, total cumulé, moyenne, catégories les plus utilisées, total par mois et comparatif des deux derniers mois actifs, tous utilisateurs confondus |
+| `/backoffice/historique` | Tous les bilans générés, connectés ou non (« visiteur anonyme »), filtrables par association et par année, téléchargement PDF/Excel/CSV |
 | `/backoffice/journal` | Journal d'audit : connexions, déconnexions, bilans calculés, et création/modification/suppression des événements et des membres du mandat (200 dernières actions) |
 | `/backoffice/reglages` | Objectif de bilan carbone (comparaison sur `/bilan`) et seuil d'alerte Discord |
 | `/mentions-legales` | Mentions légales : éditeur, hébergeur, propriété intellectuelle, responsabilité |
