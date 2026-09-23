@@ -15,6 +15,9 @@ Historique bilan (backoffice) et comparatif mensuel.
 - Politique de confidentialité (`/confidentialite`) mise à jour en conséquence : ce que devient un bilan généré sans connexion, et l'accès des administrateurs à tous les bilans.
 - L'alerte Discord de dépassement de seuil (réglable dans `/backoffice/reglages`) se déclenche désormais aussi pour un bilan généré sans connexion (elle ne concernait auparavant que les bilans d'utilisateurs connectés).
 
+### Corrigé
+- `/backoffice/historique` ne compilait pas : le composant client de la liste importait une constante depuis `src/lib/bilans.ts`, qui dépend de `server-only`. Cette constante (identifiant de l'auteur anonyme) vit désormais dans son propre fichier, sans `server-only`.
+
 ## [0.19.1] - 2026-09-23
 
 Script de purge de l'historique des bilans.

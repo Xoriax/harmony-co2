@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ANONYMOUS_USER_ID } from "@/lib/bilan-author";
 import { matchesAdminBilanFilters } from "@/lib/bilan-filter";
-import { ANONYMOUS_USER_ID, type AdminBilanRow } from "@/lib/bilans";
+import type { AdminBilanRow } from "@/lib/bilans";
 import { parisYear } from "@/lib/paris-time";
 import TiltCard from "../../tilt-card";
 

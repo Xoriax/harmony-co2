@@ -2,9 +2,10 @@
 
 import { headers } from "next/headers";
 import { logAudit } from "@/lib/audit-log";
+import { ANONYMOUS_USER_ID, ANONYMOUS_USER_NAME } from "@/lib/bilan-author";
 import { buildBilan, validateAssociationName } from "@/lib/bilan-calc";
 import { buildComparison } from "@/lib/bilan-comparison";
-import { ANONYMOUS_USER_ID, ANONYMOUS_USER_NAME, listBilans, saveBilan } from "@/lib/bilans";
+import { listBilans, saveBilan } from "@/lib/bilans";
 import { bilanAlertPayload } from "@/lib/discord-messages";
 import { postBilanAlert } from "@/lib/discord-notify";
 import { CATEGORIES, getCategoryItems } from "@/lib/impactco2";

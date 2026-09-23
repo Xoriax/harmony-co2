@@ -7,12 +7,6 @@ import { supabaseAdmin } from "./supabase";
 export const BILAN_BUCKET = "bilans";
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
-// Auteur des bilans générés sans connexion : ils sont enregistrés (visibles dans
-// /backoffice/historique) mais ne peuvent être retrouvés dans l'historique personnel de personne,
-// puisqu'aucune vraie session n'a cet identifiant.
-export const ANONYMOUS_USER_ID = "anonyme";
-export const ANONYMOUS_USER_NAME = "Visiteur anonyme";
-
 export const MISSING_BILANS_TABLE =
   "La table « bilans » n'existe pas encore : exécute supabase/migrations/20260921_create_bilans.sql dans le SQL Editor de Supabase.";
 
